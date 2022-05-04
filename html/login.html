@@ -6,6 +6,7 @@
     <meta charset="utf-8"/>
     <!-- Style Pages -->
     <link rel="stylesheet" href="/css/templateStyle.css">
+    <link rel="stylesheet" href="/css/login.css">
     <link rel="stylesheet" href="/css/allPages.css">
 
     <!-- Font Links -->
@@ -24,43 +25,29 @@
     <div id="container">
 
         <div id="nav">
-            
-                <input type="checkbox" id="check">
-                <label for="check" class="checkbtn">
-                    <i class="fas fa-bars fa-lg"></i>
-                </label>
                 <div class="logo"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></div>
-                <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">Reviews</a></li>
-                    <li><a href="#">Profile</a></li>
-                    <li>
-                        <div class="search-container">
-                            <form action="#">
-                                <input type="text" placeholder="Search.." name="search">
-                                <button type="submit"><i class="fa fa-search"></i></button>
-                            </form>
-                      </div>
-                    </li>
-                </ul>
-
         </div>
 
         <div id="content">
-            <div id="t1">T1</div>
-
-            <div id="t2">T2</div>
-
-            <div id="t3">T3</div>
+            <div id="loginBox">
+                <h1>Login Time!</h1>
+                <p>Please enter your username and password.</p>
+                <form action="#">
+                    <input type="text" placeholder="Username" name="userName">
+                    <br>
+                    <input type="text" placeholder="Password" name="password">
+                    <br><br>
+                    <button type="submit">Let's Go!</button>
+                    <br><br>
+                    <a href="#">I don't have an account yet.</a>
+                </form>
+            </div>
         </div>
         
 
         <div id="footer">
             
             <ul class="footerList">
-                <li>
-                    <a href="#">Home</a>
-                </li>
                 <!-- <li>
                     <a href="#">Privacy & Legal</a>
                 </li>

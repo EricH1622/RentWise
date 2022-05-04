@@ -1,0 +1,28 @@
+#content{
+    grid-row: 2;
+    grid-column: 1 / span 4;
+    display: grid;
+    grid-template-columns: 20% 60% 20%;
+    grid-template-rows: 10% 70% 10%;
+}
+
+#loginBox{
+    text-align: center;
+    color: white;
+    background-color: rgb(11, 0, 61);
+    border-radius: 20px;
+    grid-row: 2;
+    grid-column: 2;
+}
+
+button {
+    background-color: rgb(255, 157, 0);
+    border-style: none;
+    padding: 5%;
+    border-radius: 10px;
+    color: white;
+}
+
+a {
+    color: rgb(0, 149, 255);
+}

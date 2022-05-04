@@ -17,17 +17,6 @@ body {
   grid-template-rows: 12% 78% 10%;
 }
 
-#content {
-  grid-column: 1 / span 5;
-  grid-row: 2;
-  display: grid;
-  height: 100%;
-  width: 100%;
-  grid-template-columns: 100%;
-  grid-template-rows: 33% 33% 33%;
-  overflow: auto;
-}
-
 #nav {
   background-color: rgb(16, 0, 37);
   grid-column: 1 / span 5;
