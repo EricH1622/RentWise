@@ -11,10 +11,7 @@ body {
   width: 20px;
 }
 
-/* Track */
-::-webkit-scrollbar-track {
-  border-radius: 10px;
-}
+
  
 /* Handle */
 ::-webkit-scrollbar-thumb {
@@ -35,7 +32,7 @@ body {
 /*        grid-gap: 1em;*/
   height: 100vh;
   grid-template-columns: 20% 20% 20% 20% 20%; 
-  grid-template-rows: 12% 78% 10%;
+  grid-template-rows: 12% 80% 8%;
 }
 
 #content{
@@ -45,6 +42,7 @@ body {
 }
 
 #nav {
+  position: sticky;
   background-color: rgb(16, 0, 37);
   grid-column: 1 / span 5;
   grid-row: 1 / span 1;
@@ -82,9 +80,10 @@ body {
   grid-row: 3;
   box-sizing: border-box;
   font-family: 'Roboto', sans-serif;
+  font-size: 3vmin;
   content: ""; 
   display: block; 
-  padding-top: 10px; 
+  padding-top: 5px; 
 }
 
 
@@ -189,7 +188,7 @@ transition: 0.6s;
   margin: 0;
   text-align: center;
   color: rgb(255, 255, 255);
-  font-size: small;
+  font-size: 3vmin;
 }
 
 
