@@ -17,17 +17,3 @@ INSERT INTO `BBY_37_user` (`user_id`, `username`, `first_name`, `last_name`, `em
 INSERT INTO `BBY_37_user` (`user_id`, `username`, `first_name`, `last_name`, `email_address`, `password`, `role_id`) VALUES (3, 'eric_h', 'Eric', 'H', 'eric@email.com', 'password3', 0);
 INSERT INTO `BBY_37_user` (`user_id`, `username`, `first_name`, `last_name`, `email_address`, `password`, `role_id`) VALUES (4, 'kiefer_t', 'Kiefer', 'T', 'keifer@email.com', 'password4', 1);
 INSERT INTO `BBY_37_user` (`user_id`, `username`, `first_name`, `last_name`, `email_address`, `password`, `role_id`) VALUES (5, 'will_w', 'Will', 'W', 'will@email.com', 'password5', 0);
-
-
--- CREATE TABLE IF NOT EXISTS `BBY_37_roles` (
---   `role_id` int(16) NOT NULL AUTO_INCREMENT,
---   `role_name` varchar(50) NOT NULL,
---   PRIMARY KEY (`role_id`)
--- ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-
--- CREATE TABLE IF NOT EXISTS `BBY_37_user_roles` (
---   `user_id` int(16) NOT NULL AUTO_INCREMENT,
---   `role_id` varchar(50) NOT NULL,
---   PRIMARY KEY (`role_id`)
--- ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-
