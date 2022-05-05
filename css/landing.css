@@ -1,0 +1,76 @@
+#content{
+    grid-row: 2;
+    grid-column: 1 / span 5;
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 70% 35% 70% 35%;
+    background-size: 100%;
+}
+
+#hero1{
+    background-image: url("/assets/images/city2.jpeg");
+}
+
+#buyers{
+    background-image: url("/assets/images/city3.jpeg");
+}
+
+.hero{
+    text-align: center;
+}
+
+.hero > h1 {
+    font-size: 15vmin;
+    color: white;
+    filter: drop-shadow(8px 10px 5px #000000);
+    margin: 0 auto;
+    margin-top: 5%;
+}
+
+.hero > h2 {
+    font-size: 5vmin;
+    color: white;
+    filter: drop-shadow(5px 7px 2.5px #000000);
+    margin: 0 auto;
+    margin-bottom: 2%;
+}
+
+#content > div {
+    padding: 3% 0;
+}
+
+h1 {
+    font-size: 5vmin;
+    margin: 0 auto;
+}
+
+.hero > a{
+    font-size: 20px;
+    background-color: rgb(255, 157, 0);
+    border-style: none;
+    padding: 1%;
+    border-radius: 10px;
+    color: white;
+    text-decoration: none;
+    margin: 2%;
+}
+
+.hero > a:hover{
+    background-color: rgb(218, 134, 0);
+}
+
+@media only screen and (max-height : 740px) {
+    .hero{
+        padding: 1% !important;
+    }
+
+    .hero > h1 {
+        margin-top: 1%;
+    }
+}
+
+@media only screen and (max-width : 1260px) {
+    .hero{
+        padding: 1.5% !important;
+    }
+}
