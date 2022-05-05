@@ -5,6 +5,27 @@ body {
   overflow: hidden;
 }
 
+/* width */
+::-webkit-scrollbar {
+  background: rgb(255, 255, 255); 
+  width: 20px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(255, 157, 0);
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(223, 137, 0);
+}
 
 /**************** Grid Elements ****************/
 
@@ -15,6 +36,12 @@ body {
   height: 100vh;
   grid-template-columns: 20% 20% 20% 20% 20%; 
   grid-template-rows: 12% 78% 10%;
+}
+
+#content{
+  overflow: auto;
+  grid-row: 2;
+  grid-column: 1 / span 5;
 }
 
 #nav {

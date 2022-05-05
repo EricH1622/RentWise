@@ -1,0 +1,67 @@
+#content{
+    display: grid;
+    grid-template-columns: 35% 65%;
+    grid-template-rows: 70% 100%;
+}
+
+h1{
+    text-align: center;
+    margin: 0 auto;
+}
+
+#timeline{
+    padding: 2%;
+    background-color: rgb(157, 223, 240);
+}
+
+#profileInfo{
+    padding: 2%;
+    display: grid;
+    grid-template-rows: 15% 30% 12% 12% 12% 15%;
+    text-align: center;
+}
+
+#profilePhoto{
+    display: block;
+    margin: 0 auto;
+    height: 100%;
+    width: auto;
+    border-radius: 50%;
+}
+
+#profileInfo > p{
+    font-size: 20px;
+}
+
+#editButton{
+    padding: 5%;
+    border-radius: 10px;
+    font-size: 20px;
+    background-color: rgb(255, 157, 0);
+    border-style: none;
+    color: white;
+    text-decoration: none;
+}
+
+#editButton:hover{
+    background-color: rgb(218, 134, 0);
+}
+
+#adminDashboard{
+    padding: 2%;
+    grid-row: 2;
+    grid-column: 1 / span 2;
+    background-color: rgb(172, 172, 172);
+}
+
+@media only screen and (max-height : 666px) {
+    #profileInfo > p{
+        font-size: 3vh;
+    }
+}
+
+@media only screen and (max-width : 845px){
+    #profileInfo > p{
+        font-size: 2.3vw;
+    }
+}
