@@ -2,11 +2,12 @@
 <html lang="en">
 
 <head>
-    <title>RentWise</title>
+    <title>Rentwise - Profile</title>
     <meta charset="utf-8"/>
     <!-- Style Pages -->
     <link rel="stylesheet" href="/css/templateStyle.css">
     <link rel="stylesheet" href="/css/allPages.css">
+    <link rel="stylesheet" href="/css/admin.css">
 
     <!-- Font Links -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,8 +23,9 @@
 <body>
 
     <div id="container">
-        
+
         <div id="nav">
+            
                 <input type="checkbox" id="check">
                 <label for="check" class="checkbtn">
                     <i class="fas fa-bars fa-lg"></i>
@@ -46,11 +48,23 @@
         </div>
 
         <div id="content">
-            <div id="t1">T1</div>
-
-            <div id="t2">T2</div>
-
-            <div id="t3">T3</div>
+            <div id="profileInfo">
+                <h1>Profile Info</h1>
+                <!-- <img src="/assets/images/placholderprofilephoto.jpg" id="profilePhoto"> -->
+                <p id="username">Username: nameGoesHere</p>
+                <!--Consider obfuscating the password with dynamic js css until the user clicks it-->
+                <p id="password">Password: passwordGoesHere</p>
+                <p id="email">Email: emailGoesHere</p>
+                <div id="editContainer">
+                    <a href="#" id="editButton">Edit</a>
+                </div>
+            </div>
+            <div id="timeline">
+                <h1>Timeline</h1>
+            </div>
+            <div id="adminDashboard">
+                <h1>Admin Dashboard</h1>
+            </div>
         </div>
         
 
