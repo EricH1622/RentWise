@@ -60,7 +60,7 @@ a {
     color: rgb(0, 149, 255);
 }
 
-#errorMsg{
+#createErrorMsg{
     align-self: center;
     background-color: red;
 }

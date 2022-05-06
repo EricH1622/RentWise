@@ -2,7 +2,6 @@
 async function createAccount(data) {
   
   try {
-    console.log("hi");
     let responseObject = await fetch("/signup", {
       method: 'POST',
       headers: {
@@ -11,9 +10,7 @@ async function createAccount(data) {
       },
       body: JSON.stringify(data)
     });
-    
     let parsedJSON = await responseObject.json();
-    console.log(parsedJSON);
     if (parsedJSON.status === "fail") {
       document.getElementById("createErrorMsg").innerHTML = parsedJSON.msg;
     } else {
@@ -26,22 +23,25 @@ async function createAccount(data) {
 }
 
 ready(document.getElementById("createBtn").addEventListener("click", function(e) {
-  createAccount({
-    "username": document.getElementById("usernameBox").value,
-    "password": document.getElementById("passwordBox").value,
-    "firstName": document.getElementById("firstNameBox").value,
-    "lastName":document.getElementById("lastNameBox").value,
-    "email":document.getElementById("email").value,
-    "role_id":0
-  });
+  if((document.getElementById("usernameBox").value) && (document.getElementById("passwordBox").value) && (document.getElementById("firstNameBox").value) && (document.getElementById("lastNameBox").value) && (document.getElementById("email").value)){
+    createAccount({
+      "username": document.getElementById("usernameBox").value,
+      "password": document.getElementById("passwordBox").value,
+      "firstName": document.getElementById("firstNameBox").value,
+      "lastName":document.getElementById("lastNameBox").value,
+      "email":document.getElementById("email").value,
+      "role_id":0
+    });
+  } else {
+    e.preventDefault();
+    document.getElementById("createErrorMsg").innerText = "Please fill out all fields.";
+  }
 }))
 
 function ready(callback) {
   if (document.readyState != "loading") {
     callback();
-    console.log("ready state is 'complete'");
   } else {
     document.addEventListener("DOMContentLoaded", callback);
-    console.log("Listener was invoked");
   }
 }
