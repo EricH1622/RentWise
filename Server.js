@@ -8,6 +8,9 @@ const fs = require("fs");
 const mysql = require("mysql2/promise");
 
 
+app.use("/js", express.static("./js"));
+app.use("/css", express.static("./css"));
+app.use("/assets", express.static("./assets"));
 
 app.use(express.json());
 app.use(express.urlencoded({
