@@ -90,8 +90,8 @@ async function authenticateUser(req, res) {
   });
   connection.connect();
   const [rows, fields] = await connection.execute(
-      "SELECT user_id, role_id FROM BBY_37_user WHERE BBY_37_user.email_address = ? AND BBY_37_user.password = ?",
-      [req.body.email, req.body.password]);
+      "SELECT user_id, role_id FROM BBY_37_user WHERE BBY_37_user.username = ? AND BBY_37_user.password = ?",
+      [req.body.username, req.body.password]);
 
   await connection.end();
       
