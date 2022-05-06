@@ -1,0 +1,82 @@
+#content{
+    display: grid;
+    grid-template-columns: 25% 50% 25%;
+    grid-template-rows: 5% 80% 5% 100%;
+    background-image: url("/assets/images/city3.jpeg");
+    background-repeat: no-repeat;
+    background-size:cover;
+}
+
+h1{
+    text-align: center;
+    font-size: 5vmin;
+    margin: 0 auto;
+}
+
+#timeline{
+    padding: 2%;
+    background-color: rgb(157, 223, 240);
+    /*Remove the following 2 lines to bring back the timeline once we need it later*/
+    visibility: hidden;
+    position: absolute;
+}
+
+#profileInfo{
+    padding: 1%;
+    display: grid;
+    /*grid-template-rows: 15% 30% 12% 12% 12% 15%; FOR USE WITH AN IMAGE*/
+    grid-template-rows: 15% 12% 12% 12% 15%;
+    grid-template-columns: 25% 50% 25%;
+    text-align: center;
+    grid-row: 2;
+    grid-column: 2;
+    margin: 0;
+    vertical-align: middle;
+    background-color: rgba(61, 113, 255, 0.808);
+    border-radius: 20px;
+}
+
+#profileInfo > *{
+    grid-column: 2;
+}
+
+#profilePhoto{
+    display: block;
+    margin: 0 auto;
+    height: 100%;
+    width: auto;
+    border-radius: 50%;
+}
+
+#profileInfo > p{
+    font-size: 3vmin;
+    margin: 0;
+}
+
+#editContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#editButton{
+    padding: 3% 6%;
+    font-size: 5vmin;
+    border-radius: 10px;
+    background-color: rgb(255, 157, 0);
+    border-style: none;
+    color: white;
+    text-decoration: none;
+    display: inline;
+}
+
+#editButton:hover{
+    background-color: rgb(218, 134, 0);
+}
+
+#adminDashboard{
+    padding: 2%;
+    grid-row: 4;
+    grid-column: 1 / span 3;
+    background-color: rgb(172, 172, 172);
+}
