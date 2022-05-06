@@ -75,7 +75,7 @@ body {
   grid-row: 2;
   grid-template-columns: 100%;
   grid-template-rows: 40% 10% 40% 10%;
-  background-color: rgb(134, 117, 209);
+  background-color: rgb(82, 54, 206);
 }
 
 #content * {
@@ -95,6 +95,12 @@ body {
   overflow: auto;
   display: grid;
   grid-template-rows: 100px 100px 100px 100px 100px;
+  padding: 10px;
+}
+
+.review {
+  border-style: solid;
+  border-color: rgb(78, 47, 216);;
 }
 
 #buttons {
