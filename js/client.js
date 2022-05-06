@@ -11,14 +11,13 @@ async function submitCredentials(data) {
       },
       body: JSON.stringify(data)
     });
-    console.log("Response object", responseObject);
     let parsedJSON = await responseObject.json();
-    console.log("From the server", parsedJSON);
 
     if (parsedJSON.status === "fail") {
       document.getElementById("errorMsg").innerHTML = parsedJSON.msg;
     } else {
-      window.location.replace("...");
+      console.log("Logged in");
+      window.location.replace("/profile");
     }
 
   } catch (error) {
@@ -26,10 +25,20 @@ async function submitCredentials(data) {
   }
 }
 
-//When user clicks the submit button, execute the submitCredentials function
-document.getElementById("submit").addEventListener("click", function (e) {
+//creating DOM to execute the submitCredentials function
+document.getElementById("btn").addEventListener("click", function (e) {
   submitCredentials({
-    email: document.getElementById("email").value,
-    password: document.getElementById("password").value
+    "username": document.getElementById("usernameBox").value,
+    "password": document.getElementById("passwordBox").value
   });
 });
+
+// function ready(callback) {
+//   if (document.readyState != "loading") {
+//     callback();
+//     console.log("ready state is 'complete'");
+//   } else {
+//     document.addEventListener("DOMContentLoaded", callback);
+//     console.log("Listener was invoked");
+//   }
+// }
