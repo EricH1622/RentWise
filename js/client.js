@@ -19,7 +19,6 @@ async function submitCredentials(data) {
     }
 
   } catch (error) {
-    console.log(error);
   }
 }
 
@@ -33,9 +32,7 @@ ready(document.getElementById("btn").addEventListener("click", function (e) {
 function ready(callback) {
   if (document.readyState != "loading") {
     callback();
-    console.log("ready state is 'complete'");
   } else {
     document.addEventListener("DOMContentLoaded", callback);
-    console.log("Listener was invoked");
   }
 }

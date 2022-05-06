@@ -208,12 +208,7 @@ async function createUser(req, res) {
   });
   connection.connect();
   connection.query('INSERT INTO BBY_37_user (username,password,first_name,last_name,email_address,role_id) values (?, ?, ?, ?, ?, ?)',
-    [req.body.username, req.body.password, req.body.firstName, req.body.lastName, req.body.email, req.body.role_id],
-    function (error, results, fields) {
-      if (error) {
-        console.log(error);
-      }
-    });
+    [req.body.username, req.body.password, req.body.firstName, req.body.lastName, req.body.email, req.body.role_id]);
   connection.end();
   res.send({
     status: "success",
@@ -223,5 +218,5 @@ async function createUser(req, res) {
 
 let port = 8000;
 app.listen(port, function () {
-  console.log("Server running on port: " + port);
+  console.log("RentWise server running on port: " + port);
 });

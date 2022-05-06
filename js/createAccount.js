@@ -18,7 +18,6 @@ async function createAccount(data) {
     }
 
   } catch (error) {
-    console.log(error);
   }
 }
 

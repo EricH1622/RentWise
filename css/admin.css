@@ -24,7 +24,6 @@ h1{
 #profileInfo{
     padding: 1%;
     display: grid;
-    /*grid-template-rows: 15% 30% 12% 12% 12% 15%; FOR USE WITH AN IMAGE*/
     grid-template-rows: 15% 12% 12% 12% 15%;
     grid-template-columns: 25% 50% 25%;
     text-align: center;
