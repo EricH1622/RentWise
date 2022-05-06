@@ -1,0 +1,298 @@
+/***********************Grid Elements************************/
+/* #content {
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: 40% 10% 40% 10%;
+}
+
+.reviews {
+  background-color: blue;
+}
+
+#buttons {
+  display: grid;
+  grid-template-columns: 20% 60% 20%;
+  background-color: blanchedalmond;
+}
+
+#load {
+  grid-column: 1;
+}
+
+#post {
+  grid-column: 3;
+} */
+
+body {
+  background-color:rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
+  margin: 0;
+  overflow: hidden;
+}
+
+
+/**************** Grid Elements ****************/
+
+#container {
+  background-color: rgb(255, 255, 255);
+  display: grid;
+/*        grid-gap: 1em;*/
+  height: 100vh;
+  grid-template-columns: 20% 20% 20% 20% 20%; 
+  grid-template-rows: 12% 78% 10%;
+}
+
+#nav {
+  background-color: rgb(16, 0, 37);
+  grid-column: 1 / span 5;
+  grid-row: 1 / span 1;
+  font-family: 'Roboto', sans-serif;
+  list-style: none;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-template-rows: 100%;
+}
+
+#footer {
+  background-color: rgb(16, 0, 37);
+  grid-column: 1 / span 5;
+  grid-row: 3;
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+  content: ""; 
+  display: block; 
+  padding-top: 10px; 
+}
+
+/***************** Content Styling ****************/
+
+#content {
+  display: grid;
+  grid-column: 1 / span 5;
+  grid-row: 2;
+  grid-template-columns: 100%;
+  grid-template-rows: 40% 10% 40% 10%;
+  background-color: rgb(134, 117, 209);
+}
+
+#content * {
+  color: white;
+  font-size: 15px;
+}
+
+#prop {
+  background-image: url("/assets/images/city1.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position-x: center;
+  background-position-y: center;
+}
+
+#reviews {
+  overflow: auto;
+  display: grid;
+  grid-template-rows: 100px 100px 100px 100px 100px;
+}
+
+#buttons {
+  display: grid;
+  grid-template-columns: 20% 60% 20%;
+}
+
+#load {
+  grid-column: 1;
+}
+
+#post {
+  grid-column: 3;
+  margin-right: 0;
+  margin-left: auto;
+}
+
+/* 
+.review {
+  
+} */
+
+button {
+  font-size: 20px;
+  background-color: rgb(255, 157, 0);
+  border-style: none;
+  padding: 10px 24px;
+  border-radius: 10px;
+  color: white;
+  height: 95%;
+}
+
+button:hover{
+  background-color: rgb(218, 134, 0);
+  cursor: pointer;
+}
+/**************** Navbar Styling ****************/
+.logo{
+  height: 100%;
+}
+
+#logo1{
+  height: 70%;
+  width: auto;
+}
+
+#nav > ul {
+grid-column: 2;
+grid-row: 1;
+}
+
+#nav ul li {
+display: inline-block;
+/* margin: 0 5px; */
+}
+
+#nav ul li a {
+color:rgb(255, 255, 255);
+text-decoration: none;
+border-radius: 5px;
+padding: 7px 13px;
+}
+
+#nav.search-container {
+float: right;
+}
+
+#nav a.active, #nav a:hover {
+background-color: rgba(255, 145, 0, 0.829);
+color: white;
+transition: 0.9s;
+}
+
+.checkbtn {
+font-size: large;
+color: rgb(31, 31, 31);
+margin: auto;
+cursor: pointer;
+display: none;
+}
+
+#check {
+display: none;
+}
+
+#nav input[type=text] {
+padding: 6px;
+margin-top: 8px;
+font-size: 17px;
+border: none;
+}
+
+#nav .search-container button {
+float: right;
+padding: 6px 10px;
+margin-top: 8px;
+margin-right: 16px;
+background: #ddd;
+font-size: 17px;
+border: none;
+cursor: pointer;
+}
+
+#nav .search-container button:hover {
+background: #ccc;
+}
+
+
+/**************** Footer Styling ****************/
+
+#footer .footerList {
+list-style: none;
+text-align: center;
+margin: 0;
+padding: 0;
+}
+
+#footer ul a {
+text-decoration: none;
+color: rgb(255, 255, 255);
+}
+
+#footer ul li {
+display: inline-block;
+padding: 1%;
+}
+
+#footer ul li a:hover {
+opacity: 1;
+font-weight: bold;
+transition: 0.6s;
+}
+
+#footer .copyright {
+  margin: 0;
+  text-align: center;
+  color: rgb(255, 255, 255);
+  font-size: small;
+}
+
+
+
+@media only screen and (max-width : 1024px) {
+
+/**************** Grid Elements ****************/
+
+#container {
+  background-color: rgb(255, 255, 255);
+  display: grid;
+/*        grid-gap: 1em;*/
+  height: 100vh;
+}
+
+/**************** Navbar Styling ****************/
+#nav{
+  display: grid;
+  grid-template-columns: 80% 10%;
+  grid-row: 100%;
+}
+
+.checkbtn{
+  display: block;
+  grid-column: 2;
+  grid-row: 1;
+  filter: invert();
+}
+
+.logo{
+  height: 100%;
+  grid-column: 1;
+  grid-row: 1;
+}
+
+#nav ul {
+  visibility: hidden;
+}
+
+#nav ul li {
+  display: block;
+  padding-top: 2%;
+  padding-bottom: 2%;
+}
+
+#nav ul li a{
+  color: white;
+}
+
+#nav a.active, nav a:hover {
+  background-color: rgba(255, 255, 255, 0.8);
+  color: rgb(31, 31, 31);
+}
+
+#check:checked ~ ul {
+  left: 0;
+}
+
+#nav .search-container button {
+float: none;
+}
+
+}
