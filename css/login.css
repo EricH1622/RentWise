@@ -40,6 +40,11 @@ button {
     color: white;
 }
 
+button:hover{
+    background-color: rgb(218, 134, 0);
+    cursor: pointer;
+}
+
 form{
     grid-column: 2;
     grid-row: 4;
