@@ -163,6 +163,11 @@ app.post("/login", function (req, res) {
   authenticateUser(req, res);
 });
 
+app.post("/signup", function (req, res) {
+  res.setHeader("Content-Type", "application/json");
+  createUser(req, res);
+});
+
 
 async function authenticateUser(req, res) {
   const connection = await mysql.createConnection({
@@ -193,7 +198,28 @@ async function authenticateUser(req, res) {
   }
 }
 
-
+async function createUser(req, res) {
+  const connection = await mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "COMP2800",
+    multipleStatements: true
+  });
+  connection.connect();
+  connection.query('INSERT INTO BBY_37_user (username,password,first_name,last_name,email_address,role_id) values (?, ?, ?, ?, ?, ?)',
+    [req.body.username, req.body.password, req.body.firstName, req.body.lastName, req.body.email, req.body.role_id],
+    function (error, results, fields) {
+      if (error) {
+        console.log(error);
+      }
+    });
+  connection.end();
+  res.send({
+    status: "success",
+    msg: "Account added."
+  });
+}
 
 let port = 8000;
 app.listen(port, function () {
