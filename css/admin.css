@@ -1,7 +1,7 @@
 #content{
     display: grid;
     grid-template-columns: 25% 50% 25%;
-    grid-template-rows: 5% 80% 5% 100%;
+    grid-template-rows: 5% 80% 5%;
     background-image: url("/assets/images/city3.jpeg");
     background-repeat: no-repeat;
     background-size:cover;
@@ -79,4 +79,44 @@ h1{
     grid-row: 4;
     grid-column: 1 / span 3;
     background-color: rgb(172, 172, 172);
+    display: block;
+    grid-template-rows: 30%;
+}
+
+#tableContainer{
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    overflow:auto;
+    height: 60vh;
+}
+
+table{
+    border-collapse: collapse;
+    width: 100%;
+}
+
+tbody{
+    background-color: gray;
+    width: 100%;
+    text-align: center;
+}
+
+tr > *{
+    font-size: 2.5vmin;
+    margin: 0;
+    padding: 2vmin 1.5vmin;
+    border: 0.3vmin;
+    border-color: black;
+    border-style:solid;
+}
+
+th{
+    color: white;
+    border-color: black;
+    border-style:solid;
+    border: 0.5vmin;
+    background-color: rgb(16, 0, 37);
+    position: sticky;
+    top: 0;
 }
