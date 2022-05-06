@@ -113,6 +113,15 @@ border-radius: 5px;
 padding: 7px 13px;
 }
 
+#logout{
+  color: red !important;
+}
+
+#logout:hover{
+  color: white !important;
+  background-color: red !important;
+}
+
 #nav.search-container {
 float: right;
 }
@@ -194,6 +203,8 @@ transition: 0.6s;
   font-size: 6vmin;
 }
 
+
+
 @media only screen and (max-width : 1024px) and (min-width : 401px) {
 
 #container {
@@ -256,6 +267,8 @@ transition: 0.6s;
 #nav .search-container button {
 float: none;
 }
+
+
 
 
 }

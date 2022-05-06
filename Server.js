@@ -30,13 +30,28 @@ app.get("/", function (req, res) {
   if (req.session.loggedIn) {
     res.redirect("/profile");
   } else {
+    let doc = fs.readFileSync("./html/index.html", "utf8");
+    res.send(doc);
+  }
+});
+
+app.get("/login", function (req, res) {
+  if (req.session.loggedIn) {
+    res.redirect("/profile");
+  } else {
     let doc = fs.readFileSync("./html/login.html", "utf8");
     res.send(doc);
   }
 });
 
-
-
+app.get("/createAccount", function (req, res) {
+  if (req.session.loggedIn) {
+    res.redirect("/profile");
+  } else {
+    let doc = fs.readFileSync("./html/createAccount.html", "utf8");
+    res.send(doc);
+  }
+});
 
 app.get("/logout", function (req, res) {
 
