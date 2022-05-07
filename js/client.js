@@ -18,8 +18,7 @@ async function submitCredentials(data) {
       window.location.replace("/profile");
     }
 
-  } catch (error) {
-  }
+  } catch (error){}
 }
 
 ready(document.getElementById("btn").addEventListener("click", function (e) {
