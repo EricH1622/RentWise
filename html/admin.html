@@ -9,12 +9,6 @@
     <link rel="stylesheet" href="/css/allPages.css">
     <link rel="stylesheet" href="/css/admin.css">
 
-    <!-- Font Links -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Mono&family=Roboto&display=swap" rel="stylesheet">
-
     <!-- Icons -->
     <script src="https://kit.fontawesome.com/f1147c558e.js" crossorigin="anonymous"></script>
 
@@ -26,33 +20,30 @@
 
         <div id="nav">
             
-                <input type="checkbox" id="check">
-                <label for="check" class="checkbtn">
-                    <i class="fas fa-bars fa-lg"></i>
-                </label>
-                <div class="logo"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></div>
-                <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">Reviews</a></li>
-                    <li><a href="#">Profile</a></li>
-                    <li>
-                        <div class="search-container">
-                            <form action="#">
-                                <input type="text" placeholder="Search.." name="search">
-                                <button type="submit"><i class="fa fa-search"></i></button>
-                            </form>
-                      </div>
-                    </li>
-                </ul>
-
+            <input type="checkbox" id="check">
+            <label for="check" class="checkbtn">
+                <i class="fas fa-bars fa-lg"></i>
+            </label>
+            <div class="logo"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></div>
+            <ul>
+                <li><a href="#">Reviews</a></li>
+                <li><a href="/profile">Profile</a></li>
+                <li><a href="/logout" id="logout">Logout</a></li>
+                <li>
+                    <div class="search-container">
+                        <form action="#">
+                            <input type="text" placeholder="Search.." name="search">
+                            <button type="submit"><i class="fa fa-search"></i></button>
+                        </form>
+                  </div>
+                </li>
+            </ul>
         </div>
 
         <div id="content">
             <div id="profileInfo">
                 <h1>Profile Info</h1>
-                <!-- <img src="/assets/images/placholderprofilephoto.jpg" id="profilePhoto"> -->
                 <p id="username">Username: nameGoesHere</p>
-                <!--Consider obfuscating the password with dynamic js css until the user clicks it-->
                 <p id="password">Password: passwordGoesHere</p>
                 <p id="email">Email: emailGoesHere</p>
                 <div id="editContainer">
@@ -64,6 +55,9 @@
             </div>
             <div id="adminDashboard">
                 <h1>Admin Dashboard</h1>
+                <div id="tableContainer">
+
+                </div>
             </div>
         </div>
         
@@ -74,12 +68,6 @@
                 <li>
                     <a href="#">Home</a>
                 </li>
-                <!-- <li>
-                    <a href="#">Privacy & Legal</a>
-                </li>
-                <li>
-                    <a href="#">Terms</a>
-                </li> -->
                 <li>
                     <a href="#">Contact</a>
                 </li>

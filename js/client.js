@@ -18,9 +18,7 @@ async function submitCredentials(data) {
       window.location.replace("/profile");
     }
 
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error){}
 }
 
 ready(document.getElementById("btn").addEventListener("click", function (e) {
@@ -33,9 +31,7 @@ ready(document.getElementById("btn").addEventListener("click", function (e) {
 function ready(callback) {
   if (document.readyState != "loading") {
     callback();
-    console.log("ready state is 'complete'");
   } else {
     document.addEventListener("DOMContentLoaded", callback);
-    console.log("Listener was invoked");
   }
 }
