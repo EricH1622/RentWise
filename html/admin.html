@@ -43,12 +43,27 @@
         <div id="content">
             <div id="profileInfo">
                 <h1>Profile Info</h1>
-                <p id="username">Username: nameGoesHere</p>
-                <p id="password">Password: passwordGoesHere</p>
-                <p id="email">Email: emailGoesHere</p>
-                <div id="editContainer">
-                    <a href="#" id="editButton">Edit</a>
-                </div>
+                <form id="profileForm">
+                    <img id="profilePhoto" src="/assets/images/placholderprofilephoto.jpg">
+                    <label>
+                        First Name: <input id="firstName" placeholder="firstName">
+                    </label>
+                    <label>
+                        Last Name: <input id="lastName" placeholder="lastName">
+                    </label>
+                    <label>
+                        Username: <input id="username" placeholder="userName">
+                    </label>
+                    <label>
+                        Password: <input id="password" placeholder="password">
+                    </label>
+                    <label>
+                        Email: <input id="email" placeholder="email">
+                    </label>
+                    <div id="editContainer">
+                        <a href="#" id="editButton">Submit Changes</a>
+                    </div>
+                </form>
             </div>
             <div id="timeline">
                 <h1>Timeline</h1>

@@ -93,13 +93,16 @@ async function sendProfilePage(req, res) {
       });
       connection.connect();
       const [rows, fields] = await connection.execute(
-        "SELECT username, email_address, password FROM BBY_37_user " +
+        "SELECT first_name, last_name, username, email_address, password FROM BBY_37_user " +
         "WHERE BBY_37_user.user_id = " + req.session.userid);
       await connection.end();
 
-      docDOM.window.document.getElementById("username").innerHTML = "Username: " + rows[0].username;
-      docDOM.window.document.getElementById("email").innerHTML = "Email: " + rows[0].email_address;
-      docDOM.window.document.getElementById("password").innerHTML = "Password: " + rows[0].password;
+      docDOM.window.document.getElementById("firstName").setAttribute("placeholder", rows[0].first_name);
+      docDOM.window.document.getElementById("lastName").setAttribute("placeholder", rows[0].last_name);
+      docDOM.window.document.getElementById("username").setAttribute("placeholder", rows[0].username);
+      docDOM.window.document.getElementById("password").setAttribute("placeholder", rows[0].password);
+      docDOM.window.document.getElementById("email").setAttribute("placeholder", rows[0].email_address);
+
       res.send(docDOM.serialize());
 
 
@@ -117,12 +120,14 @@ async function sendProfilePage(req, res) {
       });
       connection.connect();
       let [rows, fields] = await connection.execute(
-        "SELECT username, email_address, password FROM BBY_37_user " +
+        "SELECT first_name, last_name, username, email_address, password FROM BBY_37_user " +
         "WHERE BBY_37_user.user_id = " + req.session.userid);
 
-      docDOM.window.document.getElementById("username").innerHTML = "Username: " + rows[0].username;
-      docDOM.window.document.getElementById("email").innerHTML = "Email: " + rows[0].email_address;
-      docDOM.window.document.getElementById("password").innerHTML = "Password: " + rows[0].password;
+        docDOM.window.document.getElementById("firstName").setAttribute("placeholder", rows[0].first_name);
+        docDOM.window.document.getElementById("lastName").setAttribute("placeholder", rows[0].last_name);
+        docDOM.window.document.getElementById("username").setAttribute("placeholder", rows[0].username);
+        docDOM.window.document.getElementById("password").setAttribute("placeholder", rows[0].password);
+        docDOM.window.document.getElementById("email").setAttribute("placeholder", rows[0].email_address);
 
       [rows, fields] = await connection.execute("SELECT * FROM BBY_37_user ");
       await connection.end();
