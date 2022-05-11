@@ -49,6 +49,11 @@ h1{
     justify-self: center;
 }
 
+#pictureForm{
+    display: grid;
+    grid-template-rows: 18% 7% 12% 12% 12% 12% 12% 15%;
+}
+
 #profilePhoto{
     display: block;
     margin: 0 auto;

@@ -6,6 +6,7 @@ const session = require("express-session");
 const app = express();
 const fs = require("fs");
 const mysql = require("mysql2/promise");
+const multer = require("multer");
 const {
   JSDOM
 } = require('jsdom');
@@ -89,7 +90,7 @@ async function sendProfilePage(req, res) {
       const connection = await mysql.createConnection({
         host: "localhost",
         user: "root",
-        password: "",
+        password: "Foxyl113.i..",
         database: "COMP2800",
         multipleStatements: true
       });
@@ -261,6 +262,38 @@ async function createUser(req, res) {
     msg: "Account added."
   });
 }
+
+
+const storage = multer.diskStorage({
+  destination: function (req, file, callback) {
+      callback(null, "./assets/uploads/")
+  },
+  filename: function(req, file, callback) {
+      callback(null, "user-uploads-" + file.originalname.split('/').pop().trim());
+  }
+});
+const upload = multer({ storage: storage });
+
+
+app.get('/', function (req, res) {
+  let doc = fs.readFileSync('./app/html/index.html', "utf8");
+
+  res.set('Server', 'Wazubi Engine');
+  res.set('X-Powered-By', 'Wazubi');
+  res.send(doc);
+
+});
+
+app.post('/upload-images', upload.array("files"), function (req, res) {
+
+  //console.log(req.body);
+  console.log(req.files);
+
+  for(let i = 0; i < req.files.length; i++) {
+      req.files[i].filename = req.files[i].originalname;
+  }
+
+});
 
 let port = 8000;
 app.listen(port, function () {
