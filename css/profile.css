@@ -41,7 +41,12 @@ h1{
 
 #profileForm{
     display: grid;
-    grid-template-rows: 18% 7% 12% 12% 12% 12% 12% 15%;
+    grid-template-rows: 18% 7% 10% 10% 10% 10% 10% 10% 10%;
+}
+
+#msg{
+    align-self: center;
+    justify-self: center;
 }
 
 #profilePhoto{
@@ -55,6 +60,7 @@ h1{
 #profileInfo > p, label{
     font-size: 3vmin;
     margin: 0;
+    align-self: center;
 }
 
 label > input{
