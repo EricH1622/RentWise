@@ -1,11 +1,19 @@
 #content{
     display: grid;
-    grid-template-columns: 25% 50% 25%;
+    grid-template-columns: 15% 70% 15%;
     grid-template-rows: 10% 80% 10%;
     background-image: url("/assets/images/city3.jpeg");
     background-repeat: no-repeat;
     background-size:cover;
 }
+
+@media only screen and (min-width : 451px){
+    #content{
+        grid-template-columns: 25% 50% 25%;
+    }
+}
+
+
 
 h1{
     text-align: center;
@@ -24,7 +32,7 @@ h1{
 #profileInfo{
     padding: 1%;
     display: grid;
-    grid-template-rows: 10% 90%;
+    grid-template-rows: 10% 30% 60%;
     grid-template-columns: 10% 80% 10%;
     text-align: center;
     grid-row: 2;
@@ -41,17 +49,27 @@ h1{
 
 #profileForm{
     display: grid;
-    grid-template-rows: 18% 7% 10% 10% 10% 10% 10% 10% 10%;
+    grid-template-rows: 15% 15% 15% 15% 15% 5% 20%;
 }
 
 #msg{
     align-self: center;
     justify-self: center;
+    grid-template-rows: 15% 15% 15% 15% 15% 8% 20%;
+    padding: 1vmin;
 }
 
 #pictureForm{
     display: grid;
-    grid-template-rows: 18% 7% 12% 12% 12% 12% 12% 15%;
+    grid-template-rows: 60% 20% 20%;
+}
+
+#imageUpload{
+    align-self: center;
+    justify-self: center;
+    width: 25vmin;
+    font-size: 1.8vmin;
+    font-family: inherit;
 }
 
 #profilePhoto{
@@ -101,8 +119,8 @@ label > input::placeholder{
     display: inline;
 }
 
-#uploadButton{
-    font-size: 2vmin;
+#submit{
+    font-size: 2.5vmin;
     border-radius: 10px;
     padding: 0.5vmin;
     width: 10vw;
@@ -118,3 +136,4 @@ label > input::placeholder{
 #editButton:hover, #uploadButton:hover{
     background-color: rgb(218, 134, 0);
 }
+
