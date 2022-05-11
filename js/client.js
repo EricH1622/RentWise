@@ -1,5 +1,4 @@
 "use strict";
-
 async function submitCredentials(data) {
   try {
     let responseObject = await fetch("/login", {

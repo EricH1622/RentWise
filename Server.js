@@ -6,7 +6,9 @@ const session = require("express-session");
 const app = express();
 const fs = require("fs");
 const mysql = require("mysql2/promise");
-const { JSDOM } = require('jsdom');
+const {
+  JSDOM
+} = require('jsdom');
 
 
 app.use("/js", express.static("./js"));
@@ -97,11 +99,11 @@ async function sendProfilePage(req, res) {
         "WHERE BBY_37_user.user_id = " + req.session.userid);
       await connection.end();
 
-      docDOM.window.document.getElementById("firstName").setAttribute("placeholder", rows[0].first_name);
-      docDOM.window.document.getElementById("lastName").setAttribute("placeholder", rows[0].last_name);
-      docDOM.window.document.getElementById("username").setAttribute("placeholder", rows[0].username);
-      docDOM.window.document.getElementById("password").setAttribute("placeholder", rows[0].password);
-      docDOM.window.document.getElementById("email").setAttribute("placeholder", rows[0].email_address);
+      docDOM.window.document.getElementById("firstName").setAttribute("value", rows[0].first_name);
+      docDOM.window.document.getElementById("lastName").setAttribute("value", rows[0].last_name);
+      docDOM.window.document.getElementById("username").setAttribute("value", rows[0].username);
+      docDOM.window.document.getElementById("password").setAttribute("value", rows[0].password);
+      docDOM.window.document.getElementById("email").setAttribute("value", rows[0].email_address);
 
       res.send(docDOM.serialize());
 
@@ -123,34 +125,34 @@ async function sendProfilePage(req, res) {
         "SELECT first_name, last_name, username, email_address, password FROM BBY_37_user " +
         "WHERE BBY_37_user.user_id = " + req.session.userid);
 
-        docDOM.window.document.getElementById("firstName").setAttribute("placeholder", rows[0].first_name);
-        docDOM.window.document.getElementById("lastName").setAttribute("placeholder", rows[0].last_name);
-        docDOM.window.document.getElementById("username").setAttribute("placeholder", rows[0].username);
-        docDOM.window.document.getElementById("password").setAttribute("placeholder", rows[0].password);
-        docDOM.window.document.getElementById("email").setAttribute("placeholder", rows[0].email_address);
+      docDOM.window.document.getElementById("firstName").setAttribute("value", rows[0].first_name);
+      docDOM.window.document.getElementById("lastName").setAttribute("value", rows[0].last_name);
+      docDOM.window.document.getElementById("username").setAttribute("value", rows[0].username);
+      docDOM.window.document.getElementById("password").setAttribute("value", rows[0].password);
+      docDOM.window.document.getElementById("email").setAttribute("value", rows[0].email_address);
 
       [rows, fields] = await connection.execute("SELECT * FROM BBY_37_user ");
       await connection.end();
       // `user_id`, `username`, `first_name`, `last_name`, `email_address`, `password`, `role_id`
 
       let table = "<table><tr>" +
-                  "<th>ID</th>" +
-                  "<th>Username</th>" +
-                  "<th>First Name</th>" +
-                  "<th>Last Name</th>" +
-                  "<th>Email</th>" +
-                  "<th>Password</th>" +
-                  "<th>User Type</th></tr>";
+        "<th>ID</th>" +
+        "<th>Username</th>" +
+        "<th>First Name</th>" +
+        "<th>Last Name</th>" +
+        "<th>Email</th>" +
+        "<th>Password</th>" +
+        "<th>User Type</th></tr>";
 
       for (let i = 0; i < rows.length; i++) {
         table += "<tr><td>" +
-                  rows[i].user_id + "</td><td>" +
-                  rows[i].username + "</td><td>" +
-                  rows[i].first_name + "</td><td>" +
-                  rows[i].last_name + "</td><td>" +
-                  rows[i].email_address + "</td><td>" +
-                  rows[i].password + "</td><td>" +
-                  rows[i].role_id + "</td></tr>";
+          rows[i].user_id + "</td><td>" +
+          rows[i].username + "</td><td>" +
+          rows[i].first_name + "</td><td>" +
+          rows[i].last_name + "</td><td>" +
+          rows[i].email_address + "</td><td>" +
+          rows[i].password + "</td><td>" +
+          rows[i].role_id + "</td></tr>";
       }
       table += "</table>";
 
@@ -173,33 +175,64 @@ app.post("/signup", function (req, res) {
   createUser(req, res);
 });
 
+app.post('/update-profile', function (req, res) {
+  res.setHeader('Content-Type', 'application/json');
+  editUserProfile(req,res);
+});
+
+async function editUserProfile(req,res){
+  if (req.session.loggedIn) {
+    const connection = await mysql.createConnection({
+      host: 'localhost',
+      user: 'root',
+      password: '',
+      database: 'COMP2800',
+      multipleStatements: true
+    });
+    connection.connect();
+    connection.query('UPDATE BBY_37_user SET username = ?, first_name =?, last_name = ?,email_address = ?,password = ? WHERE user_id = ?',
+      [req.body.username, req.body.firstName, req.body.lastName, req.body.email, req.body.password, req.session.userid])
+    connection.end();
+    res.send({
+      status: "success",
+      msg: "Profile info updated."
+    });
+  } else {
+    res.redirect("/");
+  }
+}
 
 async function authenticateUser(req, res) {
   const connection = await mysql.createConnection({
-      host: "localhost",
-      user: "root",
-      password: "",
-      database: "COMP2800",
-      multipleStatements: true
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "COMP2800",
+    multipleStatements: true
   });
   connection.connect();
   const [rows, fields] = await connection.execute(
-      "SELECT user_id, role_id FROM BBY_37_user WHERE BBY_37_user.username = ? AND BBY_37_user.password = ?",
-      [req.body.username, req.body.password]);
+    "SELECT user_id, role_id FROM BBY_37_user WHERE BBY_37_user.username = ? AND BBY_37_user.password = ?",
+    [req.body.username, req.body.password]);
 
   await connection.end();
 
   res.setHeader("Content-Type", "application/json");
-  if (rows.length == 1 ) {
-      // user authenticated, create a session
-      req.session.loggedIn = true;
-      req.session.userlevel = rows[0].role_id;
-      req.session.userid = rows[0].user_id;
-      req.session.save(function (err) {
-      });
-      res.send({ status: "success", msg: "Logged in." });
+  if (rows.length == 1) {
+    // user authenticated, create a session
+    req.session.loggedIn = true;
+    req.session.userlevel = rows[0].role_id;
+    req.session.userid = rows[0].user_id;
+    req.session.save(function (err) {});
+    res.send({
+      status: "success",
+      msg: "Logged in."
+    });
   } else {
-      res.send({ status: "fail", msg: "User account not found." });
+    res.send({
+      status: "fail",
+      msg: "User account not found."
+    });
   }
 }
 
