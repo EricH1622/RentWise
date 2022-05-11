@@ -142,17 +142,25 @@ async function sendProfilePage(req, res) {
         "<th>Last Name</th>" +
         "<th>Email</th>" +
         "<th>Password</th>" +
-        "<th>User Type</th></tr>";
+        "<th>User Type</th>" +
+        "<th>Delete</th></tr>";
 
       for (let i = 0; i < rows.length; i++) {
-        table += "<tr><td>" +
-          rows[i].user_id + "</td><td>" +
-          rows[i].username + "</td><td>" +
-          rows[i].first_name + "</td><td>" +
-          rows[i].last_name + "</td><td>" +
-          rows[i].email_address + "</td><td>" +
-          rows[i].password + "</td><td>" +
-          rows[i].role_id + "</td></tr>";
+        table += "<tr><td><input type=\"text\" placeholder=\"" +
+          rows[i].user_id + "\"></td><td>" +
+          "<input type=\"text\" placeholder=\"" +
+          rows[i].username + "\"></td><td>" +
+          "<input type=\"text\" placeholder=\"" +
+          rows[i].first_name + "\"></td><td>" +
+          "<input type=\"text\" placeholder=\"" +
+          rows[i].last_name + "\"></td><td>" +
+          "<input type=\"text\" placeholder=\"" +
+          rows[i].email_address + "\"></td><td>" +
+          "<input type=\"text\" placeholder=\"" +
+          rows[i].password + "\"></td><td>" +
+          "<input type=\"text\" placeholder=\"" +
+          rows[i].role_id + "\"></td><td>" + 
+          "<button type=\"button\" class=\"deleteButton\">Delete</button></td>" + "</tr>";
       }
       table += "</table>";
 

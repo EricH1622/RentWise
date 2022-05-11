@@ -79,7 +79,7 @@ label > input::placeholder{
     color: rgb(31, 0, 117);
 }
 
-#submitContainer{
+#submitContainer, #addContainer{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -96,7 +96,7 @@ label > input::placeholder{
     display: inline;
 }
 
-#uploadButton{
+#uploadButton, #addButton{
     font-size: 2vmin;
     border-radius: 10px;
     padding: 0.5vmin;
@@ -110,8 +110,26 @@ label > input::placeholder{
     display: inline;
 }
 
-#editButton:hover, #uploadButton:hover{
+.deleteButton{
+    font-size: 2vmin;
+    border-radius: 10px;
+    padding: 0.5vmin;
+    width: 7vw;
+    justify-self: center;
+    align-self: center;
+    background-color: rgb(226, 0, 0);
+    border-style: none;
+    color: white;
+    text-decoration: none;
+    display: inline;
+}
+
+#editButton:hover, #uploadButton:hover, #addButton:hover{
     background-color: rgb(218, 134, 0);
+}
+
+.deleteButton:hover{
+    background-color: rgb(150, 0, 0);
 }
 
 #adminDashboard{
@@ -145,10 +163,44 @@ tbody{
 tr > *{
     font-size: 2.5vmin;
     margin: 0;
-    padding: 2vmin 1.5vmin;
     border: 0.3vmin;
     border-color: black;
     border-style:solid;
+}
+
+td{
+    padding: 0;
+}
+
+td:nth-child(8n - 7) > input{
+    width: 4vw;
+}
+
+td:nth-child(8n - 1){
+    width: 5vw;
+}
+
+td:nth-child(8n - 1) > input{
+    width: 4vw;
+}
+
+td > input{
+    font-size: 1.5vmin;
+    padding: 0;
+    margin: 0;
+    color: rgb(47, 0, 255);
+    border-radius: 10px;
+    width: fit-content;
+    border-style: none;
+    background-color: rgba(0, 0, 0, 0);
+    display: inline;
+    padding: none;
+    width: 11vw;
+    text-align: center;
+}
+
+td > input::placeholder{
+    color: black
 }
 
 th{
