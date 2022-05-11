@@ -42,9 +42,13 @@
     <div id="content">
       <div id="profileInfo">
         <h1>Profile Info</h1>
-        <form id="profileForm">
+        <form id="pictureForm">
           <img id="profilePhoto" src="/assets/images/placholderprofilephoto.jpg">
-          <button type="button" id="uploadButton">Upload</button>
+          <input id="imageUpload" type="file" value="Upload Image" accept="image/png, image/gif, image/jpeg"/>
+          <input id="submit" type="submit" value="Submit"/>
+        </form>
+        <form id="profileForm">
+          
           <label>
             First Name: <input id="firstName" placeholder="firstName">
           </label>

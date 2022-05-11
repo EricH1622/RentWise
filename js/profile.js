@@ -38,3 +38,32 @@ function ready(callback) {
     document.addEventListener("DOMContentLoaded", callback);
   }
 }
+
+
+// *****Upload Profile Picture *****
+
+const upLoadForm = document.getElementById("pictureForm");
+upLoadForm.addEventListener("submit", uploadImages);
+
+function uploadImages(e) {
+    e.preventDefault();
+
+    const imageUpload = document.querySelector('#imageUpload');
+    const formData = new FormData();
+
+    for(let i =0; i < imageUpload.files.length; i++) {
+        // put the images from the input into the form data
+        formData.append("files", imageUpload.files[i]);
+    }
+
+    const options = {
+        method: 'POST',
+        body: formData,
+    };
+
+    fetch("/upload-images", options
+    ).then(function(res) {
+        console.log(res);
+    }).catch(function(err) {("Error:", err)}
+    );
+}
