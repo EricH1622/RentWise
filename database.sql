@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS `BBY_37_user` (
   `last_name` varchar(100) NOT NULL,
   `email_address` varchar(100) NOT NULL,
   `password` varchar(100) NOT NULL,
+  `image_profile` varchar(1024),
   `role_id` int(2) NOT NULL,
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;

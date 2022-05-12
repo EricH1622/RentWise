@@ -90,7 +90,7 @@ async function sendProfilePage(req, res) {
       const connection = await mysql.createConnection({
         host: "localhost",
         user: "root",
-        password: "Foxyl113.i..",
+        password: "",
         database: "COMP2800",
         multipleStatements: true
       });
