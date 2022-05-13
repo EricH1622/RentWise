@@ -66,4 +66,7 @@ function uploadImages(e) {
         console.log(res);
     }).catch(function(err) {("Error:", err)}
     );
+
+    document.getElementById("pictureMsg").innerHTML = "Profile Picture Uploaded";
+
 }

@@ -269,7 +269,7 @@ const storage = multer.diskStorage({
       callback(null, "./assets/uploads/")
   },
   filename: function(req, file, callback) {
-      callback(null, "user-uploads-" + file.originalname.split('/').pop().trim());
+      callback(null, "profilePicture_" + req.session.userid);
   }
 });
 const upload = multer({ storage: storage });
@@ -286,8 +286,6 @@ app.get('/', function (req, res) {
 
 app.post('/upload-images', upload.array("files"), function (req, res) {
 
-  //console.log(req.body);
-  console.log(req.files);
 
   for(let i = 0; i < req.files.length; i++) {
       req.files[i].filename = req.files[i].originalname;
