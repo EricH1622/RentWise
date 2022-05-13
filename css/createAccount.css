@@ -59,7 +59,7 @@ button:hover{
 
 form{
     justify-content: center;
-    grid-column: 2;
+    grid-column: 1 / span 3;
     grid-row: 3;
     display: grid;
 }
