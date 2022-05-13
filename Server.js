@@ -146,11 +146,11 @@ async function sendProfilePage(req, res) {
           "SELECT first_name, last_name, username, email_address, password FROM BBY_37_user " +
           "WHERE BBY_37_user.user_id = " + req.session.userid);
         await connection.end();
-        docDOM.window.document.getElementById("firstName").setAttribute("placeholder", rows[0].first_name);
-        docDOM.window.document.getElementById("lastName").setAttribute("placeholder", rows[0].last_name);
-        docDOM.window.document.getElementById("username").setAttribute("placeholder", rows[0].username);
-        docDOM.window.document.getElementById("password").setAttribute("placeholder", rows[0].password);
-        docDOM.window.document.getElementById("email").setAttribute("placeholder", rows[0].email_address);
+        docDOM.window.document.getElementById("firstName").setAttribute("value", rows[0].first_name);
+        docDOM.window.document.getElementById("lastName").setAttribute("value", rows[0].last_name);
+        docDOM.window.document.getElementById("username").setAttribute("value", rows[0].username);
+        docDOM.window.document.getElementById("password").setAttribute("value", rows[0].password);
+        docDOM.window.document.getElementById("email").setAttribute("value", rows[0].email_address);
 
       docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
 
