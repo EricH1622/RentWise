@@ -59,11 +59,15 @@ begin(function() {
   btn_cancelDelete.addEventListener("click", btn_cancelDelete_Do);
   btn_deleteFinal.addEventListener("click", btn_deleteFinal_Do);
 
+
   // setting clickability for all data rows
   let data_rows = document.getElementsByClassName("data_row");
   for (let i = 0; i < data_rows.length; i++) {
     data_rows[i].addEventListener("click", toggle_editRow);
   }
+
+  document.getElementById("btn_add_user").addEventListener("click", btn_add_user_Do);
+  
 });
 
 
@@ -204,7 +208,7 @@ async function btn_deleteFinal_Do() {
   }
 }
 
-
+// resets the edit bar arrangement.
 function resetEditBox() {
   btn_edit.classList.remove("hidden");
   btn_delete.classList.remove("hidden");
@@ -218,6 +222,56 @@ function resetEditBox() {
 }
 
 
+async function btn_add_user_Do() {
+  let username = document.getElementById("add_username").value;
+  let firstname = document.getElementById("add_firstname").value;
+  let lastname = document.getElementById("add_lastname").value;
+  let email = document.getElementById("add_email").value;
+  let password = document.getElementById("add_password").value;
+  let usertype = document.getElementById("add_usertype").value;
+
+  let obj =  {
+    "username": username,
+    "firstname": firstname,
+    "lastname": lastname,
+    "email": email,
+    "password": password,
+    "usertype": usertype
+  };
+  try {
+    let res = await fetch("/add_user", {
+      method: 'POST',
+      headers: {
+        "Accept": 'application/json',
+        "Content-Type": 'application/json'
+      },
+      body: JSON.stringify(obj)
+    });
+    let parsedJSON = await res.json();
+    let temp = parsedJSON.msg;
+    
+    if (parsedJSON.status == "success") {
+      let tr = document.createElement("tr");
+      console.log(parsedJSON);
+      tr.className = "data_row";
+      tr.id = "tr" + parsedJSON.userID;
+      tr.innerHTML = "<td>" +
+      parsedJSON.userID + "</td><td>" +
+      parsedJSON.username + "</td><td>" +
+      parsedJSON.firstname + "</td><td>" +
+      parsedJSON.lastname + "</td><td>" +
+      parsedJSON.email + "</td><td>" +
+      parsedJSON.password + "</td><td>" +
+      parsedJSON.usertype + "</td>";
+      let x = document.querySelector("table > tbody > .data_row:last-of-type");
+      x.insertAdjacentElement("afterend", tr);
+      tr.addEventListener("click", toggle_editRow);
+    }
+  }
+  catch (error){
+    response_msg_box.innerHTML = error;
+  }
+}
 
 
 
