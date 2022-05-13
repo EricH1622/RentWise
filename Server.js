@@ -147,13 +147,8 @@ async function sendProfilePage(req, res) {
       doc = fs.readFileSync("./html/profile.html", "utf8");
       docDOM = new JSDOM(doc);
 
-      const connection = await mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "",
-        database: "COMP2800",
-        multipleStatements: true
-      });
+      const connection = await mysql.createConnection(connectConfig
+      );
       connection.connect();
       const [rows, fields] = await connection.execute(
         "SELECT first_name, last_name, username, email_address, password FROM BBY_37_user " +
@@ -176,13 +171,7 @@ async function sendProfilePage(req, res) {
       doc = fs.readFileSync("./html/admin.html", "utf8");
       docDOM = new JSDOM(doc);
 
-      const connection = await mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "",
-        database: "COMP2800",
-        multipleStatements: true
-      });
+      const connection = await mysql.createConnection(connectConfig);
       connection.connect();
       let [rows, fields] = await connection.execute(
         "SELECT first_name, last_name, username, email_address, password FROM BBY_37_user " +
@@ -256,13 +245,7 @@ app.post('/update-profile', function (req, res) {
 
 async function editUserProfile(req,res){
   if (req.session.loggedIn) {
-    const connection = await mysql.createConnection({
-      host: 'localhost',
-      user: 'root',
-      password: '',
-      database: 'COMP2800',
-      multipleStatements: true
-    });
+    const connection = await mysql.createConnection(connectConfig);
     connection.connect();
     connection.query('UPDATE BBY_37_user SET username = ?, first_name =?, last_name = ?,email_address = ?,password = ? WHERE user_id = ?',
       [req.body.username, req.body.firstName, req.body.lastName, req.body.email, req.body.password, req.session.userid])
@@ -277,13 +260,7 @@ async function editUserProfile(req,res){
 }
 
 async function authenticateUser(req, res) {
-  const connection = await mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "COMP2800",
-    multipleStatements: true
-  });
+  const connection = await mysql.createConnection(connectConfig);
   connection.connect();
   const [rows, fields] = await connection.execute(
     "SELECT user_id, role_id FROM BBY_37_user WHERE BBY_37_user.username = ? AND BBY_37_user.password = ?",
@@ -311,13 +288,7 @@ async function authenticateUser(req, res) {
 }
 
 async function createUser(req, res) {
-  const connection = await mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "COMP2800",
-    multipleStatements: true
-  });
+  const connection = await mysql.createConnection(connectConfig);
   connection.connect();
   connection.query('INSERT INTO BBY_37_user (username,password,first_name,last_name,email_address,role_id) values (?, ?, ?, ?, ?, ?)',
     [req.body.username, req.body.password, req.body.firstName, req.body.lastName, req.body.email, req.body.role_id]);

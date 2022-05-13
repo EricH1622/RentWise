@@ -1,0 +1,1 @@
+INSERT INTO BBY_37_user (user_id, username, first_name, last_name, email_address, password, role_id) VALUES (9, 'test', 'test', 'test', 'test', 'test', 1);
