@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>RentWise</title>
+  <meta charset="utf-8" />
+  <!-- Style Pages -->
+  <link rel="stylesheet" href="/css/home.css">
+  <link rel="stylesheet" href="/css/allPages.css">
+
+  <!-- Icons -->
+  <script src="https://kit.fontawesome.com/f1147c558e.js" crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+
+  <div id="container">
+
+    <div id="nav">
+
+      <input type="checkbox" id="check">
+      <label for="check" class="checkbtn">
+        <i class="fas fa-bars fa-lg"></i>
+      </label>
+      <div class="logo"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></div>
+      <ul>
+        <li><a href="#">Reviews</a></li>
+        <li><a href="/profile">Profile</a></li>
+        <li><a href="/logout" id="logout">Logout</a></li>
+        <li>
+          <div class="search-container">
+            <form action="#">
+              <input type="text" placeholder="Search.." name="search">
+              <button type="submit"><i class="fa fa-search"></i></button>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div id="content">
+      <div id="hero">
+        <div id="tagline">
+          <h2>Great to see you back,<span id="username"> user</span></h2>
+        </div>
+      </div>
+
+      <div id="formContainer">
+        
+          <form>
+            <div id="form">
+              <div id="h3">
+                <p>Look up a home address</p>
+              </div>
+              <div id="unit">
+                <label for="unit">Unit/Apt#</label>
+                <input type="text" name="unit">
+              </div>
+              <div id="streetNum">
+                <label for="streetNum">Street Number</label>
+                <input type="text" name="streetNum">
+              </div>
+              <div id="streetName">
+                <label for="streetName">Street Name</label>
+                <input type="text" name="streetName">
+              </div>
+              <div id="city">
+                <label for="city">City</label>
+                <input type="text" name="city">
+              </div>
+              <div id="province">
+                <label for="province">Province/State</label>
+                <input type="text" name="province">
+              </div>
+              <div id="country">
+                <label for="country">Country</label>
+                <input type="text" name="country">
+              </div>
+              <div id="postcode">
+                <label for="postcode">Postal Code</label>
+                <input type="text" name="postcode">
+              </div>
+              <div id="submit">
+                <button type="submit" id="search">Search</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+
+    <div id="footer">
+
+      <ul class="footerList">
+        <li>
+          <a href="#">Home</a>
+        </li>
+        <li>
+          <a href="#">Contact</a>
+        </li>
+        <li>
+          <a href="#">About</a>
+        </li>
+      </ul>
+
+      <p class="copyright">RentWise © 2022&emsp; | &emsp;BBY 37</p>
+
+    </div>
+
+</body>
+
+</html>
