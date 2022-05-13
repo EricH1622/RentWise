@@ -7,7 +7,7 @@ const app = express();
 const fs = require("fs");
 const mysql = require("mysql2/promise");
 const { JSDOM } = require('jsdom');
-
+const is_heroku = process.env.IS_HEROKU || false;
 
 app.use("/js", express.static("./js"));
 app.use("/css", express.static("./css"));
@@ -84,13 +84,24 @@ async function sendProfilePage(req, res) {
       doc = fs.readFileSync("./html/profile.html", "utf8");
       docDOM = new JSDOM(doc);
 
-      const connection = await mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "",
-        database: "COMP2800",
-        multipleStatements: true
-      });
+      if (is_heroku) {
+        const connection = await mysql.createConnection({
+          host: "ec2-54-164-40-66.compute-1.amazonaws.com",
+          user: "hdcfcvadormhvp",
+          password: "82b6e88d1e8e098bd53e6488608eb98fae71b268974a936361b1853886da4234",
+          database: "d7rotf5r5sfvuj",
+          multipleStatements: true
+        });
+      } else {
+        const connection = await mysql.createConnection({
+          host: "localhost",
+          user: "root",
+          password: "",
+          database: "COMP2800",
+          multipleStatements: true
+        });
+      }
+
       connection.connect();
       const [rows, fields] = await connection.execute(
         "SELECT username, email_address, password FROM BBY_37_user " +
@@ -107,14 +118,23 @@ async function sendProfilePage(req, res) {
     } else if (req.session.userlevel == 1) {
       doc = fs.readFileSync("./html/admin.html", "utf8");
       docDOM = new JSDOM(doc);
-
-      const connection = await mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "",
-        database: "COMP2800",
-        multipleStatements: true
-      });
+      if (is_heroku) {
+        const connection = await mysql.createConnection({
+          host: "ec2-54-164-40-66.compute-1.amazonaws.com",
+          user: "hdcfcvadormhvp",
+          password: "82b6e88d1e8e098bd53e6488608eb98fae71b268974a936361b1853886da4234",
+          database: "d7rotf5r5sfvuj",
+          multipleStatements: true
+        });
+      } else {
+        const connection = await mysql.createConnection({
+          host: "localhost",
+          user: "root",
+          password: "",
+          database: "COMP2800",
+          multipleStatements: true
+        });
+      }
       connection.connect();
       let [rows, fields] = await connection.execute(
         "SELECT username, email_address, password FROM BBY_37_user " +
@@ -170,13 +190,24 @@ app.post("/signup", function (req, res) {
 
 
 async function authenticateUser(req, res) {
-  const connection = await mysql.createConnection({
+  if (is_heroku) {
+    const connection = await mysql.createConnection({
+      host: "ec2-54-164-40-66.compute-1.amazonaws.com",
+      user: "hdcfcvadormhvp",
+      password: "82b6e88d1e8e098bd53e6488608eb98fae71b268974a936361b1853886da4234",
+      database: "d7rotf5r5sfvuj",
+      multipleStatements: true
+    });
+  } else {
+    const connection = await mysql.createConnection({
       host: "localhost",
       user: "root",
       password: "",
       database: "COMP2800",
       multipleStatements: true
-  });
+    });
+  }
+  
   connection.connect();
   const [rows, fields] = await connection.execute(
       "SELECT user_id, role_id FROM BBY_37_user WHERE BBY_37_user.username = ? AND BBY_37_user.password = ?",
@@ -199,13 +230,24 @@ async function authenticateUser(req, res) {
 }
 
 async function createUser(req, res) {
-  const connection = await mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "COMP2800",
-    multipleStatements: true
-  });
+  if (is_heroku) {
+    const connection = await mysql.createConnection({
+      host: "ec2-54-164-40-66.compute-1.amazonaws.com",
+      user: "hdcfcvadormhvp",
+      password: "82b6e88d1e8e098bd53e6488608eb98fae71b268974a936361b1853886da4234",
+      database: "d7rotf5r5sfvuj",
+      multipleStatements: true
+    });
+  } else {
+    const connection = await mysql.createConnection({
+      host: "localhost",
+      user: "root",
+      password: "",
+      database: "COMP2800",
+      multipleStatements: true
+    });
+  }
+  
   connection.connect();
   connection.query('INSERT INTO BBY_37_user (username,password,first_name,last_name,email_address,role_id) values (?, ?, ?, ?, ?, ?)',
     [req.body.username, req.body.password, req.body.firstName, req.body.lastName, req.body.email, req.body.role_id]);
