@@ -11,6 +11,14 @@ const {
   JSDOM
 } = require('jsdom');
 
+const connectConfig = {
+  host: "ec2-54-164-40-66.compute-1.amazonaws.com",
+  user: "hdcfcvadormhvp",
+  password: "82b6e88d1e8e098bd53e6488608eb98fae71b268974a936361b1853886da4234",
+  database: "d7rotf5r5sfvuj",
+  multipleStatements: true
+  };
+
 
 app.use("/js", express.static("./js"));
 app.use("/css", express.static("./css"));
