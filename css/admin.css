@@ -12,23 +12,22 @@
 #adminDashboard{
     display: grid;
     grid-template-columns: 100%;
-    grid-template-rows: 20% 70% 10%;
+    grid-template-rows: 15% 60% 25%;
 }
 
 #tableContainer{
     display: flex;
     justify-content: center;
     align-content: center;
-    /* overflow:auto; */
-    /* height: 60vh; */
     background-color: white;
     overflow: auto;
 }
 
 h1{
-    margin: 0 1vw;
+    margin: 1vh 1vw;
     font-size: 6vh;
     align-self: center;
+    display: block;
     color: white;
     filter: drop-shadow(4px 5px 2.5px #000000);
 }
@@ -68,19 +67,14 @@ tr.data_row td{
 }
 
 td > input{
-    width: 100%;
+    width: 90%;
     font-size: 1.5vw;
 }
 
 th{
     color: white;
     height: 7vh;
-    /* border-color: black;
-    border-style:solid;
-    border: 0vmin; */
     background-color: rgb(16, 0, 37);
-    /* position: sticky;
-    top: 0; */
 }
 
 td{
@@ -112,7 +106,7 @@ td{
     color: rgb(170, 0, 0);
 }
 
-button {
+#add_user_box > button {
     font-size: 2vmin;
     background-color: rgb(255, 157, 0);
     border-style: none;
@@ -123,9 +117,37 @@ button {
     height: 100%;
 }
 
-button:hover{
+#add_user_box > button:hover{
     background-color: rgb(218, 134, 0);
     cursor: pointer;
+}
+
+#add_user_box{
+    display: grid;
+    grid-template-columns: 18% 18% 18% 18% 18% 9.5% 0.5%;
+    grid-template-rows: 50% 50%;
+    background-color: rgb(58, 132, 134);
+}
+
+#add_user_box > *{
+    width: 90%;
+    height: 50%;
+    align-self: center;
+    justify-self: center;
+}
+
+#btn_add_user{
+    grid-column: 1 / span 8;
+    background-color: rgb(255, 157, 0);
+    font-family: inherit;
+    color: white;
+    font-size: 2vh;
+    width: 100%;
+    height: 100%;
+}
+
+#btn_add_user:hover{
+    background-color: rgb(218, 134, 0);
 }
 
 @media only screen and (max-width : 650px) {
