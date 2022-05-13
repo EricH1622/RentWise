@@ -1,58 +1,7 @@
-body {
-  background-color:rgb(255, 255, 255);
-  color: rgb(0, 0, 0);
-  margin: 0;
-  overflow: hidden;
-}
-
-/* width */
-::-webkit-scrollbar {
-  background: rgb(255, 255, 255); 
-  width: 20px;
-}
-
-
- 
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: rgb(255, 157, 0);
-  border-radius: 10px;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: rgb(223, 137, 0);
-}
-
-/**************** Grid Elements ****************/
-
-#container {
-  background-color: rgb(255, 255, 255);
-  display: grid;
-  height: 100vh;
-  grid-template-columns: 20% 20% 20% 20% 20%; 
-  grid-template-rows: 12% 80% 8%;
-}
-
 #content{
-  overflow: auto;
-  grid-row: 2;
-  grid-column: 1 / span 5;
-}
-
-#nav {
-  position: sticky;
-  background-color: rgb(16, 0, 37);
-  grid-column: 1 / span 5;
-  grid-row: 1 / span 1;
-  font-family: 'Roboto', sans-serif;
-  list-style: none;
-  box-sizing: border-box;
-  width: 100%;
-  padding: 10px;
   display: grid;
-  grid-template-columns: 40% 60%;
-  grid-template-rows: 100%;
+  grid-template-rows: 60% 100%;
+  grid-template-columns: 100%;
 }
 
 h2 {
@@ -63,6 +12,7 @@ h2 {
   margin: 0 auto;
   margin-bottom: 2%;
 }
+
 #tagline {
   font-family: 'Roboto', sans-serif;
   position: absolute;
@@ -78,10 +28,9 @@ h2 {
   background-repeat: no-repeat;
   background-size: cover;
   position: relative;
-  min-height: 700px;
 }
 
-input[type=text] {
+#form > * > input[type=text] {
   width: 100%;
   padding: 12px 20px;
   margin: 8px 0;
@@ -93,11 +42,11 @@ input[type=text] {
 
 
 #form {
-  font-family: 'Roboto', sans-serif;
-  width: 100%;
+  width: 90%;
+  height: 90%;
   margin: 3rem 0 3em 0;
   border-radius: 10px;
-  background-color: #001d3d;
+  background-color: #007777;
   color: white;
   font-weight: bolder;
   display: grid;
@@ -107,7 +56,6 @@ input[type=text] {
 }
 
 #h3 {
-  font-family: 'Roboto', sans-serif !important;
   text-align: center;
   grid-row: 2 / span 1;
   grid-column: 2 / span 3;
@@ -171,271 +119,9 @@ input[type=text] {
 #formContainer {
   grid-row: 2 / span 1;
   grid-column: 1 / span 1;
-  background-image: url(../assets/images/city2.jpeg);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
+  background-color: white;
   display: flex;
   justify-content: center;
   opacity: 0.9;
 }
 
-#footer {
-  background-color: rgb(16, 0, 37);
-  grid-column: 1 / span 5;
-  grid-row: 3;
-  box-sizing: border-box;
-  font-family: 'Roboto', sans-serif;
-  font-size: 2vmin;
-  content: ""; 
-  display: block; 
-}
-
-
-/**************** Navbar Styling ****************/
-.logo{
-  height: 100%;
-}
-
-#logo1{
-  height: 70%;
-  width: auto;
-}
-
-#nav > ul {
-grid-column: 2;
-grid-row: 1;
-}
-
-#nav ul li {
-display: inline-block;
-}
-
-#nav ul li a {
-color:rgb(255, 255, 255);
-text-decoration: none;
-border-radius: 5px;
-padding: 7px 13px;
-}
-
-#logout{
-  color: red !important;
-}
-
-#logout:hover{
-  color: white !important;
-  background-color: red !important;
-}
-
-#nav.search-container {
-float: right;
-}
-
-#nav a.active, #nav a:hover {
-background-color: rgba(255, 145, 0, 0.829);
-color: white;
-transition: 0.9s;
-}
-
-.checkbtn {
-font-size: large;
-color: rgb(31, 31, 31);
-margin: auto;
-cursor: pointer;
-display: none;
-}
-
-#check {
-display: none;
-}
-
-#nav input[type=text] {
-padding: 6px;
-margin-top: 8px;
-font-size: 17px;
-border: none;
-}
-
-#nav .search-container button {
-float: right;
-padding: 6px 10px;
-margin-top: 8px;
-margin-right: 16px;
-background: #ddd;
-font-size: 17px;
-border: none;
-cursor: pointer;
-}
-
-#nav .search-container button:hover {
-background: #ccc;
-}
-
-
-/**************** Footer Styling ****************/
-
-#footer .footerList {
-list-style: none;
-text-align: center;
-margin: 0;
-padding: 0;
-}
-
-#footer ul a {
-text-decoration: none;
-color: rgb(255, 255, 255);
-}
-
-#footer ul li {
-display: inline-block;
-padding: 1%;
-}
-
-#footer ul li a:hover {
-opacity: 1;
-font-weight: bold;
-transition: 0.6s;
-}
-
-#footer .copyright {
-  margin: 0;
-  text-align: center;
-  color: rgb(255, 255, 255);
-  font-size: 1.5vmin;
-}
-
-.hamburger{
-  width: auto;
-  height: 4vh;
-}
-
-#searchIcon{
-  width: auto;
-  height: 1.8vh;
-  justify-self: center;
-  align-self: center;
-}
-
-@media only screen and (max-width : 1040px) and (min-width : 401px) {
-
-#container {
-  background-color: rgb(255, 255, 255);
-  display: grid;
-  height: 100vh;
-}
-
-/**************** Navbar Styling ****************/
-#nav{
-  display: grid;
-  grid-template-columns: 80% 20%;
-  grid-row: 100%;
-}
-
-.checkbtn{
-  display: block;
-  grid-column: 2;
-  grid-row: 1;
-  filter: invert();
-}
-
-.logo{
-  height: 100%;
-  grid-column: 1;
-  grid-row: 1;
-}
-
-#nav ul {
-  position: fixed;
-  width: 100%;
-  background: rgba(16, 0, 37, 0.808);
-  top: 7vh;
-  left: -120%;
-  text-align: center;
-  transition: all .5s;
-}
-
-#nav ul li {
-  display: block;
-  padding-top: 2%;
-  padding-bottom: 2%;
-}
-
-#nav ul li a{
-  color: white;
-}
-
-#nav a.active, nav a:hover {
-  background-color: rgba(255, 255, 255, 0.8);
-  color: rgb(31, 31, 31);
-}
-
-#check:checked ~ ul {
-  left: 0;
-}
-
-#nav .search-container button {
-float: none;
-}
-
-
-
-
-}
-
-@media only screen and (max-width : 400px) {
-  #container {
-    background-color: rgb(255, 255, 255);
-    display: grid;
-    height: 100vh;
-  }
-  
-  /**************** Navbar Styling ****************/
-  #nav{
-    display: grid;
-    grid-template-columns: 80% 20%;
-    grid-row: 100%;
-  }
-  
-  .checkbtn{
-    display: block;
-    grid-column: 2;
-    grid-row: 1;
-    filter: invert();
-  }
-  
-  .logo{
-    height: 100%;
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  #logo1{
-    height: 15vmin;
-    width: auto;
-  }
-  
-  #nav ul {
-    position: fixed;
-    width: 100%;
-    background: rgba(16, 0, 37, 0.808);
-    top: 7vh;
-    left: -120%;
-    text-align: center;
-    transition: all .5s;
-  }
-  
-  #nav ul li {
-    display: block;
-    padding-top: 2%;
-    padding-bottom: 2%;
-  }
-  
-  #nav ul li a{
-    color: white;
-  }
-  
-  #nav a.active, nav a:hover {
-    background-color: rgba(255, 255, 255, 0.8);
-    color: rgb(31, 31, 31);
-  }
-}
