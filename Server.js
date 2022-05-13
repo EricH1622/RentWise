@@ -75,88 +75,30 @@ app.get("/profile", function (req, res) {
 });
 
 async function sendProfilePage(req, res) {
-  let doc = 0;
-  let docDOM = 0;
   if (req.session.loggedIn) {
+    let doc = fs.readFileSync("./html/profile.html", "utf8");
+    let docDOM = new JSDOM(doc);
 
-    // regular user, do:
-    if (req.session.userlevel == 0) {
-      doc = fs.readFileSync("./html/profile.html", "utf8");
-      docDOM = new JSDOM(doc);
+    const connection = await mysql.createConnection({
+      host: "localhost",
+      user: "root",
+      password: "",
+      database: "COMP2800",
+      multipleStatements: true
+    });
+    connection.connect();
+    const [rows, fields] = await connection.execute(
+      "SELECT first_name, last_name, username, email_address, password FROM BBY_37_user " +
+      "WHERE BBY_37_user.user_id = " + req.session.userid);
+    await connection.end();
 
-      const connection = await mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "",
-        database: "COMP2800",
-        multipleStatements: true
-      });
-      connection.connect();
-      const [rows, fields] = await connection.execute(
-        "SELECT first_name, last_name, username, email_address, password FROM BBY_37_user " +
-        "WHERE BBY_37_user.user_id = " + req.session.userid);
-      await connection.end();
+    docDOM.window.document.getElementById("firstName").setAttribute("placeholder", rows[0].first_name);
+    docDOM.window.document.getElementById("lastName").setAttribute("placeholder", rows[0].last_name);
+    docDOM.window.document.getElementById("username").setAttribute("placeholder", rows[0].username);
+    docDOM.window.document.getElementById("password").setAttribute("placeholder", rows[0].password);
+    docDOM.window.document.getElementById("email").setAttribute("placeholder", rows[0].email_address);
 
-      docDOM.window.document.getElementById("firstName").setAttribute("placeholder", rows[0].first_name);
-      docDOM.window.document.getElementById("lastName").setAttribute("placeholder", rows[0].last_name);
-      docDOM.window.document.getElementById("username").setAttribute("placeholder", rows[0].username);
-      docDOM.window.document.getElementById("password").setAttribute("placeholder", rows[0].password);
-      docDOM.window.document.getElementById("email").setAttribute("placeholder", rows[0].email_address);
-
-      res.send(docDOM.serialize());
-
-
-      // admin user, do:
-    } else if (req.session.userlevel == 1) {
-      doc = fs.readFileSync("./html/admin.html", "utf8");
-      docDOM = new JSDOM(doc);
-
-      const connection = await mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "",
-        database: "COMP2800",
-        multipleStatements: true
-      });
-      connection.connect();
-      let [rows, fields] = await connection.execute(
-        "SELECT first_name, last_name, username, email_address, password FROM BBY_37_user " +
-        "WHERE BBY_37_user.user_id = " + req.session.userid);
-
-        docDOM.window.document.getElementById("firstName").setAttribute("placeholder", rows[0].first_name);
-        docDOM.window.document.getElementById("lastName").setAttribute("placeholder", rows[0].last_name);
-        docDOM.window.document.getElementById("username").setAttribute("placeholder", rows[0].username);
-        docDOM.window.document.getElementById("password").setAttribute("placeholder", rows[0].password);
-        docDOM.window.document.getElementById("email").setAttribute("placeholder", rows[0].email_address);
-
-      [rows, fields] = await connection.execute("SELECT * FROM BBY_37_user ");
-      await connection.end();
-      // `user_id`, `username`, `first_name`, `last_name`, `email_address`, `password`, `role_id`
-
-      let table = "<table><tr>" +
-                  "<th>ID</th>" +
-                  "<th>Username</th>" +
-                  "<th>First Name</th>" +
-                  "<th>Last Name</th>" +
-                  "<th>Email</th>" +
-                  "<th>Password</th>" +
-                  "<th>User Type</th></tr>";
-
-      for (let i = 0; i < rows.length; i++) {
-        table += "<tr><td>" +
-                  rows[i].user_id + "</td><td>" +
-                  rows[i].username + "</td><td>" +
-                  rows[i].first_name + "</td><td>" +
-                  rows[i].last_name + "</td><td>" +
-                  rows[i].email_address + "</td><td>" +
-                  rows[i].password + "</td><td>" +
-                  rows[i].role_id + "</td></tr>";
-      }
-      table += "</table>";
-
-      docDOM.window.document.getElementById("tableContainer").innerHTML = table;
-      res.send(docDOM.serialize());
-    }
+    res.send(docDOM.serialize());
   } else {
     // not logged in - no session and no access, redirect to root.
     res.redirect("/");
@@ -167,6 +109,57 @@ async function sendProfilePage(req, res) {
 app.post("/login", function (req, res) {
   authenticateUser(req, res);
 });
+
+
+app.get("/admin", function (req, res) {
+  if (req.session.loggedIn && req.session.userlevel == 1) {
+    sendAdminPage(req, res);
+  } else {
+    res.redirect("/");
+  }
+});
+
+async function sendAdminPage(req, res) {
+  let doc = fs.readFileSync("./html/admin.html", "utf8");
+  let docDOM = new JSDOM(doc);
+
+  const connection = await mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "COMP2800",
+    multipleStatements: true
+  });
+  connection.connect();
+  const [rows, fields] = await connection.execute("SELECT * FROM BBY_37_user ");
+  await connection.end();
+  // `user_id`, `username`, `first_name`, `last_name`, `email_address`, `password`, `role_id`
+
+  let table = "<table><tr>" +
+              "<th>ID</th>" +
+              "<th>Username</th>" +
+              "<th>First Name</th>" +
+              "<th>Last Name</th>" +
+              "<th>Email</th>" +
+              "<th>Password</th>" +
+              "<th>User Type</th></tr>";
+
+  for (let i = 0; i < rows.length; i++) {
+    table += `<tr id="tr${rows[i].user_id}" class="data_row"><td>` +
+              rows[i].user_id + "</td><td>" +
+              rows[i].username + "</td><td>" +
+              rows[i].first_name + "</td><td>" +
+              rows[i].last_name + "</td><td>" +
+              rows[i].email_address + "</td><td>" +
+              rows[i].password + "</td><td>" +
+              rows[i].role_id + "</td></tr>";
+  }
+  table += "</table>";
+
+  docDOM.window.document.getElementById("tableContainer").innerHTML = table;
+  res.send(docDOM.serialize());
+}
+
 
 app.post("/signup", function (req, res) {
   res.setHeader("Content-Type", "application/json");
@@ -220,6 +213,123 @@ async function createUser(req, res) {
     msg: "Account added."
   });
 }
+
+
+app.post("/delete_user", function (req, res) {
+  if (req.session.loggedIn && req.session.userlevel == 1) {
+    deleteUser(req, res);
+  } else {
+    res.send({ status: "fail", msg: "You don't have admin rights." });
+  }
+});
+
+async function deleteUser(req, res) {
+  const connection = await mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "COMP2800",
+    multipleStatements: true
+  });
+  connection.connect();
+  let [rows, fields] = await connection.query(
+      "SELECT role_id FROM BBY_37_user WHERE BBY_37_user.user_id = ?",
+      [req.body.userID]);
+
+  if (rows[0].role_id == 0) {
+    doDeleteUser(req, res);
+  } else {
+    let [rows2, fields2] = await connection.query(
+      "SELECT user_id FROM BBY_37_user WHERE BBY_37_user.role_id = 1");
+  
+    if (rows2.length < 2) { //last admin
+      res.send({ status: "fail", msg: "Last admin account. Cannot remove admin." });
+    } else {
+      doUpdateUser(req, res);
+    }
+  }
+  await connection.end();
+}
+
+
+async function doDeleteUser(req, res) {
+  const connection = await mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "COMP2800",
+    multipleStatements: true
+  });
+  connection.connect();
+  await connection.query('DELETE FROM BBY_37_user WHERE BBY_37_user.user_id = ?',
+  [req.body.userID]);
+  await connection.end();
+  res.send({ status: "success", msg: "Account deleted." });
+}
+
+
+app.post("/update_user_data", function (req, res) {
+  if (req.session.loggedIn && req.session.userlevel == 1) {
+    adminUpdateUsers(req, res);
+  } else {
+    res.send({ status: "fail", msg: "You don't have admin rights." });
+  }
+});
+
+async function adminUpdateUsers(req, res) {
+
+  const connection = await mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "COMP2800",
+    multipleStatements: true
+  });
+  connection.connect();
+  let [rows, fields] = await connection.query(
+      "SELECT user_id, role_id FROM BBY_37_user WHERE BBY_37_user.user_id = ?",
+      [req.body.userID]);
+
+  if (rows.length == 1) { //ID exists and is unique
+    if ((rows[0].role_id == 0) || rows[0].role_id == 1 && req.body.usertype == 1) {
+      doUpdateUser(req, res);
+    } else {
+      let [rows2, fields2] = await connection.query(
+          "SELECT user_id FROM BBY_37_user WHERE BBY_37_user.role_id = 1");
+      
+      if (rows2.length < 2) { //last admin
+        res.send({ status: "fail", msg: "Last admin account. Cannot remove admin privilege." });
+      } else {
+        doUpdateUser(req, res);
+      }
+    }
+  } else {
+      res.send({ status: "fail", msg: "User ID doesn't exist or has duplicates." });
+  }
+
+  await connection.end();
+}
+
+async function doUpdateUser(req, res) {
+  const connection = await mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "COMP2800",
+    multipleStatements: true
+  });
+  connection.connect();
+  connection.query('UPDATE BBY_37_user ' +
+  'SET username = ?, first_name = ?, last_name = ?, email_address = ?, password = ?, role_id = ? ' +
+  'WHERE BBY_37_user.user_id = ?',
+  [req.body.username, req.body.firstname, req.body.lastname, req.body.email,
+      req.body.password, req.body.usertype, req.body.userID]);
+  await connection.end();
+  res.send({ status: "success", msg: "User data updated." });
+}
+
+
+
 
 let port = 8000;
 app.listen(port, function () {
