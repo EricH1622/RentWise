@@ -203,7 +203,9 @@ async function sendAdminPage(req, res) {
   }
   table += "</table>";
   docDOM.window.document.getElementById("tableContainer").innerHTML = table;
-  res.send(docDOM.serialize());
+  docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
+
+      res.send(docDOM.serialize());
 }
 
 app.post("/login", function (req, res) {
