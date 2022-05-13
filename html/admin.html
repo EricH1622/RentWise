@@ -2,8 +2,9 @@
 <html lang="en">
 
 <head>
-    <title>Rentwise - Profile</title>
+    <title>Rentwise - Admin Dashboard</title>
     <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
     <!-- Style Pages -->
     <link rel="stylesheet" href="/css/templateStyle.css">
     <link rel="stylesheet" href="/css/allPages.css">
@@ -16,74 +17,31 @@
     <div id="container">
 
         <div id="nav">
-            
-            <input type="checkbox" id="check">
-            <label for="check" class="checkbtn">
-                <i><img src="/assets/images/menuIcon.png" class="hamburger"/></i>
-            </label>
-            <div class="logo"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></div>
-            <ul>
-                <li><a href="#">Reviews</a></li>
-                <li><a href="/profile">Profile</a></li>
-                <li><a href="/logout" id="logout">Logout</a></li>
-                <li>
-                    <div class="search-container">
-                        <form action="#">
-                            <input type="text" placeholder="Search.." name="search">
-                            <button type="submit"><img src="/assets/images/searchIcon.png" id="searchIcon"/></button>
-                        </form>
-                  </div>
-                </li>
-            </ul>
         </div>
 
         <div id="content">
-          <div id="profileInfo">
-            <h1>Profile Info</h1>
-            <form id="pictureForm">
-              <img id="profilePhoto" src="/assets/images/placholderprofilephoto.jpg">
-              <input id="imageUpload" type="file" value="Upload Image" accept="image/png, image/gif, image/jpeg"/>
-              <input id="submit" type="submit" value="Submit"/>
-            </form>
-            <form id="profileForm">
-              
-              <label>
-                First Name: <input id="firstName" placeholder="firstName">
-              </label>
-              <label>
-                Last Name: <input id="lastName" placeholder="lastName">
-              </label>
-              <label>
-                Username: <input id="username" placeholder="userName">
-              </label>
-              <label>
-                Password: <input id="password" placeholder="password">
-              </label>
-              <label>
-                Email: <input id="email" placeholder="email">
-              </label>
-              <p id="msg"></p>
-              <div id="submitContainer">
-                <button type="button" id="editButton">Submit Changes</button>
-              </div>
-            </form>
-    
-          </div>
-            <div id="timeline">
-              <h1>Timeline</h1>
-            </div>
-            <div id="adminDashboard">
-                <h1>Admin Dashboard</h1>
-                <div id="addContainer">
-                    <button type="button" id="addButton">Add User</button>
-                </div>
-                <br>
-                <div id="tableContainer">
 
+            <div id="adminDashboard">
+                <div>
+                    <h1>Admin Dashboard</h1>
+                </div>
+                <div id="tableContainer">
+                </div>
+
+
+                <div id="add_user_box">
+                    <input type="text" id="add_username" placeholder="Username" pattern="[A-Za-z0-9]{3,50}"/>
+                    <input type="text" id="add_firstname" placeholder="First Name"/>
+                    <input type="text" id="add_lastname" placeholder="Last Name"/>
+                    <input type="email" id="add_email" placeholder="Email"/>
+                    <input type="text" id="add_password" placeholder="Password"/>
+                    <input type="number" id="add_usertype" placeholder="Type" min="0" max="1"/>
+                    <input type="button" id="btn_add_user" value="Add"/>
                 </div>
             </div>
         </div>
-        
+
+
 
         <div id="footer">
             
@@ -104,7 +62,7 @@
         </div>
 
     </div>
-    <script src="./js/profile.js"></script>
+    <script src="./js/admin.js"></script>
 </body>
 
 </html>
