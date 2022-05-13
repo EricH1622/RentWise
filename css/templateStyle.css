@@ -51,8 +51,9 @@ body {
   width: 100%;
   padding: 10px;
   display: grid;
-  grid-template-columns: 40% 60%;
+  grid-template-columns: 30% 70%;
   grid-template-rows: 100%;
+  text-align: right;
 }
 
 #t1 {
@@ -88,6 +89,7 @@ body {
 /**************** Navbar Styling ****************/
 .logo{
   height: 100%;
+  justify-self: left;
 }
 
 #logo1{

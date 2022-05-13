@@ -35,7 +35,9 @@ app.get("/", function (req, res) {
     res.redirect("/profile");
   } else {
     let doc = fs.readFileSync("./html/index.html", "utf8");
-    res.send(doc);
+    let docDOM = new JSDOM(doc);
+    docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
+    res.send(docDOM.serialize());
   }
 });
 
@@ -44,7 +46,9 @@ app.get("/login", function (req, res) {
     res.redirect("/profile");
   } else {
     let doc = fs.readFileSync("./html/login.html", "utf8");
-    res.send(doc);
+    let docDOM = new JSDOM(doc);
+    docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
+    res.send(docDOM.serialize());
   }
 });
 
@@ -53,12 +57,13 @@ app.get("/createAccount", function (req, res) {
     res.redirect("/profile");
   } else {
     let doc = fs.readFileSync("./html/createAccount.html", "utf8");
-    res.send(doc);
+    let docDOM = new JSDOM(doc);
+    docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
+    res.send(docDOM.serialize());
   }
 });
 
 app.get("/logout", function (req, res) {
-
   if (req.session) {
     req.session.destroy(function (error) {
       if (error) {
@@ -72,6 +77,53 @@ app.get("/logout", function (req, res) {
   }
 });
 
+//dynamic navbars
+function getNavBar(req){
+  if(req.session.loggedIn){
+    if(req.session.userlevel == 0){
+      return `<input type="checkbox" id="check">
+      <label for="check" class="checkbtn">
+          <i><img src="/assets/images/menuIcon.png" class="hamburger"/></i>
+      </label>
+      <div class="logo"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></div>
+      <ul>
+          <li><a href="#">Reviews</a></li>
+          <li><a href="/profile">Profile</a></li>
+          <li><a href="/logout" id="logout">Logout</a></li>
+          <li>
+              <div class="search-container">
+                  <form action="#">
+                      <input type="text" placeholder="Search.." name="search">
+                      <button type="submit"><img src="/assets/images/searchIcon.png" id="searchIcon"/></button>
+                  </form>
+            </div>
+          </li>
+      </ul>`
+    } else {
+      return `<input type="checkbox" id="check">
+      <label for="check" class="checkbtn">
+          <i><img src="/assets/images/menuIcon.png" class="hamburger"/></i>
+      </label>
+      <div class="logo"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></div>
+      <ul>
+          <li><a href="#">Admin</a></li>
+          <li><a href="#">Reviews</a></li>
+          <li><a href="/profile">Profile</a></li>
+          <li><a href="/logout" id="logout">Logout</a></li>
+          <li>
+              <div class="search-container">
+                  <form action="#">
+                      <input type="text" placeholder="Search.." name="search">
+                      <button type="submit"><img src="/assets/images/searchIcon.png" id="searchIcon"/></button>
+                  </form>
+            </div>
+          </li>
+      </ul>`
+    }
+  } else {
+    return `<div class="logo"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></div>`
+  }
+}
 
 app.get("/profile", function (req, res) {
   sendProfilePage(req, res);
@@ -105,6 +157,8 @@ async function sendProfilePage(req, res) {
       docDOM.window.document.getElementById("username").setAttribute("value", rows[0].username);
       docDOM.window.document.getElementById("password").setAttribute("value", rows[0].password);
       docDOM.window.document.getElementById("email").setAttribute("value", rows[0].email_address);
+
+      docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
 
       res.send(docDOM.serialize());
 
@@ -166,6 +220,9 @@ async function sendProfilePage(req, res) {
       table += "</table>";
 
       docDOM.window.document.getElementById("tableContainer").innerHTML = table;
+
+      docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
+
       res.send(docDOM.serialize());
     }
   } else {
