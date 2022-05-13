@@ -50,6 +50,7 @@ h1{
 #profileForm{
     display: grid;
     grid-template-rows: 15% 15% 15% 15% 15% 5% 20%;
+    margin-top: 20px;
 }
 
 #msg{
