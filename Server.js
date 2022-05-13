@@ -153,6 +153,7 @@ async function sendProfilePage(req, res) {
         docDOM.window.document.getElementById("email").setAttribute("placeholder", rows[0].email_address);
 
       docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
+      docDOM.window.document.getElementById("profilePhoto").src = "/assets/uploads/profilePicture_" + req.session.userid;
 
       res.send(docDOM.serialize());
   } else {
