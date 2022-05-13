@@ -106,7 +106,7 @@ function getNavBar(req){
       </label>
       <div class="logo"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></div>
       <ul>
-          <li><a href="#">Admin</a></li>
+          <li><a href="/admin">Admin</a></li>
           <li><a href="#">Reviews</a></li>
           <li><a href="/profile">Profile</a></li>
           <li><a href="/logout" id="logout">Logout</a></li>

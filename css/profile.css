@@ -39,7 +39,7 @@ h1{
     grid-column: 2;
     margin: 0;
     vertical-align: middle;
-    background-color: rgba(0, 195, 255, 0.8);
+    background-color: rgba(0, 195, 255, 1);
     border-radius: 20px;
 }
 
