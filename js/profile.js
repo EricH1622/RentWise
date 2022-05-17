@@ -31,6 +31,29 @@ ready(document.getElementById("editButton").addEventListener("click", function(e
   }
 }))
 
+//Easter egg :)
+let eggActive = false;
+let timesClicked = 0;
+ready(document.getElementById("logo1").addEventListener("click", function(e) {
+  let timer;
+  if(eggActive == false){
+    eggActive = true;
+    console.log("easter egg trigger started!");
+    timer = setTimeout(function(){
+      eggActive = false;
+      timesClicked = 0;
+      console.log("time's up!");
+    }, 1500)
+  }
+  timesClicked++;
+  console.log(timesClicked);
+  if(timesClicked >= 7){
+    clearTimeout(timer);
+    console.log("easter egg is activated!");
+    timesClicked = 0;
+  }
+}))
+
 function ready(callback) {
   if (document.readyState != "loading") {
     callback();
