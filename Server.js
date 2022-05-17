@@ -7,9 +7,8 @@ const app = express();
 const fs = require("fs");
 const mysql = require("mysql2/promise");
 const multer = require("multer");
-const {
-  JSDOM
-} = require('jsdom');
+const {JSDOM} = require('jsdom');
+
 
 const connectConfig = {
   host: "ec2-54-164-40-66.compute-1.amazonaws.com",
@@ -18,11 +17,8 @@ const connectConfig = {
   database: "d7rotf5r5sfvuj",
   multipleStatements: true
   };
-<<<<<<< HEAD
 
 let connection = mysql.createPool(connectConfig);
-=======
->>>>>>> 06135a5a86ccc92c02c624685cde6c0efb150257
 
 app.use("/js", express.static("./js"));
 app.use("/css", express.static("./css"));
@@ -150,7 +146,6 @@ async function sendProfilePage(req, res) {
     if (req.session.userlevel == 0) {
       doc = fs.readFileSync("./html/profile.html", "utf8");
       docDOM = new JSDOM(doc);
-<<<<<<< HEAD
       const [rows, fields] = await connection.execute(
         "SELECT first_name, last_name, username, email_address, password FROM BBY_37_user " +
         "WHERE BBY_37_user.user_id = " + req.session.userid);
@@ -219,77 +214,11 @@ async function sendProfilePage(req, res) {
       docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
 
       res.send(docDOM.serialize());
-=======
-
-      
-        const connection = await mysql.createConnection(connectConfig);
-        connection.connect();
-        const [rows, fields] = await connection.execute(
-          "SELECT username, email_address, password FROM BBY_37_user " +
-          "WHERE BBY_37_user.user_id = " + req.session.userid);
-        await connection.end();
-  
-        docDOM.window.document.getElementById("username").innerHTML = "Username: " + rows[0].username;
-        docDOM.window.document.getElementById("email").innerHTML = "Email: " + rows[0].email_address;
-        docDOM.window.document.getElementById("password").innerHTML = "Password: " + rows[0].password;
-        res.send(docDOM.serialize());
-        
-    
-  
-        // admin user, do:
-      } else if (req.session.userlevel == 1) {
-        doc = fs.readFileSync("./html/admin.html", "utf8");
-        docDOM = new JSDOM(doc);
-  
-          const connection = await mysql.createConnection({
-            host: "ec2-54-164-40-66.compute-1.amazonaws.com",
-            user: "hdcfcvadormhvp",
-            password: "82b6e88d1e8e098bd53e6488608eb98fae71b268974a936361b1853886da4234",
-            database: "d7rotf5r5sfvuj",
-            multipleStatements: true
-          });
-          connection.connect();
-        let [rows, fields] = await connection.execute(
-          "SELECT username, email_address, password FROM BBY_37_user " +
-          "WHERE BBY_37_user.user_id = " + req.session.userid);
-  
-        docDOM.window.document.getElementById("username").innerHTML = "Username: " + rows[0].username;
-        docDOM.window.document.getElementById("email").innerHTML = "Email: " + rows[0].email_address;
-        docDOM.window.document.getElementById("password").innerHTML = "Password: " + rows[0].password;
-  
-        [rows, fields] = await connection.execute("SELECT * FROM BBY_37_user ");
-        await connection.end();
-        // `user_id`, `username`, `first_name`, `last_name`, `email_address`, `password`, `role_id`
-  
-        let table = "<table><tr>" +
-                    "<th>ID</th>" +
-                    "<th>Username</th>" +
-                    "<th>First Name</th>" +
-                    "<th>Last Name</th>" +
-                    "<th>Email</th>" +
-                    "<th>Password</th>" +
-                    "<th>User Type</th></tr>";
-  
-        for (let i = 0; i < rows.length; i++) {
-          table += "<tr><td>" +
-                    rows[i].user_id + "</td><td>" +
-                    rows[i].username + "</td><td>" +
-                    rows[i].first_name + "</td><td>" +
-                    rows[i].last_name + "</td><td>" +
-                    rows[i].email_address + "</td><td>" +
-                    rows[i].password + "</td><td>" +
-                    rows[i].role_id + "</td></tr>";
-        }
-        table += "</table>";
-  
-        docDOM.window.document.getElementById("tableContainer").innerHTML = table;
-        res.send(docDOM.serialize());
-        }
-    } else {
-      // not logged in - no session and no access, redirect to root.
-      res.redirect("/");
->>>>>>> 06135a5a86ccc92c02c624685cde6c0efb150257
     }
+  } else {
+    // not logged in - no session and no access, redirect to root.
+    res.redirect("/");
+  }
 }
 
 
@@ -321,7 +250,6 @@ async function editUserProfile(req,res){
 }
 
 async function authenticateUser(req, res) {
-<<<<<<< HEAD
   const [rows, fields] = await connection.execute(
     "SELECT user_id, role_id FROM BBY_37_user WHERE BBY_37_user.username = ? AND BBY_37_user.password = ?",
     [req.body.username, req.body.password]);
@@ -346,39 +274,6 @@ async function authenticateUser(req, res) {
 }
 
 async function createUser(req, res) {
-=======
-    const connection = await mysql.createConnection(connectConfig);
-    connection.connect();
-    const [rows, fields] = await connection.execute(
-        "SELECT user_id, role_id FROM BBY_37_user WHERE BBY_37_user.username = ? AND BBY_37_user.password = ?",
-        [req.body.username, req.body.password]);
-  
-    await connection.end();
-  
-    res.setHeader("Content-Type", "application/json");
-    if (rows.length == 1 ) {
-        // user authenticated, create a session
-        req.session.loggedIn = true;
-        req.session.userlevel = rows[0].role_id;
-        req.session.userid = rows[0].user_id;
-        req.session.save(function (err) {
-        });
-        res.send({ status: "success", msg: "Logged in." });
-    } else {
-        res.send({ status: "fail", msg: "User account not found." });
-    }
-}
-
-async function createUser(req, res) {
-    const connection = await mysql.createConnection({
-      host: "ec2-54-164-40-66.compute-1.amazonaws.com",
-      user: "hdcfcvadormhvp",
-      password: "82b6e88d1e8e098bd53e6488608eb98fae71b268974a936361b1853886da4234",
-      database: "d7rotf5r5sfvuj",
-      multipleStatements: true
-    });
-    connection.connect();
->>>>>>> 06135a5a86ccc92c02c624685cde6c0efb150257
   connection.query('INSERT INTO BBY_37_user (username,password,first_name,last_name,email_address,role_id) values (?, ?, ?, ?, ?, ?)',
     [req.body.username, req.body.password, req.body.firstName, req.body.lastName, req.body.email, req.body.role_id]);
   res.send({
@@ -387,7 +282,6 @@ async function createUser(req, res) {
   });
 }
 
-<<<<<<< HEAD
 
 const storage = multer.diskStorage({
   destination: function (req, file, callback) {
@@ -411,15 +305,12 @@ app.get('/', function (req, res) {
 
 app.post('/upload-images', upload.array("files"), function (req, res) {
 
-
   for(let i = 0; i < req.files.length; i++) {
       req.files[i].filename = req.files[i].originalname;
   }
 
 });
 
-=======
->>>>>>> 06135a5a86ccc92c02c624685cde6c0efb150257
 let port = process.env.PORT || 8000;
 app.listen(port, function () {
   console.log("RentWise server running on port: " + port);
