@@ -19,6 +19,7 @@ const connectConfig = {
   multipleStatements: true
   };
 
+let connection = mysql.createPool(connectConfig);
 
 app.use("/js", express.static("./js"));
 app.use("/css", express.static("./css"));
@@ -146,14 +147,9 @@ async function sendProfilePage(req, res) {
     if (req.session.userlevel == 0) {
       doc = fs.readFileSync("./html/profile.html", "utf8");
       docDOM = new JSDOM(doc);
-
-      const connection = await mysql.createConnection(connectConfig
-      );
-      connection.connect();
       const [rows, fields] = await connection.execute(
         "SELECT first_name, last_name, username, email_address, password FROM BBY_37_user " +
         "WHERE BBY_37_user.user_id = " + req.session.userid);
-      await connection.end();
 
       docDOM.window.document.getElementById("firstName").setAttribute("value", rows[0].first_name);
       docDOM.window.document.getElementById("lastName").setAttribute("value", rows[0].last_name);
@@ -171,8 +167,6 @@ async function sendProfilePage(req, res) {
       doc = fs.readFileSync("./html/admin.html", "utf8");
       docDOM = new JSDOM(doc);
 
-      const connection = await mysql.createConnection(connectConfig);
-      connection.connect();
       let [rows, fields] = await connection.execute(
         "SELECT first_name, last_name, username, email_address, password FROM BBY_37_user " +
         "WHERE BBY_37_user.user_id = " + req.session.userid);
@@ -184,7 +178,7 @@ async function sendProfilePage(req, res) {
       docDOM.window.document.getElementById("email").setAttribute("value", rows[0].email_address);
 
       [rows, fields] = await connection.execute("SELECT * FROM BBY_37_user ");
-      await connection.end();
+
       // `user_id`, `username`, `first_name`, `last_name`, `email_address`, `password`, `role_id`
 
       let table = "<table><tr>" +
@@ -245,11 +239,8 @@ app.post('/update-profile', function (req, res) {
 
 async function editUserProfile(req,res){
   if (req.session.loggedIn) {
-    const connection = await mysql.createConnection(connectConfig);
-    connection.connect();
     connection.query('UPDATE BBY_37_user SET username = ?, first_name =?, last_name = ?,email_address = ?,password = ? WHERE user_id = ?',
       [req.body.username, req.body.firstName, req.body.lastName, req.body.email, req.body.password, req.session.userid])
-    connection.end();
     res.send({
       status: "success",
       msg: "Profile info updated."
@@ -260,13 +251,9 @@ async function editUserProfile(req,res){
 }
 
 async function authenticateUser(req, res) {
-  const connection = await mysql.createConnection(connectConfig);
-  connection.connect();
   const [rows, fields] = await connection.execute(
     "SELECT user_id, role_id FROM BBY_37_user WHERE BBY_37_user.username = ? AND BBY_37_user.password = ?",
     [req.body.username, req.body.password]);
-
-  await connection.end();
 
   res.setHeader("Content-Type", "application/json");
   if (rows.length == 1) {
@@ -288,11 +275,8 @@ async function authenticateUser(req, res) {
 }
 
 async function createUser(req, res) {
-  const connection = await mysql.createConnection(connectConfig);
-  connection.connect();
   connection.query('INSERT INTO BBY_37_user (username,password,first_name,last_name,email_address,role_id) values (?, ?, ?, ?, ?, ?)',
     [req.body.username, req.body.password, req.body.firstName, req.body.lastName, req.body.email, req.body.role_id]);
-  connection.end();
   res.send({
     status: "success",
     msg: "Account added."
