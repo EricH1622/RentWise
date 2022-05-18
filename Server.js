@@ -76,6 +76,20 @@ app.get("/logout", function (req, res) {
   }
 });
 
+app.get("/unitView", function (req, res) {
+  if (req.session.loggedIn) {
+    let doc = fs.readFileSync("./html/unitView.html", "utf8");
+    let docDOM = new JSDOM(doc);
+    docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
+    res.send(docDOM.serialize());
+  } else {
+    let doc = fs.readFileSync("./html/login.html", "utf8");
+    let docDOM = new JSDOM(doc);
+    docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
+    res.send(docDOM.serialize());
+  }
+});
+
 //dynamic navbars
 function getNavBar(req){
   if(req.session.loggedIn){
