@@ -14,11 +14,32 @@ async function createAccount(data) {
     if (parsedJSON.status === "fail") {
       document.getElementById("createErrorMsg").innerHTML = parsedJSON.msg;
     } else {
-      window.location.replace("/login");
+      submitCredentials(data);
     }
 
   } catch (error) {
   }
+}
+
+async function submitCredentials(data) {
+  try {
+    let responseObject = await fetch("/login", {
+      method: 'POST',
+      headers: {
+        "Accept": 'application/json',
+        "Content-Type": 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+    let parsedJSON = await responseObject.json();
+
+    if (parsedJSON.status === "fail") {
+      document.getElementById("errorMsg").innerHTML = parsedJSON.msg;
+    } else {
+      window.location.replace("/profile");
+    }
+
+  } catch (error){}
 }
 
 ready(document.getElementById("createBtn").addEventListener("click", function(e) {
