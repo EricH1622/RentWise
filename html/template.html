@@ -8,15 +8,6 @@
     <link rel="stylesheet" href="/css/templateStyle.css">
     <link rel="stylesheet" href="/css/allPages.css">
 
-    <!-- Font Links -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Mono&family=Roboto&display=swap" rel="stylesheet">
-
-    <!-- Icons -->
-    <script src="https://kit.fontawesome.com/f1147c558e.js" crossorigin="anonymous"></script>
-
 </head>
 
 <body>
@@ -24,25 +15,25 @@
     <div id="container">
         
         <div id="nav">
-                <input type="checkbox" id="check">
-                <label for="check" class="checkbtn">
-                    <i class="fas fa-bars fa-lg"></i>
-                </label>
-                <div class="logo"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></div>
-                <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">Reviews</a></li>
-                    <li><a href="#">Profile</a></li>
-                    <li>
-                        <div class="search-container">
-                            <form action="#">
-                                <input type="text" placeholder="Search.." name="search">
-                                <button type="submit"><i class="fa fa-search"></i></button>
-                            </form>
-                      </div>
-                    </li>
-                </ul>
-
+            
+            <input type="checkbox" id="check">
+            <label for="check" class="checkbtn">
+                <i><img src="/assets/images/menuIcon.png" class="hamburger"/></i>
+            </label>
+            <div class="logo"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></div>
+            <ul>
+                <li><a href="#">Reviews</a></li>
+                <li><a href="/profile">Profile</a></li>
+                <li><a href="/logout" id="logout">Logout</a></li>
+                <li>
+                    <div class="search-container">
+                        <form action="#">
+                            <input type="text" placeholder="Search.." name="search">
+                            <button type="submit"><img src="/assets/images/searchIcon.png" id="searchIcon"/></button>
+                        </form>
+                  </div>
+                </li>
+            </ul>
         </div>
 
         <div id="content">
@@ -60,12 +51,6 @@
                 <li>
                     <a href="#">Home</a>
                 </li>
-                <!-- <li>
-                    <a href="#">Privacy & Legal</a>
-                </li>
-                <li>
-                    <a href="#">Terms</a>
-                </li> -->
                 <li>
                     <a href="#">Contact</a>
                 </li>

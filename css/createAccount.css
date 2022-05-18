@@ -1,0 +1,87 @@
+#container {
+    grid-template-rows: 0% 100% 0%;
+}
+
+#nav {
+    padding: 0;
+}
+
+#content{
+    grid-row: 2;
+    grid-column: 1 / span 5;
+    display: grid;
+    grid-template-columns: 20% 60% 20%;
+    grid-template-rows: 10% 80% 10%;
+    background-image: url("/assets/images/city1.jpg");
+    background-size: 350%;
+    overflow: hidden;
+}
+
+#createBox{
+    display: grid;
+    grid-template-columns: 25% 50% 25%;
+    grid-template-rows: 10% 10% 80%;
+    text-align: center;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.75);
+    grid-row: 1 / span 3;
+    grid-column: 1/ span 3;
+    padding: 15%;
+}
+
+#createText{
+    margin: 0 auto;
+    grid-column: 2;
+    grid-row: 1;
+}
+
+#createDesc{
+    grid-column: 2;
+    grid-row: 2;
+    margin: 0;
+}
+
+button {
+    justify-self: center;
+    font-size: 2vh;
+    background-color: rgb(255, 157, 0);
+    border-style: none;
+    width: 12vh;
+    height: 7vh;
+    border-radius: 10px;
+    color: white;
+}
+
+button:hover{
+    background-color: rgb(218, 134, 0);
+    cursor: pointer;
+}
+
+form{
+    justify-content: center;
+    grid-column: 1 / span 3;
+    grid-row: 3;
+    display: grid;
+}
+
+a {
+    color: rgb(0, 149, 255);
+}
+
+#createErrorMsg{
+    align-self: center;
+    background-color: red;
+}
+
+input {
+    font-size: 2vmin;
+    padding: 5px 10px;
+    border-radius: 7px;
+}
+
+@media only screen and (min-width : 1500px) {
+    #content{
+        grid-template-columns: 30% 40% 30%;
+    }
+}
+
