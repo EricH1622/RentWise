@@ -81,7 +81,7 @@ input[type=text],select {
   color: white;
   font-weight: bolder;
   display: grid;
-  grid-template-rows: 2rem 1fr 1fr 1fr 1fr 1fr 1fr 6fr 1fr 2rem;
+  grid-template-rows: 2rem 1fr 1fr 1fr 1fr 1fr 1fr 2fr 6fr 0.5fr 1fr 2rem;
   grid-template-columns: 2rem 1fr 2rem 1fr 2rem;
   box-shadow: 15px 15px 5px 0px rgba(0,0,0,0.85);
 }
@@ -125,20 +125,31 @@ input[type=text],select {
   grid-row: 7 / span 1;
   grid-column: 2 / span 3;
 }
-
-#richText{
+#imgUpload{
   grid-row: 8 / span 1;
+  grid-column: 2 / span 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+}
+#richText{
+  grid-row: 9 / span 1;
+  grid-column: 2 / span 3;
+}
+#msg{
+  grid-row: 10 / span 1;
   grid-column: 2 / span 3;
 }
 #submit {
-  grid-row: 9 / span 1;
+  grid-row: 11 / span 1;
   grid-column: 2 / span 3;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-#btn{
+#btn,#uploadBtn{
   background-color: rgb(255, 157, 0); /* Green */
   border: none;
   border-radius: 10px;
