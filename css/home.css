@@ -81,7 +81,7 @@ h2 {
   min-height: 700px;
 }
 
-input[type=text] {
+input[type=text],select {
   width: 100%;
   padding: 12px 20px;
   margin: 8px 0;
@@ -90,7 +90,6 @@ input[type=text] {
   border-radius: 4px;
   box-sizing: border-box;
 }
-
 
 #form {
   font-family: 'Roboto', sans-serif;
@@ -102,7 +101,7 @@ input[type=text] {
   font-weight: bolder;
   display: grid;
   grid-template-rows: 2rem 1fr 1fr 1fr 1fr 1fr 1fr 1fr 2rem;
-  grid-template-columns: 2rem 1fr 1rem 1fr 2rem;
+  grid-template-columns: 2rem 1fr 2rem 1fr 2rem;
   box-shadow: 15px 15px 5px 0px rgba(0,0,0,0.85);
 }
 
@@ -119,34 +118,33 @@ input[type=text] {
 }
 
 #streetNum {
-  grid-row: 3 /span 1;
-  grid-column: 4 /span 1;
+  grid-row: 4 /span 1;
+  grid-column: 2 /span 1;
+}
+
+#prefix{
+  grid-row: 4 / span 1;
+  grid-column: 4 / span 1;
 }
 
 #streetName {
-  grid-row: 4 / span 1;
-  grid-column: 2 / span 3;
-}
-
-#city {
   grid-row: 5 / span 1;
+  grid-column: 2 / span 1;
+}
+#streetType{
+  grid-row: 5 / span 1;
+  grid-column: 4 / span 1;
+}
+#city {
+  grid-row: 6 / span 1;
   grid-column: 2 / span 3;
 }
 
 #province {
-  grid-row: 6 / span 1;
-  grid-column: 2 / span 1;
-}
-
-#postcode {
-  grid-row: 6 / span 1;
-  grid-column: 4 / span 1;
-}
-
-#country {
   grid-row: 7 / span 1;
   grid-column: 2 / span 3;
 }
+
 
 #submit {
   grid-row: 8 / span 1;
@@ -156,7 +154,7 @@ input[type=text] {
   align-items: center;
 }
 
-#search{
+#btn{
   background-color: rgb(255, 157, 0); /* Green */
   border: none;
   border-radius: 10px;

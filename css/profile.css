@@ -39,7 +39,7 @@ h1{
     grid-column: 2;
     margin: 0;
     vertical-align: middle;
-    background-color: rgba(0, 195, 255, 0.8);
+    background-color: rgba(0, 195, 255, 1);
     border-radius: 20px;
 }
 
@@ -50,6 +50,7 @@ h1{
 #profileForm{
     display: grid;
     grid-template-rows: 15% 15% 15% 15% 15% 5% 20%;
+    margin-top: 20px;
 }
 
 #msg{
@@ -109,8 +110,8 @@ label > input::placeholder{
 }
 
 #editButton{
-    padding: 3% 6%;
-    font-size: 4vmin;
+    padding: 1vh 1vw;
+    font-size: 2.5vh;
     border-radius: 10px;
     background-color: rgb(255, 157, 0);
     border-style: none;
@@ -120,10 +121,9 @@ label > input::placeholder{
 }
 
 #submit{
-    font-size: 2.5vmin;
+    padding: 0.5vh 0.5vw;
+    font-size: 2vh;
     border-radius: 10px;
-    padding: 0.5vmin;
-    width: 10vw;
     justify-self: center;
     align-self: center;
     background-color: rgb(255, 157, 0);

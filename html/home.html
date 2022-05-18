@@ -61,28 +61,64 @@
                 <label for="streetNum">Street Number</label>
                 <input type="text" name="streetNum">
               </div>
+              <div id="prefix">
+                <label for="prefix">Prefix</label>
+                <select name="prefix" id="prefixInput">
+                  <option value="N/A">N/A</option>
+                  <option value="N">N</option>
+                  <option value="E">E</option>
+                  <option value="S">S</option>
+                  <option value="W">W</option>
+                  <option value="N">NE</option>
+                  <option value="E">NW</option>
+                  <option value="S">SE</option>
+                  <option value="W">SW</option>
+                </select>
+              </div>
               <div id="streetName">
                 <label for="streetName">Street Name</label>
                 <input type="text" name="streetName">
+              </div>
+              <div id="streetType">
+                <label for="streetName">Street type</label>
+                <select name="streetType" id="streetTypeInput">
+                  <option value="St">Street</option>
+                  <option value="Rd">Road</option>
+                  <option value="Av">Avenue</option>
+                  <option value="Dr">Drive</option>
+                  <option value="Ct">Court</option>
+                  <option value="Cst">Cresent</option>
+                  <option value="Bl">Boulevard</option>
+                  <option value="Way">Way</option>
+                  <option value="Pl">Place</option>
+                  <option value="Hwy">Hwy</option>
+                  <option value="Ln">Lane</option>
+                  <option value="Other">other</option>
+                </select>
               </div>
               <div id="city">
                 <label for="city">City</label>
                 <input type="text" name="city">
               </div>
               <div id="province">
-                <label for="province">Province/State</label>
-                <input type="text" name="province">
-              </div>
-              <div id="country">
-                <label for="country">Country</label>
-                <input type="text" name="country">
-              </div>
-              <div id="postcode">
-                <label for="postcode">Postal Code</label>
-                <input type="text" name="postcode">
+                <label for="province">Province/Territory</label>
+                <select name="province" id="provinceInput">
+                  <option value="BC">British Columbia</option>
+                  <option value="AB">Alberta</option>
+                  <option value="ON">Ontario</option>
+                  <option value="QC">Quebec</option>
+                  <option value="SK">Saskatchewan</option>
+                  <option value="MB">Manitoba</option>
+                  <option value="NS">Nova Scotia</option>
+                  <option value="PE">Prince Edward Island</option>
+                  <option value="NB">New Brunswick</option>
+                  <option value="YT">Yukon</option>
+                  <option value="NT">Northwest Territories</option>
+                  <option value="NU">Nunvut</option>
+                </select>
               </div>
               <div id="submit">
-                <button type="submit" id="search">Search</button>
+                <button type="submit" id="btn">Search</button>
               </div>
             </div>
           </form>
