@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `BBY_37_post` (
   `post_id` int(16) NOT NULL AUTO_INCREMENT,
   `user_id` int(16) NOT NULL,
   `timestamp` DATETIME NOT NULL,
-  `content` TEXT NOT NULL,
+  `content` BLOB,
   `location_id` int(16) NOT NULL,
   `photo1` varchar(1024),
   `photo2` varchar(1024),
