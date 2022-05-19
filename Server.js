@@ -197,6 +197,14 @@ app.get("/admin", function (req, res) {
   }
 });
 
+app.get("/results", function (req, res) {
+  if (req.session.loggedIn) {
+    executeSearch(req, res);
+  } else {
+    res.redirect("/");
+  }
+});
+
 async function sendAdminPage(req, res) {
   let doc = fs.readFileSync("./html/admin.html", "utf8");
   let docDOM = new JSDOM(doc);
@@ -249,9 +257,8 @@ app.post('/update-profile', function (req, res) {
   editUserProfile(req, res);
 });
 
-app.post('/search-query', function (req, res) {
-  res.setHeader('Content-Type', 'application/json');
-  executeSearch(req, res);
+app.post('/search', function (req, res) {
+  storeSearch(req, res);
 });
 
 async function editUserProfile(req, res) {
@@ -275,8 +282,33 @@ async function editUserProfile(req, res) {
   }
 }
 
+async function storeSearch(req, res) {
+  res.setHeader("Content-Type", "application/json");
+  if (req.session.loggedIn) {
+    req.session.unit = req.body.unit;
+    req.session.streetNum = req.body.streetNum;
+    req.session.prefix = req.body.prefix;
+    req.session.streetName = req.body.streetName;
+    req.session.streetType = req.body.streetType;
+    req.session.city = req.body.city;
+    req.session.province = req.body.province;
+    res.send({
+      status: "success",
+      msg: "Search parameters stored."
+    });
+  } else {
+    res.send({
+      status: "fail",
+      msg: "Not logged in."
+    });
+  }
+}
+
 async function executeSearch(req, res) {
   if (req.session.loggedIn) {
+    let doc = fs.readFileSync("./html/results.html", "utf8");
+    let docDOM = new JSDOM(doc);
+
     const connection = await mysql.createConnection({
       host: 'localhost',
       user: 'root',
@@ -284,16 +316,6 @@ async function executeSearch(req, res) {
       multipleStatements: true
     });
     connection.connect();
-
-    // `SELECT * FROM BBY_37_post WHERE location_id IN 
-    // (SELECT location_id FROM BBY_37_location WHERE
-    //   unit_number LIKE '%4%' AND 
-    //   street_number LIKE '%920%' AND 
-    //   prefix LIKE '%W%' AND 
-    //   street_name LIKE '%14th%' AND 
-    //   street_type LIKE '%Ave%' AND 
-    //   city LIKE '%Vancouver%' AND 
-    //   province LIKE '%British Columbia%')`
 
     let query = `SELECT * FROM BBY_37_location WHERE 
       unit_number LIKE ? AND 
@@ -304,10 +326,10 @@ async function executeSearch(req, res) {
       city LIKE ? AND 
       province LIKE ?`;
     
-    let values = [req.body.unit, req.body.streetNum, req.body.prefix, req.body.streetName, req.body.streetType, req.body.city, req.body.province];
+    let values = [req.session.unit, req.session.streetNum, req.session.prefix, req.session.streetName, req.session.streetType, req.session.city, req.session.province];
 
     const [rows, fields] = await connection.query(query, values);
-    console.log("Searching with values " + req.body.unit + " " + req.body.streetNum + " " + req.body.prefix + " " + req.body.streetName + " " + req.body.streetType + " " + req.body.city + " " + req.body.province + "...");
+    console.log("Searching with values " + req.session.unit + " " + req.session.streetNum + " " + req.session.prefix + " " + req.session.streetName + " " + req.session.streetType + " " + req.session.city + " " + req.session.province + "...");
     if(rows.length > 0){
       for (let i = 0; i < rows.length; i++) {
         console.log(
@@ -320,38 +342,29 @@ async function executeSearch(req, res) {
         rows[i].city + " " +
         rows[i].province + "\n"
         );
+
+        docDOM.window.document.getElementById("results").innerHTML += `
+        <div class="resultBox">
+                    <div class="resultHead">
+                        <h2>` + rows[i].unit_number + "-" + rows[i].street_number + " " + rows[i].prefix + " " + rows[i].street_name + " " + rows[i].street_type + " " + `</h2>
+                        <p class="address">` + rows[i].city + ", " + rows[i].province + `</p>
+                    </div>
+                    <div class="resultBody">
+                        <p class="description">Number of posts will go here eventually</p>
+                        <div>
+                            <button class="resultButton more" type="button">See more</button>
+                        </div>
+                    </div>
+        </div>`;
+
       }
     } else {
       console.log("No results found!");
     }
-    
-
     await connection.end();
 
-    // `user_id`, `username`, `first_name`, `last_name`, `email_address`, `password`, `role_id`
-    // let table = "<table><tr>" +
-    //   "<th>ID</th>" +
-    //   "<th>Username</th>" +
-    //   "<th>First Name</th>" +
-    //   "<th>Last Name</th>" +
-    //   "<th>Email</th>" +
-    //   "<th>Password</th>" +
-    //   "<th>User Type</th></tr>";
-    // for (let i = 0; i < rows.length; i++) {
-    //   table += `<tr id="tr${rows[i].user_id}" class="data_row"><td>` +
-    //     rows[i].user_id + "</td><td>" +
-    //     rows[i].username + "</td><td>" +
-    //     rows[i].first_name + "</td><td>" +
-    //     rows[i].last_name + "</td><td>" +
-    //     rows[i].email_address + "</td><td>" +
-    //     rows[i].password + "</td><td>" +
-    //     rows[i].role_id + "</td></tr>";
-    // }
-
-    res.send({
-      status: "success",
-      msg: "Profile info updated."
-    });
+    docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
+    res.send(docDOM.serialize());
   } else {
     res.redirect("/");
   }

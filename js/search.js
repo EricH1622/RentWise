@@ -1,7 +1,7 @@
 "use strict";
 async function searchQuery(data) {
   try {
-    let responseObject = await fetch("/search-query", {
+    let responseObject = await fetch("/search", {
       method: 'POST',
       headers: {
         "Accept": 'application/json',
@@ -10,8 +10,15 @@ async function searchQuery(data) {
       body: JSON.stringify(data)
     });
     let parsedJSON = await responseObject.json();
-    document.getElementById("msg").innerHTML = parsedJSON.msg;
+
+    if (parsedJSON.status === "success") {
+      window.location.replace("/results");
+    } else {
+      console.log(parsedJSON.msg);
+    }
+
   } catch (error) {
+    console.log("An error occurred: " + error);
   }
 }
 
