@@ -11,6 +11,7 @@ const {JSDOM} = require('jsdom');
 
 
 
+
 app.use("/js", express.static("./js"));
 app.use("/css", express.static("./css"));
 app.use("/assets", express.static("./assets"));
@@ -77,9 +78,9 @@ app.get("/logout", function (req, res) {
 });
 
 //dynamic navbars
-function getNavBar(req){
-  if(req.session.loggedIn){
-    if(req.session.userlevel == 0){
+function getNavBar(req) {
+  if (req.session.loggedIn) {
+    if (req.session.userlevel == 0) {
       return `<input type="checkbox" id="check">
       <label for="check" class="checkbtn">
           <i><img src="/assets/images/menuIcon.png" class="hamburger"/></i>
@@ -132,30 +133,30 @@ async function sendProfilePage(req, res) {
   let doc = 0;
   let docDOM = 0;
   if (req.session.loggedIn) {
-        let doc = fs.readFileSync("./html/profile.html", "utf8");
-        let docDOM = new JSDOM(doc);
-        const connection = await mysql.createConnection({
-          host: "localhost",
-          user: "root",
-          password: "",
-          database: "COMP2800",
-          multipleStatements: true
-        });
-        connection.connect();
-        const [rows, fields] = await connection.execute(
-          "SELECT first_name, last_name, username, email_address, password FROM BBY_37_user " +
-          "WHERE BBY_37_user.user_id = " + req.session.userid);
-        await connection.end();
-        docDOM.window.document.getElementById("firstName").setAttribute("value", rows[0].first_name);
-        docDOM.window.document.getElementById("lastName").setAttribute("value", rows[0].last_name);
-        docDOM.window.document.getElementById("username").setAttribute("value", rows[0].username);
-        docDOM.window.document.getElementById("password").setAttribute("value", rows[0].password);
-        docDOM.window.document.getElementById("email").setAttribute("value", rows[0].email_address);
+    let doc = fs.readFileSync("./html/profile.html", "utf8");
+    let docDOM = new JSDOM(doc);
+    const connection = await mysql.createConnection({
+      host: "localhost",
+      user: "root",
+      password: "",
+      database: "COMP2800",
+      multipleStatements: true
+    });
+    connection.connect();
+    const [rows, fields] = await connection.execute(
+      "SELECT first_name, last_name, username, email_address, password FROM BBY_37_user " +
+      "WHERE BBY_37_user.user_id = " + req.session.userid);
+    await connection.end();
+    docDOM.window.document.getElementById("firstName").setAttribute("value", rows[0].first_name);
+    docDOM.window.document.getElementById("lastName").setAttribute("value", rows[0].last_name);
+    docDOM.window.document.getElementById("username").setAttribute("value", rows[0].username);
+    docDOM.window.document.getElementById("password").setAttribute("value", rows[0].password);
+    docDOM.window.document.getElementById("email").setAttribute("value", rows[0].email_address);
 
-      docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
-      docDOM.window.document.getElementById("profilePhoto").src = "/assets/uploads/profilePicture_" + req.session.userid;
+    docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
+    docDOM.window.document.getElementById("profilePhoto").src = "/assets/uploads/profilePicture_" + req.session.userid;
 
-      res.send(docDOM.serialize());
+    res.send(docDOM.serialize());
   } else {
     // not logged in - no session and no access, redirect to root.
     res.redirect("/");
@@ -185,28 +186,28 @@ async function sendAdminPage(req, res) {
   await connection.end();
   // `user_id`, `username`, `first_name`, `last_name`, `email_address`, `password`, `role_id`
   let table = "<table><tr>" +
-              "<th>ID</th>" +
-              "<th>Username</th>" +
-              "<th>First Name</th>" +
-              "<th>Last Name</th>" +
-              "<th>Email</th>" +
-              "<th>Password</th>" +
-              "<th>User Type</th></tr>";
+    "<th>ID</th>" +
+    "<th>Username</th>" +
+    "<th>First Name</th>" +
+    "<th>Last Name</th>" +
+    "<th>Email</th>" +
+    "<th>Password</th>" +
+    "<th>User Type</th></tr>";
   for (let i = 0; i < rows.length; i++) {
     table += `<tr id="tr${rows[i].user_id}" class="data_row"><td>` +
-              rows[i].user_id + "</td><td>" +
-              rows[i].username + "</td><td>" +
-              rows[i].first_name + "</td><td>" +
-              rows[i].last_name + "</td><td>" +
-              rows[i].email_address + "</td><td>" +
-              rows[i].password + "</td><td>" +
-              rows[i].role_id + "</td></tr>";
+      rows[i].user_id + "</td><td>" +
+      rows[i].username + "</td><td>" +
+      rows[i].first_name + "</td><td>" +
+      rows[i].last_name + "</td><td>" +
+      rows[i].email_address + "</td><td>" +
+      rows[i].password + "</td><td>" +
+      rows[i].role_id + "</td></tr>";
   }
   table += "</table>";
   docDOM.window.document.getElementById("tableContainer").innerHTML = table;
   docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
 
-      res.send(docDOM.serialize());
+  res.send(docDOM.serialize());
 }
 
 app.post("/login", function (req, res) {
@@ -220,10 +221,10 @@ app.post("/signup", function (req, res) {
 
 app.post('/update-profile', function (req, res) {
   res.setHeader('Content-Type', 'application/json');
-  editUserProfile(req,res);
+  editUserProfile(req, res);
 });
 
-async function editUserProfile(req,res){
+async function editUserProfile(req, res) {
   if (req.session.loggedIn) {
     const connection = await mysql.createConnection({
       host: 'localhost',
@@ -300,13 +301,15 @@ async function createUser(req, res) {
 
 const storage = multer.diskStorage({
   destination: function (req, file, callback) {
-      callback(null, "./assets/uploads/")
+    callback(null, "./assets/uploads/")
   },
-  filename: function(req, file, callback) {
-      callback(null, "profilePicture_" + req.session.userid);
+  filename: function (req, file, callback) {
+    callback(null, "profilePicture_" + req.session.userid);
   }
 });
-const upload = multer({ storage: storage });
+const upload = multer({
+  storage: storage
+});
 
 
 app.get('/', function (req, res) {
@@ -321,8 +324,8 @@ app.get('/', function (req, res) {
 app.post('/upload-images', upload.array("files"), function (req, res) {
 
 
-  for(let i = 0; i < req.files.length; i++) {
-      req.files[i].filename = req.files[i].originalname;
+  for (let i = 0; i < req.files.length; i++) {
+    req.files[i].filename = req.files[i].originalname;
   }
 
 });
@@ -331,9 +334,13 @@ app.post("/delete_user", function (req, res) {
   if (req.session.loggedIn && req.session.userlevel == 1) {
     deleteUser(req, res);
   } else {
-    res.send({ status: "fail", msg: "You don't have admin rights." });
+    res.send({
+      status: "fail",
+      msg: "You don't have admin rights."
+    });
   }
 });
+
 
 async function deleteUser(req, res) {
   const connection = await mysql.createConnection({
@@ -345,17 +352,20 @@ async function deleteUser(req, res) {
   });
   connection.connect();
   let [rows, fields] = await connection.query(
-      "SELECT role_id FROM BBY_37_user WHERE BBY_37_user.user_id = ?",
-      [req.body.userID]);
+    "SELECT role_id FROM BBY_37_user WHERE BBY_37_user.user_id = ?",
+    [req.body.userID]);
 
   if (rows[0].role_id == 0) {
     doDeleteUser(req, res);
   } else {
     let [rows2, fields2] = await connection.query(
       "SELECT user_id FROM BBY_37_user WHERE BBY_37_user.role_id = 1");
-  
+
     if (rows2.length < 2) { //last admin
-      res.send({ status: "fail", msg: "Last admin account. Cannot remove admin." });
+      res.send({
+        status: "fail",
+        msg: "Last admin account. Cannot remove admin."
+      });
     } else {
       doUpdateUser(req, res);
     }
@@ -374,9 +384,12 @@ async function doDeleteUser(req, res) {
   });
   connection.connect();
   await connection.query('DELETE FROM BBY_37_user WHERE BBY_37_user.user_id = ?',
-  [req.body.userID]);
+    [req.body.userID]);
   await connection.end();
-  res.send({ status: "success", msg: "Account deleted." });
+  res.send({
+    status: "success",
+    msg: "Account deleted."
+  });
 }
 
 
@@ -384,7 +397,10 @@ app.post("/update_user_data", function (req, res) {
   if (req.session.loggedIn && req.session.userlevel == 1) {
     adminUpdateUsers(req, res);
   } else {
-    res.send({ status: "fail", msg: "You don't have admin rights." });
+    res.send({
+      status: "fail",
+      msg: "You don't have admin rights."
+    });
   }
 });
 
@@ -399,24 +415,30 @@ async function adminUpdateUsers(req, res) {
   });
   connection.connect();
   let [rows, fields] = await connection.query(
-      "SELECT user_id, role_id FROM BBY_37_user WHERE BBY_37_user.user_id = ?",
-      [req.body.userID]);
+    "SELECT user_id, role_id FROM BBY_37_user WHERE BBY_37_user.user_id = ?",
+    [req.body.userID]);
 
   if (rows.length == 1) { //ID exists and is unique
     if ((rows[0].role_id == 0) || rows[0].role_id == 1 && req.body.usertype == 1) {
       doUpdateUser(req, res);
     } else {
       let [rows2, fields2] = await connection.query(
-          "SELECT user_id FROM BBY_37_user WHERE BBY_37_user.role_id = 1");
-      
+        "SELECT user_id FROM BBY_37_user WHERE BBY_37_user.role_id = 1");
+
       if (rows2.length < 2) { //last admin
-        res.send({ status: "fail", msg: "Last admin account. Cannot remove admin privilege." });
+        res.send({
+          status: "fail",
+          msg: "Last admin account. Cannot remove admin privilege."
+        });
       } else {
         doUpdateUser(req, res);
       }
     }
   } else {
-      res.send({ status: "fail", msg: "User ID doesn't exist or has duplicates." });
+    res.send({
+      status: "fail",
+      msg: "User ID doesn't exist or has duplicates."
+    });
   }
 
   await connection.end();
@@ -432,12 +454,16 @@ async function doUpdateUser(req, res) {
   });
   connection.connect();
   await connection.query('UPDATE BBY_37_user ' +
-  'SET username = ?, first_name = ?, last_name = ?, email_address = ?, password = ?, role_id = ? ' +
-  'WHERE BBY_37_user.user_id = ?',
-  [req.body.username, req.body.firstname, req.body.lastname, req.body.email,
-      req.body.password, req.body.usertype, req.body.userID]);
+    'SET username = ?, first_name = ?, last_name = ?, email_address = ?, password = ?, role_id = ? ' +
+    'WHERE BBY_37_user.user_id = ?',
+    [req.body.username, req.body.firstname, req.body.lastname, req.body.email,
+      req.body.password, req.body.usertype, req.body.userID
+    ]);
   connection.end();
-  res.send({ status: "success", msg: "User data updated." });
+  res.send({
+    status: "success",
+    msg: "User data updated."
+  });
 }
 
 
@@ -445,7 +471,10 @@ app.post("/add_user", function (req, res) {
   if (req.session.loggedIn && req.session.userlevel == 1) {
     adminAddUser(req, res);
   } else {
-    res.send({ status: "fail", msg: "You don't have admin rights." });
+    res.send({
+      status: "fail",
+      msg: "You don't have admin rights."
+    });
   }
 });
 
@@ -459,27 +488,32 @@ async function adminAddUser(req, res) {
     multipleStatements: true
   });
   connection.connect();
- 
   // check if username exists
   let [rows, fields] = await connection.query(
     "SELECT user_id FROM BBY_37_user WHERE BBY_37_user.username = ?",
     [req.body.username]);
 
-  if (rows.length > 0 ) {
-    res.send({ status: "fail", msg: "Username already exists." });
+  if (rows.length > 0) {
+    res.send({
+      status: "fail",
+      msg: "Username already exists."
+    });
     connection.end();
     return;
   }
 
   await connection.query('INSERT INTO BBY_37_user (username, first_name, last_name, email_address, password, role_id) values (?, ?, ?, ?, ?, ?)',
-  [req.body.username, req.body.firstname, req.body.lastname, req.body.email, req.body.password, req.body.usertype]);
-  
+    [req.body.username, req.body.firstname, req.body.lastname, req.body.email, req.body.password, req.body.usertype]);
+
   [rows, fields] = await connection.query(
     "SELECT * FROM BBY_37_user WHERE BBY_37_user.username = ?",
     [req.body.username]);
 
   if (rows.length < 1) {
-    res.send({ status: "fail", msg: "Error: Was not able to retrieve the username from database after setting." });
+    res.send({
+      status: "fail",
+      msg: "Error: Was not able to retrieve the username from database after setting."
+    });
     connection.end();
     return;
   }
@@ -496,6 +530,61 @@ async function adminAddUser(req, res) {
     password: rows[0].password,
     usertype: rows[0].role_id
   });
+}
+
+app.get("/createPost", function (req, res) {
+  if (req.session.loggedIn) {
+    let doc = fs.readFileSync("./html/createPost.html", "utf8");
+    res.send(doc);
+  }else{
+    res.redirect("/login");
+  }
+});
+
+app.post("/submitPost",function (req,res){
+  if (req.session.loggedIn) {
+    submitPost(req,res);
+  }else{
+    res.redirect("/login");
+  }
+  
+});
+async function submitPost(req,res){
+  const connection = await mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "COMP2800",
+    multipleStatements: true
+  });
+  connection.connect();
+
+  //Read into database to see if the address entered by user already exsits
+  const [rows, fields] = await connection.query(
+    "SELECT * FROM BBY_37_location WHERE BBY_37_location.unit_number = ? AND BBY_37_location.street_number = ? AND BBY_37_location.prefix = ? AND BBY_37_location.street_name = ? AND BBY_37_location.street_type = ? AND BBY_37_location.city = ? AND BBY_37_location.province = ?",
+    [req.body.unit_number, req.body.street_number, req.body.prefix, req.body.street_name, req.body.street_type, req.body.city, req.body.province]);
+
+    //if the addres does not exist in the database, create a new entry in the location table, grab that location id and add a new entry to the post table
+    if (rows.length === 0) {
+      await connection.execute("INSERT INTO BBY_37_location (unit_number,street_number,prefix,street_name,street_type,city,province) values (?, ?, ?, ?, ?, ?, ?)",[req.body.unit_number, req.body.street_number, req.body.prefix, req.body.street_name, req.body.street_type, req.body.city, req.body.province]);
+      const [row, fields] = await connection.query(
+        "SELECT * FROM BBY_37_location WHERE BBY_37_location.unit_number = ? AND BBY_37_location.street_number = ? AND BBY_37_location.prefix = ? AND BBY_37_location.street_name = ? AND BBY_37_location.street_type = ? AND BBY_37_location.city = ? AND BBY_37_location.province = ?",
+        [req.body.unit_number, req.body.street_number, req.body.prefix, req.body.street_name, req.body.street_type, req.body.city, req.body.province]);
+
+      //Grab the location_id of the new address added to location table
+      let newLocationid = row[0].location_id;
+      await connection.execute("INSERT INTO BBY_37_post (user_id, date_created, content, location_id) values (?, ?, ?, ?)",[req.session.userid,new Date(),req.body.review,newLocationid]);
+      await connection.end();
+
+      //if the address already exist, only add the review with the user id and the location id of this address
+    }else{
+      await connection.execute("INSERT INTO BBY_37_post (user_id, date_created, content, location_id) values (?, ?, ?, ?)",[req.session.userid,new Date(),req.body.review,rows[0].location_id]);
+      await connection.end();
+    }
+    res.send({
+      status:"success",
+      message:"The post has been created."
+    }); 
 }
 
 let port = 8000;

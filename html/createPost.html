@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>RentWise</title>
+  <meta charset="utf-8" />
+  <!-- Style Pages -->
+  <link rel="stylesheet" href="/css/createPost.css">
+  <link rel="stylesheet" href="/css/allPages.css">
+  <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+</head>
+
+<body>
+
+  <div id="container">
+
+    <div id="nav">
+
+      <input type="checkbox" id="check">
+      <label for="check" class="checkbtn">
+        <i><img src="/assets/images/menuIcon.png" class="hamburger" /></i>
+      </label>
+      <div class="logo"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></div>
+      <ul>
+        <li><a href="#">Reviews</a></li>
+        <li><a href="/profile">Profile</a></li>
+        <li><a href="/logout" id="logout">Logout</a></li>
+        <li>
+          <div class="search-container">
+            <form action="#">
+              <input type="text" placeholder="Search.." name="search">
+              <button type="submit"><img src="/assets/images/searchIcon.png" id="searchIcon" /></button>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div id="content">
+      <div id="t1">
+        <div id="formContainer">
+        
+          <form>
+            <div id="form">
+              <div id="h3">
+                <p>Write a review</p>
+              </div>
+              <div id="unit">
+                <label for="unit">Unit/Apt#</label>
+                <input type="text" name="unit" id="unitInput">
+              </div>
+              <div id="streetNum">
+                <label for="streetNum">Street Number</label>
+                <input type="text" name="streetNum" id="streetNumInput">
+              </div>
+              <div id="prefix">
+                <label for="prefix">Prefix</label>
+                <select name="prefix" id="prefixInput">
+                  <option value="N/A">N/A</option>
+                  <option value="N">N</option>
+                  <option value="E">E</option>
+                  <option value="S">S</option>
+                  <option value="W">W</option>
+                  <option value="N">NE</option>
+                  <option value="E">NW</option>
+                  <option value="S">SE</option>
+                  <option value="W">SW</option>
+                </select>
+              </div>
+              <div id="streetName">
+                <label for="streetName">Street Name</label>
+                <input type="text" name="streetName" id="streetNameInput">
+              </div>
+              <div id="streetType">
+                <label for="streetName">Street type</label>
+                <select name="streetType" id="streetTypeInput">
+                  <option value="St">Street</option>
+                  <option value="Rd">Road</option>
+                  <option value="Ave">Avenue</option>
+                  <option value="Dr">Drive</option>
+                  <option value="Ct">Court</option>
+                  <option value="Cst">Cresent</option>
+                  <option value="Bld">Boulevard</option>
+                  <option value="Way">Way</option>
+                  <option value="Pl">Place</option>
+                  <option value="Hwy">Hwy</option>
+                  <option value="Ln">Lane</option>
+                  <option value="Other">other</option>
+                </select>
+              </div>
+              <div id="city">
+                <label for="city">City</label>
+                <input type="text" name="city" id="cityInput">
+              </div>
+              <div id="province">
+                <label for="province">Province/Territory</label>
+                <select name="province" id="provinceInput">
+                  <option value="British Columbia">British Columbia</option>
+                  <option value="Alberta">Alberta</option>
+                  <option value="Ontario">Ontario</option>
+                  <option value="Quebec">Quebec</option>
+                  <option value="Saskatchewan">Saskatchewan</option>
+                  <option value="Manitoba">Manitoba</option>
+                  <option value="Nova Scotia">Nova Scotia</option>
+                  <option value="Prince Edward Island">Prince Edward Island</option>
+                  <option value="New Brunswick">New Brunswick</option>
+                  <option value="Yukon">Yukon</option>
+                  <option value="Northwest Territories">Northwest Territories</option>
+                  <option value="Nunvut">Nunvut</option>
+                </select>
+              </div>
+              <div id="imgUpload">
+                <button type="button" id="uploadBtn">Upload</button>
+              </div>
+              <div id="richText">
+                <p>Please enter your review for this property:</p>
+                <form method="post">
+                  <textarea id="mytextarea">Hello, World!</textarea>
+                </form>
+              </div>
+              <div id="msg"><p>Response Message</p></div>
+              <div id="submit">
+                <button type="submit" id="btn">Submit</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      </div>
+    </div>
+
+
+    <div id="footer">
+
+      <ul class="footerList">
+        <li>
+          <a href="#">Home</a>
+        </li>
+        <li>
+          <a href="#">Contact</a>
+        </li>
+        <li>
+          <a href="#">About</a>
+        </li>
+      </ul>
+
+      <p class="copyright">RentWise © 2022&emsp; | &emsp;BBY 37</p>
+
+    </div>
+
+
+  <script src="./js/createPost.js"></script>
+</body>
+
+</html>
