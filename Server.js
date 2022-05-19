@@ -541,13 +541,13 @@ app.get("/createPost", function (req, res) {
   }
 });
 
-app.post("/submitPost",function (req,res){
+app.post("/submitPost", function (req,res){
+  console.log(req.body.review);
   if (req.session.loggedIn) {
     submitPost(req,res);
   }else{
     res.redirect("/login");
   }
-  
 });
 async function submitPost(req,res){
   const connection = await mysql.createConnection({

@@ -24,15 +24,14 @@ async function createPost(data) {
       body: JSON.stringify(data)
     });
     let parsedJSON = await responseObject.json();
-    if (parsedJSON.status === "sccuss") {
+    if (parsedJSON.status === "success") {
       document.getElementById("msg").innerHTML = parsedJSON.msg;
-      // window.location.replace("...");
+      window.location.replace("...");
     } else {
       document.getElementById("msg").innerHTML = "Error,unable to create a post";
     }
 
   } catch (error) {
-    document.getElementById("msg").innerHTML = "Error,unable to create a post";
   }
 }
 
@@ -46,7 +45,7 @@ ready(() => {
     let streetTypeData = document.getElementById("streetTypeInput").value;
     let cityData = document.getElementById("cityInput").value;
     let provinceData = document.getElementById("provinceInput").value;
-    let reviewData = document.getElementById("mytextarea").value;
+    let reviewData = tinymce.get("mytextarea").getContent();
     if (streetNumData && prefixData && streetNameData && streetTypeData && cityData && provinceData && reviewData) {
       createPost({
         "unit_number": unitData,
