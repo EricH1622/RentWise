@@ -139,7 +139,7 @@ async function sendProfilePage(req, res) {
     const connection = await mysql.createConnection({
       host: "localhost",
       user: "root",
-      password: "ca998k269",
+      password: "",
       database: "COMP2800",
       multipleStatements: true
     });
@@ -178,7 +178,7 @@ async function sendAdminPage(req, res) {
   const connection = await mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "ca998k269",
+    password: "",
     database: "COMP2800",
     multipleStatements: true
   });
@@ -230,7 +230,7 @@ async function editUserProfile(req, res) {
     const connection = await mysql.createConnection({
       host: 'localhost',
       user: 'root',
-      password: 'ca998k269',
+      password: '',
       database: 'COMP2800',
       multipleStatements: true
     });
@@ -251,7 +251,7 @@ async function authenticateUser(req, res) {
   const connection = await mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "ca998k269",
+    password: "",
     database: "COMP2800",
     multipleStatements: true
   });
@@ -285,7 +285,7 @@ async function createUser(req, res) {
   const connection = await mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "ca998k269",
+    password: "",
     database: "COMP2800",
     multipleStatements: true
   });
@@ -347,7 +347,7 @@ async function deleteUser(req, res) {
   const connection = await mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "ca998k269",
+    password: "",
     database: "COMP2800",
     multipleStatements: true
   });
@@ -379,7 +379,7 @@ async function doDeleteUser(req, res) {
   const connection = await mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "ca998k269",
+    password: "",
     database: "COMP2800",
     multipleStatements: true
   });
@@ -410,7 +410,7 @@ async function adminUpdateUsers(req, res) {
   const connection = await mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "ca998k269",
+    password: "",
     database: "COMP2800",
     multipleStatements: true
   });
@@ -449,7 +449,7 @@ async function doUpdateUser(req, res) {
   const connection = await mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "ca998k269",
+    password: "",
     database: "COMP2800",
     multipleStatements: true
   });
@@ -484,7 +484,7 @@ async function adminAddUser(req, res) {
   const connection = await mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "ca998k269",
+    password: "",
     database: "COMP2800",
     multipleStatements: true
   });
@@ -543,21 +543,50 @@ app.get("/createPost", function (req, res) {
   }
 });
 
-app.post("/submitPost",function (req,res){});
+app.post("/submitPost",function (req,res){
+  if (req.session.loggedIn) {
+    submitPost(req,res);
+  }else{
+    res.redirect("/login");
+  }
+  
+});
 async function submitPost(req,res){
   const connection = await mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "ca998k269",
+    password: "",
     database: "COMP2800",
     multipleStatements: true
   });
   connection.connect();
-  const [rows, fields] = await connection.execute(
-    "SELECT user_id, role_id FROM BBY_37_user WHERE BBY_37_user.username = ? AND BBY_37_user.password = ?",
-    [req.body.username, req.body.password]);
 
-  await connection.end();
+  //Read into database to see if the address entered by user already exsits
+  const [rows, fields] = await connection.query(
+    "SELECT * FROM BBY_37_location WHERE BBY_37_location.unit_number = ? AND BBY_37_location.street_number = ? AND BBY_37_location.prefix = ? AND BBY_37_location.street_name = ? AND BBY_37_location.street_type = ? AND BBY_37_location.city = ? AND BBY_37_location.province = ?",
+    [req.body.unit_number, req.body.street_number, req.body.prefix, req.body.street_name, req.body.street_type, req.body.city, req.body.province]);
+
+    //if the addres does not exist in the database, create a new entry in the location table, grab that location id and add a new entry to the post table
+    if (rows.length === 0) {
+      await connection.execute("INSERT INTO BBY_37_location (unit_number,street_number,prefix,street_name,street_type,city,province) values (?, ?, ?, ?, ?, ?, ?)",[req.body.unit_number, req.body.street_number, req.body.prefix, req.body.street_name, req.body.street_type, req.body.city, req.body.province]);
+      const [row, fields] = await connection.query(
+        "SELECT * FROM BBY_37_location WHERE BBY_37_location.unit_number = ? AND BBY_37_location.street_number = ? AND BBY_37_location.prefix = ? AND BBY_37_location.street_name = ? AND BBY_37_location.street_type = ? AND BBY_37_location.city = ? AND BBY_37_location.province = ?",
+        [req.body.unit_number, req.body.street_number, req.body.prefix, req.body.street_name, req.body.street_type, req.body.city, req.body.province]);
+
+      //Grab the location_id of the new address added to location table
+      let newLocationid = row[0].location_id;
+      await connection.execute("INSERT INTO BBY_37_post (user_id, date_created, content, location_id) values (?, ?, ?, ?)",[req.session.userid,new Date(),req.body.review,newLocationid]);
+      await connection.end();
+
+      //if the address already exist, only add the review with the user id and the location id of this address
+    }else{
+      await connection.execute("INSERT INTO BBY_37_post (user_id, date_created, content, location_id) values (?, ?, ?, ?)",[req.session.userid,new Date(),req.body.review,rows[0].location_id]);
+      await connection.end();
+    }
+    res.send({
+      status:"success",
+      message:"The post has been created"
+    }); 
 }
 
 let port = 8000;
