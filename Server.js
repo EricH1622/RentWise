@@ -359,7 +359,6 @@ async function executeSearch(req, res) {
 
       }
     } else {
-      console.log("No results found!");
     }
     await connection.end();
 
