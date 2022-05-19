@@ -585,7 +585,7 @@ async function submitPost(req,res){
     }
     res.send({
       status:"success",
-      message:"The post has been created"
+      message:"The post has been created."
     }); 
 }
 

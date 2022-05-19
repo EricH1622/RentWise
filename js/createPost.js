@@ -24,13 +24,16 @@ async function createPost(data) {
       body: JSON.stringify(data)
     });
     let parsedJSON = await responseObject.json();
-    if (parsedJSON.status === "fail") {
-      document.getElementById("createErrorMsg").innerHTML = parsedJSON.msg;
-    } else {
+    if (parsedJSON.status === "sccuss") {
+      document.getElementById("msg").innerHTML = parsedJSON.msg;
       // window.location.replace("...");
+    } else {
+      document.getElementById("msg").innerHTML = "Error,unable to create a post";
     }
 
-  } catch (error) {}
+  } catch (error) {
+    document.getElementById("msg").innerHTML = "Error,unable to create a post";
+  }
 }
 
 
