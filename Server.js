@@ -78,6 +78,48 @@ app.get("/logout", function (req, res) {
   }
 });
 
+app.get("/profile", function (req, res) {
+  sendProfilePage(req, res);
+});
+
+app.get("/home", function (req, res) {
+  sendHomePage(req, res);
+});
+
+async function sendHomePage(req, res) {
+  if (req.session.loggedIn) {
+    let doc = fs.readFileSync("./html/home.html", "utf8");
+    let docDOM = new JSDOM(doc);
+    const connection = await mysql.createConnection({
+      host: "localhost",
+      user: "root",
+      database: "COMP2800",
+      multipleStatements: true
+    });
+    connection.connect();
+    const [rows, fields] = await connection.execute(
+      "SELECT first_name FROM BBY_37_user " +
+      "WHERE BBY_37_user.user_id = " + req.session.userid);
+    docDOM.window.document.getElementById("username").innerHTML = "Great to have you back, " + rows[0].first_name;
+    await connection.end();
+    docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
+
+    res.send(docDOM.serialize());
+  } else {
+    // not logged in - no session and no access, redirect to root.
+    res.redirect("/login");
+  }
+}
+
+app.get("/admin", function (req, res) {
+  if (req.session.loggedIn && req.session.userlevel == 1) {
+    sendAdminPage(req, res);
+  } else {
+    res.redirect("/");
+  }
+});
+
+
 //dynamic navbars
 function getNavBar(req) {
   if (req.session.loggedIn) {
@@ -88,17 +130,10 @@ function getNavBar(req) {
       </label>
       <div class="logo"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></div>
       <ul>
-          <li><a href="#">Reviews</a></li>
+          <li><a href="/home">Search</a></li>
+          <li><a href="#">Create Post</a></li>
           <li><a href="/profile">Profile</a></li>
           <li><a href="/logout" id="logout">Logout</a></li>
-          <li>
-              <div class="search-container">
-                  <form action="#">
-                      <input type="text" placeholder="Search.." name="search">
-                      <button type="submit"><img src="/assets/images/searchIcon.png" id="searchIcon"/></button>
-                  </form>
-            </div>
-          </li>
       </ul>`
     } else {
       return `<input type="checkbox" id="check">
@@ -108,17 +143,10 @@ function getNavBar(req) {
       <div class="logo"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></div>
       <ul>
           <li><a href="/admin">Admin</a></li>
-          <li><a href="#">Reviews</a></li>
+          <li><a href="/home">Search</a></li>
+          <li><a href="#">Create Post</a></li>
           <li><a href="/profile">Profile</a></li>
           <li><a href="/logout" id="logout">Logout</a></li>
-          <li>
-              <div class="search-container">
-                  <form action="#">
-                      <input type="text" placeholder="Search.." name="search">
-                      <button type="submit"><img src="/assets/images/searchIcon.png" id="searchIcon"/></button>
-                  </form>
-            </div>
-          </li>
       </ul>`
     }
   } else {
@@ -126,9 +154,7 @@ function getNavBar(req) {
   }
 }
 
-app.get("/profile", function (req, res) {
-  sendProfilePage(req, res);
-});
+
 
 async function sendProfilePage(req, res) {
   let doc = 0;
@@ -139,7 +165,6 @@ async function sendProfilePage(req, res) {
     const connection = await mysql.createConnection({
       host: "localhost",
       user: "root",
-      password: "ca998k269",
       database: "COMP2800",
       multipleStatements: true
     });
@@ -178,7 +203,6 @@ async function sendAdminPage(req, res) {
   const connection = await mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "ca998k269",
     database: "COMP2800",
     multipleStatements: true
   });
@@ -225,12 +249,16 @@ app.post('/update-profile', function (req, res) {
   editUserProfile(req, res);
 });
 
+app.post('/search-query', function (req, res) {
+  res.setHeader('Content-Type', 'application/json');
+  executeSearch(req, res);
+});
+
 async function editUserProfile(req, res) {
   if (req.session.loggedIn) {
     const connection = await mysql.createConnection({
       host: 'localhost',
       user: 'root',
-      password: 'ca998k269',
       database: 'COMP2800',
       multipleStatements: true
     });
@@ -247,11 +275,92 @@ async function editUserProfile(req, res) {
   }
 }
 
+async function executeSearch(req, res) {
+  if (req.session.loggedIn) {
+    const connection = await mysql.createConnection({
+      host: 'localhost',
+      user: 'root',
+      database: 'COMP2800',
+      multipleStatements: true
+    });
+    connection.connect();
+
+    // `SELECT * FROM BBY_37_post WHERE location_id IN 
+    // (SELECT location_id FROM BBY_37_location WHERE
+    //   unit_number LIKE '%4%' AND 
+    //   street_number LIKE '%920%' AND 
+    //   prefix LIKE '%W%' AND 
+    //   street_name LIKE '%14th%' AND 
+    //   street_type LIKE '%Ave%' AND 
+    //   city LIKE '%Vancouver%' AND 
+    //   province LIKE '%British Columbia%')`
+
+    let query = `SELECT * FROM BBY_37_location WHERE 
+      unit_number LIKE ? AND 
+      street_number LIKE ? AND 
+      prefix LIKE ? AND 
+      street_name LIKE ? AND 
+      street_type LIKE ? AND 
+      city LIKE ? AND 
+      province LIKE ?`;
+    
+    let values = [req.body.unit, req.body.streetNum, req.body.prefix, req.body.streetName, req.body.streetType, req.body.city, req.body.province];
+
+    const [rows, fields] = await connection.query(query, values);
+    console.log("Searching with values " + req.body.unit + " " + req.body.streetNum + " " + req.body.prefix + " " + req.body.streetName + " " + req.body.streetType + " " + req.body.city + " " + req.body.province + "...");
+    if(rows.length > 0){
+      for (let i = 0; i < rows.length; i++) {
+        console.log(
+        rows[i].location_id + " " +
+        rows[i].unit_number + " " +
+        rows[i].street_number + " " +
+        rows[i].prefix + " " +
+        rows[i].street_name + " " +
+        rows[i].street_type + " " +
+        rows[i].city + " " +
+        rows[i].province + "\n"
+        );
+      }
+    } else {
+      console.log("No results found!");
+    }
+    
+
+    await connection.end();
+
+    // `user_id`, `username`, `first_name`, `last_name`, `email_address`, `password`, `role_id`
+    // let table = "<table><tr>" +
+    //   "<th>ID</th>" +
+    //   "<th>Username</th>" +
+    //   "<th>First Name</th>" +
+    //   "<th>Last Name</th>" +
+    //   "<th>Email</th>" +
+    //   "<th>Password</th>" +
+    //   "<th>User Type</th></tr>";
+    // for (let i = 0; i < rows.length; i++) {
+    //   table += `<tr id="tr${rows[i].user_id}" class="data_row"><td>` +
+    //     rows[i].user_id + "</td><td>" +
+    //     rows[i].username + "</td><td>" +
+    //     rows[i].first_name + "</td><td>" +
+    //     rows[i].last_name + "</td><td>" +
+    //     rows[i].email_address + "</td><td>" +
+    //     rows[i].password + "</td><td>" +
+    //     rows[i].role_id + "</td></tr>";
+    // }
+
+    res.send({
+      status: "success",
+      msg: "Profile info updated."
+    });
+  } else {
+    res.redirect("/");
+  }
+}
+
 async function authenticateUser(req, res) {
   const connection = await mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "ca998k269",
     database: "COMP2800",
     multipleStatements: true
   });
@@ -285,7 +394,6 @@ async function createUser(req, res) {
   const connection = await mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "ca998k269",
     database: "COMP2800",
     multipleStatements: true
   });
@@ -347,7 +455,6 @@ async function deleteUser(req, res) {
   const connection = await mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "ca998k269",
     database: "COMP2800",
     multipleStatements: true
   });
@@ -379,7 +486,6 @@ async function doDeleteUser(req, res) {
   const connection = await mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "ca998k269",
     database: "COMP2800",
     multipleStatements: true
   });
@@ -410,7 +516,6 @@ async function adminUpdateUsers(req, res) {
   const connection = await mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "ca998k269",
     database: "COMP2800",
     multipleStatements: true
   });
@@ -449,7 +554,6 @@ async function doUpdateUser(req, res) {
   const connection = await mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "ca998k269",
     database: "COMP2800",
     multipleStatements: true
   });
@@ -484,7 +588,6 @@ async function adminAddUser(req, res) {
   const connection = await mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "ca998k269",
     database: "COMP2800",
     multipleStatements: true
   });
@@ -548,7 +651,6 @@ async function submitPost(req,res){
   const connection = await mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "ca998k269",
     database: "COMP2800",
     multipleStatements: true
   });

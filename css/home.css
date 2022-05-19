@@ -56,7 +56,6 @@ body {
 }
 
 h2 {
-  font-family: 'Roboto', sans-serif;
   font-size: 5vw;
   color: white;
   filter: drop-shadow(5px 7px 2.5px #000000);
@@ -64,7 +63,6 @@ h2 {
   margin-bottom: 2%;
 }
 #tagline {
-  font-family: 'Roboto', sans-serif;
   position: absolute;
   bottom: 5em;
   left: 2em;
@@ -92,11 +90,10 @@ input[type=text],select {
 }
 
 #form {
-  font-family: 'Roboto', sans-serif;
   width: 100%;
   margin: 3rem 0 3em 0;
   border-radius: 10px;
-  background-color: #001d3d;
+  background-color: #06002e;
   color: white;
   font-weight: bolder;
   display: grid;
@@ -106,7 +103,7 @@ input[type=text],select {
 }
 
 #h3 {
-  font-family: 'Roboto', sans-serif !important;
+  font-size: 3vh;
   text-align: center;
   grid-row: 2 / span 1;
   grid-column: 2 / span 3;

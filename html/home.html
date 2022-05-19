@@ -7,6 +7,7 @@
   <!-- Style Pages -->
   <link rel="stylesheet" href="/css/home.css">
   <link rel="stylesheet" href="/css/allPages.css">
+  <link rel="stylesheet" href="/css/templateStyle.css">
 
   <!-- Icons -->
   <script src="https://kit.fontawesome.com/f1147c558e.js" crossorigin="anonymous"></script>
@@ -18,31 +19,12 @@
   <div id="container">
 
     <div id="nav">
-
-      <input type="checkbox" id="check">
-      <label for="check" class="checkbtn">
-        <i class="fas fa-bars fa-lg"></i>
-      </label>
-      <div class="logo"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></div>
-      <ul>
-        <li><a href="#">Reviews</a></li>
-        <li><a href="/profile">Profile</a></li>
-        <li><a href="/logout" id="logout">Logout</a></li>
-        <li>
-          <div class="search-container">
-            <form action="#">
-              <input type="text" placeholder="Search.." name="search">
-              <button type="submit"><i class="fa fa-search"></i></button>
-            </form>
-          </div>
-        </li>
-      </ul>
     </div>
 
     <div id="content">
       <div id="hero">
         <div id="tagline">
-          <h2>Great to see you back,<span id="username"> user</span></h2>
+          <h2 id="username"></h2>
         </div>
       </div>
 
@@ -55,16 +37,16 @@
               </div>
               <div id="unit">
                 <label for="unit">Unit/Apt#</label>
-                <input type="text" name="unit">
+                <input type="text" name="unit" id="unitVal">
               </div>
               <div id="streetNum">
                 <label for="streetNum">Street Number</label>
-                <input type="text" name="streetNum">
+                <input type="text" name="streetNum" id="streetNumVal">
               </div>
               <div id="prefix">
                 <label for="prefix">Prefix</label>
                 <select name="prefix" id="prefixInput">
-                  <option value="N/A">N/A</option>
+                  <option value="%">Any</option>
                   <option value="N">N</option>
                   <option value="E">E</option>
                   <option value="S">S</option>
@@ -77,14 +59,15 @@
               </div>
               <div id="streetName">
                 <label for="streetName">Street Name</label>
-                <input type="text" name="streetName">
+                <input type="text" name="streetName" id="streetNameVal">
               </div>
               <div id="streetType">
                 <label for="streetName">Street type</label>
                 <select name="streetType" id="streetTypeInput">
+                  <option value="%">Any</option>
                   <option value="St">Street</option>
                   <option value="Rd">Road</option>
-                  <option value="Av">Avenue</option>
+                  <option value="Ave">Avenue</option>
                   <option value="Dr">Drive</option>
                   <option value="Ct">Court</option>
                   <option value="Cst">Cresent</option>
@@ -98,11 +81,12 @@
               </div>
               <div id="city">
                 <label for="city">City</label>
-                <input type="text" name="city">
+                <input type="text" name="city" id="cityVal">
               </div>
               <div id="province">
                 <label for="province">Province/Territory</label>
                 <select name="province" id="provinceInput">
+                  <option value="%">Any</option>
                   <option value="BC">British Columbia</option>
                   <option value="AB">Alberta</option>
                   <option value="ON">Ontario</option>
@@ -114,7 +98,7 @@
                   <option value="NB">New Brunswick</option>
                   <option value="YT">Yukon</option>
                   <option value="NT">Northwest Territories</option>
-                  <option value="NU">Nunvut</option>
+                  <option value="NU">Nunavut</option>
                 </select>
               </div>
               <div id="submit">
@@ -144,6 +128,8 @@
       </div>
   
     </div>
+
+    <script src="./js/search.js"></script>
 </body>
 
 </html>
