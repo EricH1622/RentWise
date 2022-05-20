@@ -183,26 +183,30 @@ async function sendReviews(req, res) {
   // replace unit_id with selected option
   let unit_id = 1;
 
-  let u_name = [];
   connection.connect();
-  // get posts related to address
+  // get relative data and save into constants
+
+  // posts
   const [rows, fields] = await connection.execute("SELECT * FROM bby_37_post WHERE bby_37_post.location_id = " + unit_id
   );
+
+  // addresses
   const [rows2, fields2] = await connection.execute("SELECT * FROM bby_37_location WHERE bby_37_location.location_id = " + unit_id
   );
 
-  const [rows3, fields3] = await connection.execute("SELECT * FROM bby_37_location WHERE bby_37_location.location_id = " + unit_id
-  );
+  // users
+  let u_name = [];
 
-  // get usernames from users who have posted
-  
-  // set address
-  // for (let i = 0; i < rows2.length; i++) {
-  //   if (rows2[i].location_id == ) {
+  // for each post, the user id is used to query the user db for usernames
+  for (let k = 0; k < rows2.length; k++) {
+    const [rows2, fields2] = await connection.execute("SELECT * FROM bby_37_user WHERE bby_37_user.user_id = " + rows[k].user_id
+    );
+    u_name[k] = rows2[k].username;
+  }
 
-  //   }
-  // }
-  let address = "Unit " + rows2[0].unit_number + " " + rows2[0].street_number + " " + rows2[0].street_name + " " + rows2[0].prefix + " " + rows2[0].city + " " + rows2[0].province; 
+  // load address into page
+  let address = rows2[0].unit_number + " " + rows2[0].street_number + " " + rows2[0].street_name + " " + rows2[0].prefix + " " + rows2[0].city + " " + rows2[0].province; 
+
   await connection.end();
   let currentReview = "";
   // empty reviews div
@@ -210,8 +214,10 @@ async function sendReviews(req, res) {
   for (let j = 0; j < rows.length; j++) {
     // for each row, make a new review
     currentReview += "<div class='review'>";
-    currentReview += "<p><strong>" + rows2[j] + "</strong></p>";
+    currentReview += "<p><strong>" + u_name[j] + "</strong></p>";
     currentReview += "<p>" + rows[j].content + "</p>";
+    currentReview += "<p>" + rows[j].date_created + "</p>";
+    currentReview += "<p>" + rows[j].last_edited_date + "</p>";
     currentReview += "</div>";
   }
   docDOM.window.document.getElementById("address").innerHTML= address;
