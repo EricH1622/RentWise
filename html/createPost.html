@@ -7,6 +7,7 @@
   <!-- Style Pages -->
   <link rel="stylesheet" href="/css/createPost.css">
   <link rel="stylesheet" href="/css/allPages.css">
+  <link rel="stylesheet" href="/css/templateStyle.css">
   <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 </head>
 
@@ -15,25 +16,6 @@
   <div id="container">
 
     <div id="nav">
-
-      <input type="checkbox" id="check">
-      <label for="check" class="checkbtn">
-        <i><img src="/assets/images/menuIcon.png" class="hamburger" /></i>
-      </label>
-      <div class="logo"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></div>
-      <ul>
-        <li><a href="#">Reviews</a></li>
-        <li><a href="/profile">Profile</a></li>
-        <li><a href="/logout" id="logout">Logout</a></li>
-        <li>
-          <div class="search-container">
-            <form action="#">
-              <input type="text" placeholder="Search.." name="search">
-              <button type="submit"><img src="/assets/images/searchIcon.png" id="searchIcon" /></button>
-            </form>
-          </div>
-        </li>
-      </ul>
     </div>
 
     <div id="content">
@@ -115,7 +97,7 @@
               <div id="richText">
                 <p>Please enter your review for this property:</p>
                 <form method="post">
-                  <textarea id="mytextarea">Hello, World!</textarea>
+                  <textarea id="mytextarea"></textarea>
                 </form>
               </div>
               <div id="msg"></div>

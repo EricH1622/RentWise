@@ -87,17 +87,10 @@ function getNavBar(req) {
       </label>
       <div class="logo"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></div>
       <ul>
-          <li><a href="#">Reviews</a></li>
+          <li><a href="/home">Home</a></li>
+          <li><a href="/createPost">Write a review</a></li>
           <li><a href="/profile">Profile</a></li>
           <li><a href="/logout" id="logout">Logout</a></li>
-          <li>
-              <div class="search-container">
-                  <form action="#">
-                      <input type="text" placeholder="Search.." name="search">
-                      <button type="submit"><img src="/assets/images/searchIcon.png" id="searchIcon"/></button>
-                  </form>
-            </div>
-          </li>
       </ul>`
     } else {
       return `<input type="checkbox" id="check">
@@ -110,14 +103,6 @@ function getNavBar(req) {
           <li><a href="#">Reviews</a></li>
           <li><a href="/profile">Profile</a></li>
           <li><a href="/logout" id="logout">Logout</a></li>
-          <li>
-              <div class="search-container">
-                  <form action="#">
-                      <input type="text" placeholder="Search.." name="search">
-                      <button type="submit"><img src="/assets/images/searchIcon.png" id="searchIcon"/></button>
-                  </form>
-            </div>
-          </li>
       </ul>`
     }
   } else {
@@ -535,7 +520,9 @@ async function adminAddUser(req, res) {
 app.get("/home",function (req, res) {
   if (req.session.loggedIn) {
     let doc = fs.readFileSync("./html/home.html", "utf8");
-    res.send(doc);
+    let docDOM = new JSDOM(doc);
+    docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
+    res.send(docDOM.serialize());
   }else{
     res.redirect("/login");
   }
@@ -544,7 +531,9 @@ app.get("/home",function (req, res) {
 app.get("/createPost", function (req, res) {
   if (req.session.loggedIn) {
     let doc = fs.readFileSync("./html/createPost.html", "utf8");
-    res.send(doc);
+    let docDOM = new JSDOM(doc);
+    docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
+    res.send(docDOM.serialize());
   }else{
     res.redirect("/login");
   }
@@ -562,7 +551,7 @@ async function submitPost(req,res){
   const connection = await mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "ca998k269",
+    password: "",
     database: "COMP2800",
     multipleStatements: true
   });

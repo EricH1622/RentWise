@@ -81,7 +81,7 @@ input[type=text],select {
 #form {
   font-family: 'Roboto', sans-serif;
   width: 100%;
-  margin: 3rem 0 3em 0;
+  margin: 1rem 0 3em 0;
   border-radius: 10px;
   background-color: #001d3d;
   color: white;
