@@ -81,9 +81,6 @@ app.get("/profile", function (req, res) {
   sendProfilePage(req, res);
 });
 
-app.get("/home", function (req, res) {
-  sendHomePage(req, res);
-});
 
 async function sendHomePage(req, res) {
   if (req.session.loggedIn) {
