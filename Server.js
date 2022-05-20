@@ -205,7 +205,7 @@ async function sendReviews(req, res) {
   }
 
   // load address into page
-  let address = rows2[0].unit_number + " " + rows2[0].street_number + " " + rows2[0].street_name + " " + rows2[0].prefix + " " + rows2[0].city + " " + rows2[0].province; 
+  let address = rows2[0].unit_number + " " + rows2[0].street_number + " " + rows2[0].street_name + " " + rows2[0].street_type + " " + rows2[0].prefix + " " + rows2[0].city + " " + rows2[0].province; 
 
   await connection.end();
   let currentReview = "";
@@ -214,10 +214,13 @@ async function sendReviews(req, res) {
   for (let j = 0; j < rows.length; j++) {
     // for each row, make a new review
     currentReview += "<div class='review'>";
-    currentReview += "<p><strong>" + u_name[j] + "</strong></p>";
-    currentReview += "<p>" + rows[j].content + "</p>";
-    currentReview += "<p>" + rows[j].date_created + "</p>";
-    currentReview += "<p>" + rows[j].last_edited_date + "</p>";
+    currentReview += "<div class='name'><strong>" + u_name[j] + "</strong></div>";
+    currentReview += "<div class='rev'><strong>" + rows[j].content + "</strong></div>";
+    currentReview += "<div class='createTime'> Original Post: " + rows[j].date_created + "</div>";
+    if (rows[j].last_edited_date) {
+      currentReview += "<div class='editTime'> Last edit:" + rows[j].last_edited_date + "</div>";
+    }
+    // currentReview += "<div class='images'>" + IMAGE TO GO HERE + "</div>";
     currentReview += "</div>";
   }
   docDOM.window.document.getElementById("address").innerHTML= address;
