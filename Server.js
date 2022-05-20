@@ -532,6 +532,15 @@ async function adminAddUser(req, res) {
   });
 }
 
+app.get("/home",function (req, res) {
+  if (req.session.loggedIn) {
+    let doc = fs.readFileSync("./html/home.html", "utf8");
+    res.send(doc);
+  }else{
+    res.redirect("/login");
+  }
+})
+
 app.get("/createPost", function (req, res) {
   if (req.session.loggedIn) {
     let doc = fs.readFileSync("./html/createPost.html", "utf8");
@@ -553,7 +562,7 @@ async function submitPost(req,res){
   const connection = await mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "",
+    password: "ca998k269",
     database: "COMP2800",
     multipleStatements: true
   });
