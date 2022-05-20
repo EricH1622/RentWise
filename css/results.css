@@ -1,0 +1,129 @@
+#container {
+    grid-template-rows: 12% 88%;
+}
+
+#footer {
+    background-color: rgb(16, 0, 37);
+    grid-column: 1;
+    grid-row: 3;
+}
+
+#content{
+    grid-row: 2;
+    grid-column: 1 / span 5;
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 100%;
+    background-image: url("/assets/images/city5.jpg");
+    background-position: 0px 1000px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#title{
+    grid-row: 1;
+    grid-column: 1;
+    align-content: center;
+}
+
+h1{
+    font-size: 7vh;
+    color: white;
+    filter: drop-shadow(3px 5px 4px #000000);
+    margin: 0 auto;
+    display: block;
+    margin-top: 4vh;
+}
+
+h2{
+    font-size: 3.5vh;
+    color: white;
+    display: block;
+    margin: 0;
+}
+
+#results{
+    margin: 0vh 7vw;
+}
+
+#noResults{
+    border-radius: 7px;
+    margin: 4% 2%;
+    height: 30vh;
+    background: linear-gradient(180deg, rgb(16, 0, 37) 30%, #b8f9ff 30%);
+    align-content: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.resultBox{
+    border-radius: 7px;
+    margin: 2vh 2vw;
+    display: grid;
+    grid-template-rows: 40% 60%;
+    background: linear-gradient(180deg, rgb(16, 0, 37) 40%, #b8f9ff 40%);
+}
+
+
+.resultHead, .resultBody{
+    margin: 2% 2%;
+}
+
+.resultHead > p{
+    margin: 0;
+    color: rgb(169, 168, 211);
+}
+
+.resultBody{
+    grid-gap: 1%;
+}
+
+.description{
+    grid-column: 1 / span 4;
+    grid-row: 1;
+}
+
+.resultButton{
+    padding: 1.5vh 1.5vw;
+    font-size: 2.3vh;
+    border-radius: 10px;
+    border-style: none;
+    color: white;
+    text-decoration: none;
+    display: inline;
+}
+
+.resultButton:hover{
+    cursor: pointer;
+}
+
+.more, .create{
+    background-color: rgb(255, 157, 0);
+}
+
+.more{
+    float: left;
+}
+
+.more:hover, .create:hover{
+    background-color: rgb(218, 134, 0);
+}
+
+.report{
+    background-color: rgb(145, 0, 0);
+    float: right;
+    margin-left: 1%;
+}
+
+.report:hover{
+    background-color: rgb(87, 0, 0);
+}
+
+.edit{
+    background-color: rgb(147, 147, 147);
+    float: right;
+}
+
+.edit:hover{
+    background-color: rgb(113, 113, 113);
+}

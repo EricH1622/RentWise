@@ -26,7 +26,7 @@ async function createPost(data) {
     let parsedJSON = await responseObject.json();
     if (parsedJSON.status === "success") {
       document.getElementById("msg").innerHTML = parsedJSON.msg;
-      window.location.replace("...");
+      window.location.replace(`/unitView?id=${parsedJSON.location_id}`);
     } else {
       document.getElementById("msg").innerHTML = "Error,unable to create a post";
     }

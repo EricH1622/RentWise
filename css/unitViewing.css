@@ -5,7 +5,7 @@
   grid-column: 1 / span 5;
   grid-row: 2;
   grid-template-columns: 100%;
-  grid-template-rows: 30% 10% 50% 10%;
+  grid-template-rows: 10% 10% 70% 10%;
   background-color: rgb(16, 0, 37);
   overflow-x: hidden;
 }
@@ -36,53 +36,64 @@ h3{
 
 #reviews {
   overflow: auto;
-  padding: 10px;
+  padding: 1rem 2rem 1rem 2rem;
   grid-gap: 10px;
   background-color: rgb(255, 255, 255);
   overflow-x: hidden;
 }
 
 .review {
+  min-height: 160px;
   border-style: solid;
   border-color: rgb(0, 124, 161);
   background-color: rgb(0, 195, 255);
   border-radius: 10px;
   padding: 15px;
   display: grid;
-  grid-template-columns: 12.5% 12.5% 12.5% 12.5% 12.5% 12.5% 12.5% 12.5%;
+  grid-template-columns: 160px 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   grid-template-rows: 16.7% 16.7% 16.7% 16.7% 16.7% 16.7%;
 }
-
+#photo1{
+  width:80%;
+  height:80%;
+  border-radius: 8px;
+}
 .name {
-  grid-column: 1;
-  grid-row: 1;
+  grid-column: 2 / span 1;
+  grid-row: 1 / span 2;
 }
 
 .rev {
-  grid-column: 1 / span 8;
-  grid-row: 3 / span 3;
+  grid-column: 2 / span 7;
+  grid-row: 3 / span 2;
 }
 
 .images {
-  grid-column: 3 / span 2;
-  grid-row: 2;
+  grid-column: 1 / span 1;
+  grid-row: 1/ span 6;
 }
 
 .createTime {
-  grid-column: 1 / span 3;
-  grid-row: 6;
+  grid-column: 2 / span 3;
+  grid-row: 5 /  span 2;
+  /* display: flex;
+  flex-direction: column;
+  justify-content: flex-end; */
 }
 
 .editTime {
-  grid-column: 4 / span 3;
-  grid-row: 6;
+  grid-column: 5 / span 3;
+  grid-row: 5 /  span 2;
+  /* display: flex;
+  flex-direction: column;
+  justify-content: flex-end; */
 }
 
-.editBtn {
+/* .editBtn {
   grid-column: 7 / span 2;
   grid-row: 6;
-  /* display: none; */
-}
+  display: none;
+} */
 #buttons {
   display: grid;
   grid-template-columns: 20% 60% 20%;
@@ -123,12 +134,60 @@ button:hover {
 @media only screen and (max-width: 1024px) and (min-width: 401px) {
   #content {
     grid-template-columns: 100%;
-    grid-template-rows: 30% 10% 40% 20%;
+    grid-template-rows: 10% 10% 70% 10%;
   }
 
+  #reviews {
+    overflow: auto;
+    padding: 1rem 2rem 1rem 2rem;
+    grid-gap: 10px;
+    background-color: rgb(255, 255, 255);
+    overflow-x: hidden;
+  }
+  
+  .review {
+    min-height: 290px;
+    border-style: solid;
+    border-color: rgb(0, 124, 161);
+    background-color: rgb(0, 195, 255);
+    border-radius: 10px;
+    padding: 15px;
+    display: grid;
+    grid-template-columns: 160px 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 16.7% 16.7% 16.7% 16.7% 16.7% 16.7%;
+  }
+  #photo1{
+    width:80%;
+    max-height: 50%;
+    border-radius: 8px;
+    
+  }
+  .name {
+    grid-column: 2 / span 1;
+    grid-row: 1 / span 2;
+  }
+  
+  .rev {
+    grid-column: 2 / span 7;
+    grid-row: 3 / span 2;
+  }
+  
+  .images {
+    grid-column: 1 / span 1;
+    grid-row: 1/ span 6;
+  }
+  
+  .createTime {
+    grid-column: 2 / span 3;
+    grid-row: 5 /  span 2;
+  }
+  
+  .editTime {
+    grid-column: 5 / span 3;
+    grid-row: 5 /  span 2;
+  }
   #buttons {
     grid-template-columns: 100%;
-    grid-template-rows: 50% 50%;
   }
 
   #load {
@@ -144,8 +203,10 @@ button:hover {
   }  
 
   .viewButton {
-    display: block;
-    width: 98%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40%;
     border-radius: 10px;
     margin: 0 auto;
   }
@@ -158,8 +219,59 @@ button:hover {
 @media only screen and (max-width: 400px) {
   #content {
     grid-template-columns: 100%;
-    grid-template-rows: 30% 10% 40% 20%;
+    grid-template-rows: 10% 10% 70% 10%;
   }
+
+  #reviews {
+    overflow: auto;
+    padding: 1rem 2rem 1rem 2rem;
+    grid-gap: 10px;
+    background-color: rgb(255, 255, 255);
+    overflow-x: hidden;
+  }
+  
+  .review {
+    min-height: 300px;
+    border-style: solid;
+    border-color: rgb(0, 124, 161);
+    background-color: rgb(0, 195, 255);
+    border-radius: 10px;
+    padding: 15px;
+    display: grid;
+    grid-template-columns: 200px 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 16.7% 16.7% 16.7% 16.7% 16.7% 16.7%;
+  }
+  #photo1{
+    width:80%;
+    max-height: 50%;
+    border-radius: 8px;
+    
+  }
+  .name {
+    grid-column: 2 / span 1;
+    grid-row: 1 / span 2;
+  }
+  
+  .rev {
+    grid-column: 2 / span 7;
+    grid-row: 3 / span 2;
+  }
+  
+  .images {
+    grid-column: 1 / span 1;
+    grid-row: 1/ span 6;
+  }
+  
+  .createTime {
+    grid-column: 2 / span 3;
+    grid-row: 5 /  span 2;
+  }
+  
+  .editTime {
+    grid-column: 5 / span 3;
+    grid-row: 5 /  span 2;
+  }
+  
 
   #buttons {
     grid-template-columns: 100%;
@@ -179,7 +291,7 @@ button:hover {
 
   .viewButton {
     display: block;
-    width: 98%;
+    width: 50%;
     border-radius: 10px;
     margin: 0 auto;
   }
