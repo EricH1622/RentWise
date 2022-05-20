@@ -13,12 +13,9 @@ async function searchQuery(data) {
 
     if (parsedJSON.status === "success") {
       window.location.replace("/results");
-    } else {
-      console.log(parsedJSON.msg);
     }
 
   } catch (error) {
-    console.log("An error occurred: " + error);
   }
 }
 

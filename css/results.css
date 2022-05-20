@@ -13,7 +13,7 @@
     grid-column: 1 / span 5;
     display: grid;
     grid-template-columns: 100%;
-    grid-template-rows: 20% 80%;
+    grid-template-rows: 100%;
     background-image: url("/assets/images/city5.jpg");
     background-position: 0px 800px;
 }
@@ -21,7 +21,6 @@
 #title{
     grid-row: 1;
     grid-column: 1;
-    background: linear-gradient(rgba)
     align-content: center;
 }
 
@@ -42,11 +41,21 @@ h2{
 }
 
 #results{
-    grid-row: 2;
+    grid-row: 1;
     grid-column: 1;
     display: flexbox;
     overflow-y: auto;
     overflow-x: hidden;
+}
+
+#noResults{
+    border-radius: 7px;
+    margin: 4% 2%;
+    height: 30vh;
+    background: linear-gradient(180deg, rgb(16, 0, 37) 30%, #9fc1c5 30%);
+    align-content: center;
+    justify-content: center;
+    text-align: center;
 }
 
 .resultBox{
@@ -91,12 +100,15 @@ h2{
     cursor: pointer;
 }
 
-.more{
+.more, .create{
     background-color: rgb(255, 157, 0);
+}
+
+.more{
     float: left;
 }
 
-.more:hover{
+.more:hover, .create:hover{
     background-color: rgb(218, 134, 0);
 }
 

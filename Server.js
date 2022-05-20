@@ -329,20 +329,8 @@ async function executeSearch(req, res) {
     let values = [req.session.unit, req.session.streetNum, req.session.prefix, req.session.streetName, req.session.streetType, req.session.city, req.session.province];
 
     const [rows, fields] = await connection.query(query, values);
-    console.log("Searching with values " + req.session.unit + " " + req.session.streetNum + " " + req.session.prefix + " " + req.session.streetName + " " + req.session.streetType + " " + req.session.city + " " + req.session.province + "...");
     if(rows.length > 0){
       for (let i = 0; i < rows.length; i++) {
-        console.log(
-        rows[i].location_id + " " +
-        rows[i].unit_number + " " +
-        rows[i].street_number + " " +
-        rows[i].prefix + " " +
-        rows[i].street_name + " " +
-        rows[i].street_type + " " +
-        rows[i].city + " " +
-        rows[i].province + "\n"
-        );
-
         docDOM.window.document.getElementById("results").innerHTML += `
         <div class="resultBox">
                     <div class="resultHead">
@@ -359,6 +347,13 @@ async function executeSearch(req, res) {
 
       }
     } else {
+      docDOM.window.document.getElementById("results").innerHTML += `
+      <div id="noResults">
+        <h1>No results found!</h1>
+        <p>We couldn't find any results for that search, sorry!</p>
+        <p>Maybe you'd like to make a post for it though?</p>
+        <button class="resultButton create" type="button">Create a post</button>
+      </div>`;
     }
     await connection.end();
 
