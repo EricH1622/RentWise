@@ -32,11 +32,11 @@ CREATE TABLE IF NOT EXISTS `BBY_37_location` (
   PRIMARY KEY (`location_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
-INSERT INTO `BBY_37_location` (`location_id`, `unit_number`, `street_number`, `prefix`, `street_name`, `street_type`, `city`, `province`) VALUES (1, '4', '920', 'W', '14th', 'Ave', 'Vancouver', 'British Columbia');
-INSERT INTO `BBY_37_location` (`location_id`, `unit_number`, `street_number`, `prefix`, `street_name`, `street_type`, `city`, `province`) VALUES (2, '6', '125', 'W', '10th', 'Ave', 'Vancouver', 'British Columbia');
-INSERT INTO `BBY_37_location` (`location_id`, `unit_number`, `street_number`, `prefix`, `street_name`, `street_type`, `city`, `province`) VALUES (3, '124', '2200', 'N/A', 'Douglas', 'Rd', 'Burnaby', 'British Columbia');
-INSERT INTO `BBY_37_location` (`location_id`, `unit_number`, `street_number`, `prefix`, `street_name`, `street_type`, `city`, `province`) VALUES (4, '52', '16686', 'N/A', '31', 'Ave', 'Surrey', 'British Columbia');
-INSERT INTO `BBY_37_location` (`location_id`, `street_number`, `prefix`, `street_name`, `street_type`, `city`, `province`) VALUES (5, '9566', 'N/A', 'Tomicki', 'Ave', 'Richmond', 'British Columbia');
+INSERT INTO `BBY_37_location` (`location_id`, `unit_number`, `street_number`, `prefix`, `street_name`, `street_type`, `city`, `province`) VALUES (1, '4', '920', 'W', '14th', 'Ave', 'Vancouver', 'BC');
+INSERT INTO `BBY_37_location` (`location_id`, `unit_number`, `street_number`, `prefix`, `street_name`, `street_type`, `city`, `province`) VALUES (2, '6', '125', 'W', '14th', 'Ave', 'Vancouver', 'BC');
+INSERT INTO `BBY_37_location` (`location_id`, `unit_number`, `street_number`, `prefix`, `street_name`, `street_type`, `city`, `province`) VALUES (3, '124', '2200', 'N/A', 'Douglas', 'Rd', 'Burnaby', 'BC');
+INSERT INTO `BBY_37_location` (`location_id`, `unit_number`, `street_number`, `prefix`, `street_name`, `street_type`, `city`, `province`) VALUES (4, '52', '16686', 'N/A', '31', 'Ave', 'Surrey', 'BC');
+INSERT INTO `BBY_37_location` (`location_id`, `unit_number`, `street_number`, `prefix`, `street_name`, `street_type`, `city`, `province`) VALUES (5, '6', '9566', 'N/A', 'Tomicki', 'Ave', 'Richmond', 'BC');
 
 
 CREATE TABLE IF NOT EXISTS `BBY_37_post` (

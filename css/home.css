@@ -1,71 +1,23 @@
-body {
-  background-color:rgb(255, 255, 255);
-  color: rgb(0, 0, 0);
-  margin: 0;
-  overflow: hidden;
-}
 
-/* width */
-::-webkit-scrollbar {
-  background: rgb(255, 255, 255); 
-  width: 20px;
-}
-
-
- 
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: rgb(255, 157, 0);
-  border-radius: 10px;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: rgb(223, 137, 0);
-}
-
-/**************** Grid Elements ****************/
-
-#container {
-  background-color: rgb(255, 255, 255);
-  display: grid;
-  height: 100vh;
-  grid-template-columns: 20% 20% 20% 20% 20%; 
-  grid-template-rows: 12% 80% 8%;
-}
 
 #content{
   overflow: auto;
-  grid-row: 2;
+  grid-row: 2 / span 2 !important;
   grid-column: 1 / span 5;
-}
-
-#nav {
-  position: sticky;
-  background-color: rgb(16, 0, 37);
-  grid-column: 1 / span 5;
-  grid-row: 1 / span 1;
-  font-family: 'Roboto', sans-serif;
-  list-style: none;
-  box-sizing: border-box;
-  width: 100%;
-  padding: 10px;
   display: grid;
-  grid-template-columns: 40% 60%;
+  grid-template-columns: 100%;
   grid-template-rows: 100%;
 }
 
 h2 {
-  font-family: 'Roboto', sans-serif;
-  font-size: 3vw;
+  font-size: 6vh;
   color: white;
   filter: drop-shadow(5px 7px 2.5px #000000);
-  margin: 0 auto;
-  margin-bottom: 2%;
+  margin: 5vh auto;
 }
-#tagline {
-  font-family: 'Roboto', sans-serif;
-  margin:0 auto;
+
+#username{
+  margin: 0 auto;
 }
 
 input[type=text],select {
@@ -79,11 +31,10 @@ input[type=text],select {
 }
 
 #form {
-  font-family: 'Roboto', sans-serif;
   width: 100%;
   margin: 1rem 0 3em 0;
   border-radius: 10px;
-  background-color: #001d3d;
+  background-color: #06002e;
   color: white;
   font-weight: bolder;
   display: grid;
@@ -93,7 +44,7 @@ input[type=text],select {
 }
 
 #h3 {
-  font-family: 'Roboto', sans-serif !important;
+  font-size: 3vh;
   text-align: center;
   grid-row: 2 / span 1;
   grid-column: 2 / span 3;
@@ -154,7 +105,7 @@ input[type=text],select {
 }
 
 #formContainer {
-  grid-row: 2 / span 1;
+  grid-row: 1 / span 1;
   grid-column: 1 / span 1;
   background-image: url(../assets/images/city2.jpeg);
   background-position: center;
@@ -165,6 +116,7 @@ input[type=text],select {
   justify-content: center;
   align-items: center;
   opacity: 0.9;
+  overflow: hidden;
 }
 
 #footer {

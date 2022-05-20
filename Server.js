@@ -77,6 +77,47 @@ app.get("/logout", function (req, res) {
   }
 });
 
+app.get("/profile", function (req, res) {
+  sendProfilePage(req, res);
+});
+
+app.get("/home", function (req, res) {
+  sendHomePage(req, res);
+});
+
+async function sendHomePage(req, res) {
+  if (req.session.loggedIn) {
+    let doc = fs.readFileSync("./html/home.html", "utf8");
+    let docDOM = new JSDOM(doc);
+    const connection = await mysql.createConnection({
+      host: "localhost",
+      user: "root",
+      database: "COMP2800",
+      multipleStatements: true
+    });
+    connection.connect();
+    const [rows, fields] = await connection.execute(
+      "SELECT first_name FROM BBY_37_user " +
+      "WHERE BBY_37_user.user_id = " + req.session.userid);
+    await connection.end();
+    docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
+
+    res.send(docDOM.serialize());
+  } else {
+    // not logged in - no session and no access, redirect to root.
+    res.redirect("/login");
+  }
+}
+
+app.get("/admin", function (req, res) {
+  if (req.session.loggedIn && req.session.userlevel == 1) {
+    sendAdminPage(req, res);
+  } else {
+    res.redirect("/");
+  }
+});
+
+
 //dynamic navbars
 function getNavBar(req) {
   if (req.session.loggedIn) {
@@ -87,7 +128,7 @@ function getNavBar(req) {
       </label>
       <div class="logo"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></div>
       <ul>
-          <li><a href="/home">Home</a></li>
+          <li><a href="/home">Search</a></li>
           <li><a href="/createPost">Write a review</a></li>
           <li><a href="/profile">Profile</a></li>
           <li><a href="/logout" id="logout">Logout</a></li>
@@ -100,7 +141,8 @@ function getNavBar(req) {
       <div class="logo"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></div>
       <ul>
           <li><a href="/admin">Admin</a></li>
-          <li><a href="#">Reviews</a></li>
+          <li><a href="/home">Search</a></li>
+          <li><a href="#">Create Post</a></li>
           <li><a href="/profile">Profile</a></li>
           <li><a href="/logout" id="logout">Logout</a></li>
       </ul>`
@@ -110,9 +152,7 @@ function getNavBar(req) {
   }
 }
 
-app.get("/profile", function (req, res) {
-  sendProfilePage(req, res);
-});
+
 
 async function sendProfilePage(req, res) {
   let doc = 0;
@@ -290,6 +330,14 @@ app.get("/admin", function (req, res) {
   }
 });
 
+app.get("/results", function (req, res) {
+  if (req.session.loggedIn) {
+    executeSearch(req, res);
+  } else {
+    res.redirect("/");
+  }
+});
+
 async function sendAdminPage(req, res) {
   let doc = fs.readFileSync("./html/admin.html", "utf8");
   let docDOM = new JSDOM(doc);
@@ -382,6 +430,10 @@ app.post('/update-profile', function (req, res) {
   editUserProfile(req, res);
 });
 
+app.post('/search', function (req, res) {
+  storeSearch(req, res);
+});
+
 async function editUserProfile(req, res) {
   if (req.session.loggedIn) {
     const connection = await mysql.createConnection({
@@ -399,6 +451,112 @@ async function editUserProfile(req, res) {
       status: "success",
       msg: "Profile info updated."
     });
+  } else {
+    res.redirect("/");
+  }
+}
+
+async function storeSearch(req, res) {
+  res.setHeader("Content-Type", "application/json");
+  if (req.session.loggedIn) {
+    req.session.unit = req.body.unit;
+    req.session.streetNum = req.body.streetNum;
+    req.session.prefix = req.body.prefix;
+    req.session.streetName = req.body.streetName;
+    req.session.streetType = req.body.streetType;
+    req.session.city = req.body.city;
+    req.session.province = req.body.province;
+    res.send({
+      status: "success",
+      msg: "Search parameters stored."
+    });
+  } else {
+    res.send({
+      status: "fail",
+      msg: "Not logged in."
+    });
+  }
+}
+
+async function executeSearch(req, res) {
+  if (req.session.loggedIn) {
+    let doc = fs.readFileSync("./html/results.html", "utf8");
+    let docDOM = new JSDOM(doc);
+
+    const connection = await mysql.createConnection({
+      host: 'localhost',
+      user: 'root',
+      database: 'COMP2800',
+      multipleStatements: true
+    });
+    connection.connect();
+
+    let query = `SELECT * FROM BBY_37_location WHERE 
+      unit_number LIKE ? AND 
+      street_number LIKE ? AND 
+      prefix LIKE ? AND 
+      street_name LIKE ? AND 
+      street_type LIKE ? AND 
+      city LIKE ? AND 
+      province LIKE ?`;
+    
+    let values = [req.session.unit, req.session.streetNum, req.session.prefix, req.session.streetName, req.session.streetType, req.session.city, req.session.province];
+
+    const [rows, fields] = await connection.query(query, values);
+
+    
+    if(rows.length > 0){
+      let query2 = `SELECT COUNT(post_id) AS post_count FROM BBY_37_post WHERE location_id = ?`;
+      let rows2;
+      let fields2;
+      for (let i = 0; i < rows.length; i++) {
+        [rows2, fields2] = await connection.query(query2, [rows[i].location_id]);
+
+        let postNumStr;
+        if(rows2.length == 0){
+          postNumStr = "There are 0 posts for this address.";
+        } else if(rows2[0].post_count == 1){
+          postNumStr = "There is 1 post for this address.";
+        } else {
+          postNumStr = "There are " + rows2[0].post_count + " posts for this address.";
+        }
+
+        let prefixStr;
+        if(rows[i].prefix == "N/A"){
+          prefixStr = "";
+        } else {
+          prefixStr = rows[i].prefix;
+        }
+        
+
+        docDOM.window.document.getElementById("results").innerHTML += `
+        <div class="resultBox">
+                    <div class="resultHead">
+                        <h2>` + rows[i].unit_number + "-" + rows[i].street_number + " " + prefixStr + " " + rows[i].street_name + " " + rows[i].street_type + " " + `</h2>
+                        <p class="address">` + rows[i].city + ", " + rows[i].province + `</p>
+                    </div>
+                    <div class="resultBody">
+                        <p class="description">` + postNumStr + `</p>
+                        <div>
+                            <a class="resultButton more" href="/unitview?id=[` + rows[i].location_id + `]">See more</a>
+                        </div>
+                    </div>
+        </div>`;
+
+      }
+    } else {
+      docDOM.window.document.getElementById("results").innerHTML += `
+      <div id="noResults">
+        <h1>No results found!</h1>
+        <p>We couldn't find any results for that search, sorry!</p>
+        <p>Maybe you'd like to make a post for it though?</p>
+        <button class="resultButton create" type="button">Create a post</button>
+      </div>`;
+    }
+    await connection.end();
+
+    docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
+    res.send(docDOM.serialize());
   } else {
     res.redirect("/");
   }
