@@ -173,11 +173,11 @@ async function sendReviews(req, res) {
   // get relative data and save into constants
 
   // posts
-  const [rows, fields] = await connection.execute("SELECT * FROM bby_37_post WHERE bby_37_post.location_id = " + unit_id
+  const [rows, fields] = await connection.execute("SELECT * FROM BBY_37_post WHERE BBY_37_post.location_id = " + unit_id
   );
 
   // addresses
-  const [rows2, fields2] = await connection.execute("SELECT * FROM bby_37_location WHERE bby_37_location.location_id = " + unit_id
+  const [rows2, fields2] = await connection.execute("SELECT * FROM BBY_37_location WHERE BBY_37_location.location_id = " + unit_id
   );
 
   // users
@@ -185,7 +185,7 @@ async function sendReviews(req, res) {
 
   // for each post, the user id is used to query the user db for usernames
   for (let k = 0; k < rows2.length; k++) {
-    const [rows2, fields2] = await connection.execute("SELECT * FROM bby_37_user WHERE bby_37_user.user_id = " + rows[k].user_id
+    const [rows2, fields2] = await connection.execute("SELECT * FROM BBY_37_user WHERE BBY_37_user.user_id = " + rows[k].user_id
     );
     u_name[k] = rows2[k].username;
   }
