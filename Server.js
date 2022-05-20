@@ -148,6 +148,73 @@ async function sendProfilePage(req, res) {
   }
 }
 
+app.get("/unitView", function (req, res) {
+  if (req.session.loggedIn) {
+    sendReviews(req, res);
+  } else {
+    res.redirect("/login")
+  }
+});
+
+async function sendReviews(req, res) {
+  let doc = fs.readFileSync("./html/unitView.html", "utf8");
+  let docDOM = new JSDOM(doc);
+  const connection = await mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "COMP2800",
+    multipleStatements: true
+  });
+  // replace unit_id with selected option
+  let unit_id = 1;
+
+  connection.connect();
+  // get relative data and save into constants
+
+  // posts
+  const [rows, fields] = await connection.execute("SELECT * FROM bby_37_post WHERE bby_37_post.location_id = " + unit_id
+  );
+
+  // addresses
+  const [rows2, fields2] = await connection.execute("SELECT * FROM bby_37_location WHERE bby_37_location.location_id = " + unit_id
+  );
+
+  // users
+  let u_name = [];
+
+  // for each post, the user id is used to query the user db for usernames
+  for (let k = 0; k < rows2.length; k++) {
+    const [rows2, fields2] = await connection.execute("SELECT * FROM bby_37_user WHERE bby_37_user.user_id = " + rows[k].user_id
+    );
+    u_name[k] = rows2[k].username;
+  }
+
+  // load address into page
+  let address = rows2[0].unit_number + " " + rows2[0].street_number + " " + rows2[0].street_name + " " + rows2[0].street_type + " " + rows2[0].prefix + " " + rows2[0].city + " " + rows2[0].province; 
+
+  await connection.end();
+  let currentReview = "";
+  // empty reviews div
+  docDOM.window.document.getElementById("reviews").innerHTML = currentReview;
+  for (let j = 0; j < rows.length; j++) {
+    // for each row, make a new review
+    currentReview += "<div class='review'>";
+    currentReview += "<div class='name'><strong>" + u_name[j] + "</strong></div>";
+    currentReview += "<div class='rev'><strong>" + rows[j].content + "</strong></div>";
+    currentReview += "<div class='createTime'> Original Post: " + rows[j].date_created + "</div>";
+    if (rows[j].last_edited_date) {
+      currentReview += "<div class='editTime'> Last edit:" + rows[j].last_edited_date + "</div>";
+    }
+    // currentReview += "<div class='images'>" + IMAGE TO GO HERE + "</div>";
+    currentReview += "</div>";
+  }
+  docDOM.window.document.getElementById("address").innerHTML= address;
+  docDOM.window.document.getElementById("reviews").innerHTML += currentReview;
+
+      res.send(docDOM.serialize());
+}
+
 app.get("/admin", function (req, res) {
   if (req.session.loggedIn && req.session.userlevel == 1) {
     sendAdminPage(req, res);
