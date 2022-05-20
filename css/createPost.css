@@ -62,6 +62,116 @@ body {
   background-color: rgb(153, 190, 228);
 
 }
+input[type=text],select {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+#form {
+  font-family: 'Roboto', sans-serif;
+  width: 100%;
+  margin: 3rem 0 3em 0;
+  border-radius: 10px;
+  background-color: #001d3d;
+  color: white;
+  font-weight: bolder;
+  display: grid;
+  grid-template-rows: 2rem 1fr 1fr 1fr 1fr 1fr 1fr 2fr 6fr 0.5fr 1fr 2rem;
+  grid-template-columns: 2rem 1fr 2rem 1fr 2rem;
+  box-shadow: 15px 15px 5px 0px rgba(0,0,0,0.85);
+}
+
+#h3 {
+  font-family: 'Roboto', sans-serif !important;
+  text-align: center;
+  grid-row: 2 / span 1;
+  grid-column: 2 / span 3;
+}
+
+#unit {
+  grid-row: 3 /span 1;
+  grid-column: 2 /span 1;
+}
+
+#streetNum {
+  grid-row: 4 /span 1;
+  grid-column: 2 /span 1;
+}
+
+#prefix{
+  grid-row: 4 / span 1;
+  grid-column: 4 / span 1;
+}
+
+#streetName {
+  grid-row: 5 / span 1;
+  grid-column: 2 / span 1;
+}
+#streetType{
+  grid-row: 5 / span 1;
+  grid-column: 4 / span 1;
+}
+#city {
+  grid-row: 6 / span 1;
+  grid-column: 2 / span 3;
+}
+
+#province {
+  grid-row: 7 / span 1;
+  grid-column: 2 / span 3;
+}
+#imgUpload{
+  grid-row: 8 / span 1;
+  grid-column: 2 / span 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+}
+#richText{
+  grid-row: 9 / span 1;
+  grid-column: 2 / span 3;
+}
+#msg{
+  grid-row: 10 / span 1;
+  grid-column: 2 / span 3;
+}
+#submit {
+  grid-row: 11 / span 1;
+  grid-column: 2 / span 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#btn,#uploadBtn{
+  background-color: rgb(255, 157, 0); /* Green */
+  border: none;
+  border-radius: 10px;
+  color: white;
+  padding: 15px 80px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+
+#formContainer {
+  grid-row: 2 / span 1;
+  grid-column: 1 / span 1;
+  background-image: url(../assets/images/city2.jpeg);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  opacity: 0.9;
+}
 
 #t2 {
   grid-row: 2 / span 1;
@@ -194,13 +304,11 @@ font-weight: bold;
 transition: 0.6s;
 }
 
-#footer #copyright {
+#footer .copyright {
   margin: 0;
   text-align: center;
   color: rgb(255, 255, 255);
   font-size: 1.5vmin;
-  user-select: none;
-  cursor: pointer;
 }
 
 .hamburger{
