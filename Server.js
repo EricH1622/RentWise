@@ -8,13 +8,14 @@ const fs = require("fs");
 const mysql = require("mysql2/promise");
 const multer = require("multer");
 const {JSDOM} = require('jsdom');
+const { connect } = require("http2");
 
 
 const connectConfig = {
-  host: "ec2-54-164-40-66.compute-1.amazonaws.com",
-  user: "hdcfcvadormhvp",
-  password: "82b6e88d1e8e098bd53e6488608eb98fae71b268974a936361b1853886da4234",
-  database: "d7rotf5r5sfvuj",
+  host: "remotemysql.com",
+  user: "ZT2gXxE8UI",
+  password: "dcXru9j3DE",
+  database: "ZT2gXxE8UI",
   multipleStatements: true
   };
 
@@ -129,13 +130,7 @@ async function sendProfilePage(req, res) {
   if (req.session.loggedIn) {
     let doc = fs.readFileSync("./html/profile.html", "utf8");
     let docDOM = new JSDOM(doc);
-    const connection = await mysql.createConnection({
-      host: "localhost",
-      user: "root",
-      password: "",
-      database: "COMP2800",
-      multipleStatements: true
-    });
+    const connection = await mysql.createConnection(connectConfig);
     connection.connect();
     const [rows, fields] = await connection.execute(
       "SELECT first_name, last_name, username, email_address, password FROM BBY_37_user " +
@@ -168,13 +163,7 @@ app.get("/unitView", function (req, res) {
 async function sendReviews(req, res) {
   let doc = fs.readFileSync("./html/unitView.html", "utf8");
   let docDOM = new JSDOM(doc);
-  const connection = await mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "COMP2800",
-    multipleStatements: true
-  });
+  const connection = await mysql.createConnection(connectConfig);
   // replace unit_id with selected option
   let unit_id = 1;
 
@@ -182,11 +171,11 @@ async function sendReviews(req, res) {
   // get relative data and save into constants
 
   // posts
-  const [rows, fields] = await connection.execute("SELECT * FROM bby_37_post WHERE bby_37_post.location_id = " + unit_id
+  const [rows, fields] = await connection.execute("SELECT * FROM BBY_37_post WHERE BBY_37_post.location_id = " + unit_id
   );
 
   // addresses
-  const [rows2, fields2] = await connection.execute("SELECT * FROM bby_37_location WHERE bby_37_location.location_id = " + unit_id
+  const [rows2, fields2] = await connection.execute("SELECT * FROM BBY_37_location WHERE BBY_37_location.location_id = " + unit_id
   );
 
   // users
@@ -194,7 +183,7 @@ async function sendReviews(req, res) {
 
   // for each post, the user id is used to query the user db for usernames
   for (let k = 0; k < rows2.length; k++) {
-    const [rows2, fields2] = await connection.execute("SELECT * FROM bby_37_user WHERE bby_37_user.user_id = " + rows[k].user_id
+    const [rows2, fields2] = await connection.execute("SELECT * FROM BBY_37_user WHERE BBY_37_user.user_id = " + rows[k].user_id
     );
     u_name[k] = rows2[k].username;
   }
@@ -220,7 +209,7 @@ async function sendReviews(req, res) {
   }
   docDOM.window.document.getElementById("address").innerHTML= address;
   docDOM.window.document.getElementById("reviews").innerHTML += currentReview;
-
+  docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
       res.send(docDOM.serialize());
 }
 
@@ -235,13 +224,7 @@ app.get("/admin", function (req, res) {
 async function sendAdminPage(req, res) {
   let doc = fs.readFileSync("./html/admin.html", "utf8");
   let docDOM = new JSDOM(doc);
-  const connection = await mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "COMP2800",
-    multipleStatements: true
-  });
+  const connection = await mysql.createConnection(connectConfig);
   connection.connect();
   const [rows, fields] = await connection.execute("SELECT * FROM BBY_37_user ");
   await connection.end();
@@ -376,13 +359,7 @@ app.post("/delete_user", function (req, res) {
 
 
 async function deleteUser(req, res) {
-  const connection = await mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "COMP2800",
-    multipleStatements: true
-  });
+  const connection = await mysql.createConnection(connectConfig);
   connection.connect();
   let [rows, fields] = await connection.query(
     "SELECT role_id FROM BBY_37_user WHERE BBY_37_user.user_id = ?",
@@ -408,13 +385,7 @@ async function deleteUser(req, res) {
 
 
 async function doDeleteUser(req, res) {
-  const connection = await mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "COMP2800",
-    multipleStatements: true
-  });
+  const connection = await mysql.createConnection(connectConfig);
   connection.connect();
   await connection.query('DELETE FROM BBY_37_user WHERE BBY_37_user.user_id = ?',
     [req.body.userID]);
@@ -439,13 +410,7 @@ app.post("/update_user_data", function (req, res) {
 
 async function adminUpdateUsers(req, res) {
 
-  const connection = await mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "COMP2800",
-    multipleStatements: true
-  });
+  const connection = await mysql.createConnection(connectConfig);
   connection.connect();
   let [rows, fields] = await connection.query(
     "SELECT user_id, role_id FROM BBY_37_user WHERE BBY_37_user.user_id = ?",
@@ -478,13 +443,7 @@ async function adminUpdateUsers(req, res) {
 }
 
 async function doUpdateUser(req, res) {
-  const connection = await mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "COMP2800",
-    multipleStatements: true
-  });
+  const connection = await mysql.createConnection(connectConfig);
   connection.connect();
   await connection.query('UPDATE BBY_37_user ' +
     'SET username = ?, first_name = ?, last_name = ?, email_address = ?, password = ?, role_id = ? ' +
@@ -513,13 +472,7 @@ app.post("/add_user", function (req, res) {
 
 
 async function adminAddUser(req, res) {
-  const connection = await mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "COMP2800",
-    multipleStatements: true
-  });
+  const connection = await mysql.createConnection(connectConfig);
   connection.connect();
   // check if username exists
   let [rows, fields] = await connection.query(
@@ -596,13 +549,7 @@ app.post("/submitPost", function (req,res){
   }
 });
 async function submitPost(req,res){
-  const connection = await mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "COMP2800",
-    multipleStatements: true
-  });
+  const connection = await mysql.createConnection(connectConfig);
   connection.connect();
 
   //Read into database to see if the address entered by user already exsits
