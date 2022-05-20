@@ -215,6 +215,73 @@ async function sendReviews(req, res) {
       res.send(docDOM.serialize());
 }
 
+app.get("/history", function (req, res) {
+  if (req.session.loggedIn) {
+    sendHistory(req, res);
+  } else {
+    res.redirect("/login")
+  }
+});
+
+async function sendHistory(req, res) {
+  let doc = fs.readFileSync("./html/userTimeLine.html", "utf8");
+  let docDOM = new JSDOM(doc);
+  const connection = await mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "COMP2800",
+    multipleStatements: true
+  });
+
+  connection.connect();
+
+  // query for relative data from DB
+  const [rows, fields] = await connection.execute("SELECT BBY_37_location.unit_number, BBY_37_location.street_number, BBY_37_location.prefix, BBY_37_location.street_name, BBY_37_location.street_type, BBY_37_location.city, BBY_37_location.province, BBY_37_post.user_id, BBY_37_post.date_created, BBY_37_post.last_edited_date, BBY_37_post.content, BBY_37_post.photo1 FROM BBY_37_post INNER JOIN BBY_37_location ON BBY_37_location.location_id=BBY_37_post.location_id WHERE user_id=" + req.session.userid
+  );
+
+  await connection.end();
+  let historyItems = ""; 
+  // empty reviews div
+  docDOM.window.document.getElementById("userHistory").innerHTML = historyItems;
+
+  // check for if user has no posts
+  if (rows[0]?.street_number === undefined) {
+    docDOM.window.document.getElementById("userHistory").innerHTML += "no posts";
+    // unecessary check?
+  } else if (rows[0].street_number != null) {
+    for (let j = rows.length - 1; j > -1; j--) {
+      // for each item, define the address
+      let address = "";
+      if (rows[j].unit_number != null) {
+        address = rows[j].unit_number + " " + rows[j].street_number + " " + rows[j].street_name + " " + rows[j].street_type + " " + rows[j].prefix + " " + rows[j].city + " " + rows[j].province;
+      } else {
+        address = rows[j].street_number + " " + rows[j].street_name + " " + rows[j].street_type + " " + rows[j].prefix + " " + rows[j].city + " " + rows[j].province;
+      }
+      // for each row, make a new review
+      historyItems += "<div class='timeLineItem'>";
+      historyItems += "<div class='address'>" + address + "</div>";
+      if (rows[j].photo1 != null) {
+        historyItems += "<div class='image'> " + rows[j].photo1 + "</div>";
+      }
+      historyItems += "<div class='review'>" + rows[j].content + "</div>";
+      historyItems += "<div class='message'></div>";
+      historyItems += "<div class='initPostTime'>Posted: " + rows[j].date_created + "</div>";
+      if (rows[j].last_edited_date != "Invalid Date") {
+        historyItems += "<div class='lastEditTime'>Edited: " + rows[j].last_edited_date + "</div>";
+      } else {
+        historyItems += "<div class='lastEditTime'></div>";
+      }
+      historyItems += "<div class='editBtn'></div>";
+      historyItems += "</div>";
+      }
+    docDOM.window.document.getElementById("userHistory").innerHTML = historyItems;
+  } else {
+    // error 
+  }
+      res.send(docDOM.serialize());
+}
+
 app.get("/admin", function (req, res) {
   if (req.session.loggedIn && req.session.userlevel == 1) {
     sendAdminPage(req, res);
@@ -260,6 +327,45 @@ async function sendAdminPage(req, res) {
   docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
 
   res.send(docDOM.serialize());
+}
+
+app.get("/userTimeLine", function (req, res) {
+  if (req.session.loggedIn) {
+    sendTimeLine(req, res);
+  } else {
+    res.redirect("/login")
+  }
+});
+
+async function sendTimeLine(req, res) {
+  let doc = fs.readFileSync("./html/userTimeLine.html", "utf8");
+  let docDOM = new JSDOM(doc);
+  const connection = await mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "COMP2800",
+    multipleStatements: true
+  });
+  let unit_id = 1;
+  connection.connect();
+  const [rows, fields] = await connection.execute("SELECT * FROM bby_37_post WHERE bby_37_post.user_id = " + req.session.userid
+  );
+
+  await connection.end();
+  let historyItem = "";
+  for (let j = 0; j < rows.length; j++) {
+    // for each row, make a timeline item
+    historyItem += "<div class='review'>";
+    // information to be added
+    historyItem += "";
+    historyItem += "";
+    historyItem += "";
+    historyItem += "";
+  }
+  docDOM.window.document.getElementById("user_history").innerHTML += historyItem;
+
+      res.send(docDOM.serialize());
 }
 
 app.post("/login", function (req, res) {
