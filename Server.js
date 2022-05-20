@@ -114,6 +114,7 @@ function getNavBar(req) {
           <li><a href="/home">Search</a></li>
           <li><a href="/createPost">Create Post</a></li>
           <li><a href="/profile">Profile</a></li>
+          <li><a href="/userTimeline">Timeline</a></li>
           <li><a href="/logout" id="logout">Logout</a></li>
       </ul>`
     }
@@ -125,8 +126,6 @@ function getNavBar(req) {
 
 
 async function sendProfilePage(req, res) {
-  let doc = 0;
-  let docDOM = 0;
   if (req.session.loggedIn) {
     let doc = fs.readFileSync("./html/profile.html", "utf8");
     let docDOM = new JSDOM(doc);
@@ -233,7 +232,7 @@ async function sendReviews(req, res) {
   res.send(docDOM.serialize());
 }
 
-app.get("/history", function (req, res) {
+app.get("/userTimeline", function (req, res) {
   if (req.session.loggedIn) {
     sendHistory(req, res);
   } else {
