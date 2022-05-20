@@ -361,13 +361,7 @@ app.post('/search', function (req, res) {
 
 async function editUserProfile(req, res) {
   if (req.session.loggedIn) {
-    const connection = await mysql.createConnection({
-      host: 'localhost',
-      user: 'root',
-      password: '',
-      database: 'COMP2800',
-      multipleStatements: true
-    });
+    const connection = await mysql.createConnection(connectConfig);
     connection.connect();
 
     if(!valid_username(req.body.username)){
@@ -458,12 +452,7 @@ async function executeSearch(req, res) {
     let doc = fs.readFileSync("./html/results.html", "utf8");
     let docDOM = new JSDOM(doc);
 
-    const connection = await mysql.createConnection({
-      host: 'localhost',
-      user: 'root',
-      database: 'COMP2800',
-      multipleStatements: true
-    });
+    const connection = await mysql.createConnection(connectConfig);
     connection.connect();
 
     let query = `SELECT * FROM BBY_37_location WHERE 
@@ -562,13 +551,7 @@ async function authenticateUser(req, res) {
 }
 
 async function createUser(req, res) {
-  const connection = await mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "COMP2800",
-    multipleStatements: true
-  });
+  const connection = await mysql.createConnection(connectConfig);
   connection.connect();
 
   //Checks for valid user values
@@ -1127,7 +1110,7 @@ function valid_userID (userID) {
   return false;
 }
 
-let port = 8000;
+let port = process.env.PORT;
 app.listen(port, function () {
   console.log("RentWise server running on port: " + port);
 });
