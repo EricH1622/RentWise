@@ -76,20 +76,6 @@ app.get("/logout", function (req, res) {
   }
 });
 
-app.get("/unitView", function (req, res) {
-  if (req.session.loggedIn) {
-    let doc = fs.readFileSync("./html/unitView.html", "utf8");
-    let docDOM = new JSDOM(doc);
-    docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
-    res.send(docDOM.serialize());
-  } else {
-    let doc = fs.readFileSync("./html/login.html", "utf8");
-    let docDOM = new JSDOM(doc);
-    docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
-    res.send(docDOM.serialize());
-  }
-});
-
 //dynamic navbars
 function getNavBar(req){
   if(req.session.loggedIn){
@@ -174,6 +160,45 @@ async function sendProfilePage(req, res) {
     // not logged in - no session and no access, redirect to root.
     res.redirect("/");
   }
+}
+
+app.get("/unitView", function (req, res) {
+  if (req.session.loggedIn) {
+    sendReviews(req, res);
+  } else {
+    res.redirect("/login")
+  }
+});
+
+async function sendReviews(req, res) {
+  let doc = fs.readFileSync("./html/unitView.html", "utf8");
+  let docDOM = new JSDOM(doc);
+  const connection = await mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "COMP2800",
+    multipleStatements: true
+  });
+  var u_name = [];
+  let unit_id = 1;
+  connection.connect();
+  const [rows, fields] = await connection.execute("SELECT * FROM bby_37_post WHERE bby_37_post.location_id = " + unit_id
+  );
+
+  await connection.end();
+  let currentReview = "";
+  for (let j = 0; j < rows.length; j++) {
+    // for each row, make a new review
+    currentReview += "<div class='review'>";
+    currentReview += "<p><strong>" + "name" + "</strong></p>";
+    currentReview += "<p>" + rows[j].content + "</p>";
+    currentReview += "<p>" + rows[j].date_created + "</p>";
+    currentReview += "</div>";
+  }
+  docDOM.window.document.getElementById("reviews").innerHTML += currentReview;
+
+      res.send(docDOM.serialize());
 }
 
 app.get("/admin", function (req, res) {
