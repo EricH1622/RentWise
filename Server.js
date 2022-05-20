@@ -329,18 +329,42 @@ async function executeSearch(req, res) {
     let values = [req.session.unit, req.session.streetNum, req.session.prefix, req.session.streetName, req.session.streetType, req.session.city, req.session.province];
 
     const [rows, fields] = await connection.query(query, values);
+
+    
     if(rows.length > 0){
+      let query2 = `SELECT COUNT(post_id) AS post_count FROM BBY_37_post WHERE location_id = ?`;
+      let rows2;
+      let fields2;
       for (let i = 0; i < rows.length; i++) {
+        [rows2, fields2] = await connection.query(query2, [rows[i].location_id]);
+
+        let postNumStr;
+        if(rows2.length == 0){
+          postNumStr = "There are 0 posts for this address.";
+        } else if(rows2[0].post_count == 1){
+          postNumStr = "There is 1 post for this address.";
+        } else {
+          postNumStr = "There are " + rows2[0].post_count + " posts for this address.";
+        }
+
+        let prefixStr;
+        if(rows[i].prefix == "N/A"){
+          prefixStr = "";
+        } else {
+          prefixStr = rows[i].prefix;
+        }
+        
+
         docDOM.window.document.getElementById("results").innerHTML += `
         <div class="resultBox">
                     <div class="resultHead">
-                        <h2>` + rows[i].unit_number + "-" + rows[i].street_number + " " + rows[i].prefix + " " + rows[i].street_name + " " + rows[i].street_type + " " + `</h2>
+                        <h2>` + rows[i].unit_number + "-" + rows[i].street_number + " " + prefixStr + " " + rows[i].street_name + " " + rows[i].street_type + " " + `</h2>
                         <p class="address">` + rows[i].city + ", " + rows[i].province + `</p>
                     </div>
                     <div class="resultBody">
-                        <p class="description">Number of posts will go here eventually</p>
+                        <p class="description">` + postNumStr + `</p>
                         <div>
-                            <button class="resultButton more" type="button">See more</button>
+                            <a class="resultButton more" href="/unitview?id=[` + rows[i].location_id + `]">See more</a>
                         </div>
                     </div>
         </div>`;
