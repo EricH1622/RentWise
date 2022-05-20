@@ -68,7 +68,7 @@ h2{
 
 
 .resultHead, .resultBody{
-    margin: 4% 2% 1%;
+    margin: 2% 2%;
 }
 
 .resultHead > p{
@@ -78,7 +78,6 @@ h2{
 
 .resultBody{
     grid-gap: 1%;
-    margin-bottom: 10%;
 }
 
 .description{
