@@ -238,10 +238,10 @@ transition: 0.6s;
   border-radius: 20px;
   border-width: 3.7px;
   padding: 10px;
+  padding-bottom: 20px;
   margin: 15px;
-  border-color: rgba(103, 103, 250, 0.452);
-  background-color: rgb(165, 165, 228);
-  
+  border-color: rgb(0, 124, 161);
+  background-color: rgb(0, 195, 255);
 }
 
 .address {
@@ -255,16 +255,21 @@ transition: 0.6s;
 }
 
 .image {
-  grid-column: 3 / span 2;
+  grid-column: 1 / span 2;
   grid-row: 2 / span 2;
   /* border-style: solid; */
   /* border-color: aqua; */
   background-color: rgb(168, 168, 168);
 }
 
+.image img {
+  height: 200px;
+  width: 300px;
+  }
+
 .review {
-  grid-column: 1 / span 6;
-  grid-row: 4 / span 3;
+  grid-column: 3 / span 6;
+  grid-row: 2 / span 3;
   /* border-style: solid; */
   /* border-color: aqua; */
 
@@ -280,7 +285,7 @@ transition: 0.6s;
 }
 
 .initPostTime {
-  grid-column: 1 / span 2;
+  grid-column: 1 / span 3;
   grid-row: 9;
   /* border-style: solid; */
   /* border-color: aqua; */
@@ -289,7 +294,7 @@ transition: 0.6s;
 }
 
 .lastEditTime {
-  grid-column: 3 / span 2;
+  grid-column: 5 / span 2;
   grid-row: 9;
   /* border-style: solid; */
   /* border-color: aqua; */

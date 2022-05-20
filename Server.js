@@ -307,7 +307,7 @@ async function sendHistory(req, res) {
       historyItems += "<div class='timeLineItem'>";
       historyItems += "<div class='address'>" + address + "</div>";
       if (rows[j].photo1 != null) {
-        historyItems += "<div class='image'> " + rows[j].photo1 + "</div>";
+        historyItems += "<div class='image'><img id='photo1' src=' " + rows[j].photo1 + "'></div>";
       }
       historyItems += "<div class='review'>" + rows[j].content + "</div>";
       historyItems += "<div class='message'></div>";
