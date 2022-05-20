@@ -180,22 +180,41 @@ async function sendReviews(req, res) {
     database: "COMP2800",
     multipleStatements: true
   });
-  var u_name = [];
+  // replace unit_id with selected option
   let unit_id = 1;
+
+  let u_name = [];
   connection.connect();
+  // get posts related to address
   const [rows, fields] = await connection.execute("SELECT * FROM bby_37_post WHERE bby_37_post.location_id = " + unit_id
   );
+  const [rows2, fields2] = await connection.execute("SELECT * FROM bby_37_location WHERE bby_37_location.location_id = " + unit_id
+  );
 
+  const [rows3, fields3] = await connection.execute("SELECT * FROM bby_37_location WHERE bby_37_location.location_id = " + unit_id
+  );
+
+  // get usernames from users who have posted
+  
+  // set address
+  // for (let i = 0; i < rows2.length; i++) {
+  //   if (rows2[i].location_id == ) {
+
+  //   }
+  // }
+  let address = "Unit " + rows2[0].unit_number + " " + rows2[0].street_number + " " + rows2[0].street_name + " " + rows2[0].prefix + " " + rows2[0].city + " " + rows2[0].province; 
   await connection.end();
   let currentReview = "";
+  // empty reviews div
+  docDOM.window.document.getElementById("reviews").innerHTML = currentReview;
   for (let j = 0; j < rows.length; j++) {
     // for each row, make a new review
     currentReview += "<div class='review'>";
-    currentReview += "<p><strong>" + "name" + "</strong></p>";
+    currentReview += "<p><strong>" + rows2[j] + "</strong></p>";
     currentReview += "<p>" + rows[j].content + "</p>";
-    currentReview += "<p>" + rows[j].date_created + "</p>";
     currentReview += "</div>";
   }
+  docDOM.window.document.getElementById("address").innerHTML= address;
   docDOM.window.document.getElementById("reviews").innerHTML += currentReview;
 
       res.send(docDOM.serialize());

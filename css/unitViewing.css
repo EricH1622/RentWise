@@ -103,6 +103,7 @@ button:hover {
   #load {
     grid-column: 1;
     grid-row: 1;
+    display: none;
   }
   
   #post {
