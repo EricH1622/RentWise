@@ -1028,7 +1028,6 @@ app.get("/createPost", function (req, res) {
 });
 
 app.post("/submitPost", function (req,res){
-  console.log(req.body.review);
   if (req.session.loggedIn) {
     submitPost(req,res);
   }else{
@@ -1224,7 +1223,6 @@ function valid_usertype(userType) {
 
 
 function valid_userID (userID) {
-  console.log(typeof(userID));
   if (typeof(userID) == "number") return true;
   return false;
 }
