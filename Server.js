@@ -9,9 +9,6 @@ const mysql = require("mysql2/promise");
 const multer = require("multer");
 const {JSDOM} = require('jsdom');
 
-
-
-
 app.use("/js", express.static("./js"));
 app.use("/css", express.static("./css"));
 app.use("/assets", express.static("./assets"));
@@ -905,6 +902,141 @@ async function submitPost(req,res){
       message:"The post has been created.",
       location_id:locationid
     }); 
+}
+
+function valid_email (email) {
+  // allowed: a-z A-Z 0-9 _-.@
+  // email should be trimmed before sending here.
+
+  if (!email) return false;
+  if (email.length > 100) return false;
+
+  const emailParts = email.split('@');
+  if (emailParts.length !== 2  ||
+      emailParts[0].length < 1 ||
+      emailParts[1].length < 3 ||
+      !emailParts[1].includes(".") ) {
+    return false;
+  }
+
+  const charList = email.split("");
+  if (charList[0] == '.' || charList[charList.length - 1] == '.') return false;
+
+  for (let i = 0; i < charList.length; i++) {
+    let char = charList[i];
+    if ((char >= 'a' && char <= 'z') ||
+        (char >= '@' && char <= 'Z') ||
+        (char >= '0' && char <= '9') ||
+        char == '-' ||
+        char == '_' ||
+        char == '.' ) {
+      // continue...
+    } else {
+      return false;
+    }
+  }
+  return true;
+}
+
+
+function valid_username (username) {
+  // allowed: a-z A-Z 0-9 _-.
+  // username should be trimmed before sending here.
+
+  if (!username) return false;
+  if (username.length > 50) return false;
+
+  const charList = username.split("");
+  if (charList[0] == '.' || charList[charList.length - 1] == '.') return false;
+
+  for (let i = 0; i < charList.length; i++) {
+    let char = charList[i];
+    if ((char >= 'a' && char <= 'z') ||
+        (char >= 'A' && char <= 'Z') ||
+        (char >= '0' && char <= '9') ||
+        char == '-' ||
+        char == '_' ||
+        char == '.' ) {
+      // continue...
+    } else {
+      return false;
+    }
+  }
+  return true;
+}
+
+
+function valid_password (password) {
+  // * allowed: A-Z a-z 0-9 ~!@#$%^&* -=_+,. space
+  // * password should NOT be trimmed before sending here.
+  // * password can contain consecutive spaces, therefore when displayed on page,
+  //   it must be put in <pre> or <code> tags.
+
+  if (!password) return false;
+  if (password.length > 100) return false;
+
+  const charList = password.split("");
+  if (charList[0] == " " || charList[charList.length - 1] == " ") return false;
+
+  for (let i = 0; i < charList.length; i++) {
+    let char = charList[i];
+    if ((char >= 'a' && char <= 'z') ||
+        (char >= '@' && char <= 'Z') ||
+        (char >= '0' && char <= '9') ||
+        (char >= ' ' && char <= '&' && char != '"') ||
+        (char >= '*' && char <= '.') ||
+        
+        char == '=' ||
+        char == '^' ||
+        char == '_' ||
+        char == '~'  ) {
+      // continue...
+    } else {
+      return false;
+    }
+  }
+  return true;
+}
+
+
+function valid_name (name) {
+  // allowed: a-z A-Z .
+  // username should be trimmed before sending here.
+
+  if (!name) return false;
+  if (name.length > 100) return false;
+
+  const charList = name.split("");
+  if (charList[0] == " " || charList[charList.length - 1] == " ") return false;
+
+  for (let i = 0; i < charList.length; i++) {
+    let char = charList[i];
+    if ((char >= 'a' && char <= 'z') ||
+        (char >= 'A' && char <= 'Z')) {
+      // continue...
+
+    } else if (char == ' ') {
+      if (charList[i + 1] == " ") {
+        return false;
+      }
+      // continue...
+    } else {
+      return false;
+    }
+  }
+  return true;
+}
+
+
+function valid_usertype(userType) {
+  if (userType == 0 || userType == 1) return true;
+  return false;
+}
+
+
+function valid_userID (userID) {
+  if (typeof(userID) == "number") return true;
+  return false;
 }
 
 let port = 8000;
