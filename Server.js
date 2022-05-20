@@ -77,6 +77,44 @@ app.get("/logout", function (req, res) {
   }
 });
 
+app.get("/profile", function (req, res) {
+  sendProfilePage(req, res);
+});
+
+
+async function sendHomePage(req, res) {
+  if (req.session.loggedIn) {
+    let doc = fs.readFileSync("./html/home.html", "utf8");
+    let docDOM = new JSDOM(doc);
+    const connection = await mysql.createConnection({
+      host: "localhost",
+      user: "root",
+      database: "COMP2800",
+      multipleStatements: true
+    });
+    connection.connect();
+    const [rows, fields] = await connection.execute(
+      "SELECT first_name FROM BBY_37_user " +
+      "WHERE BBY_37_user.user_id = " + req.session.userid);
+    await connection.end();
+    docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
+
+    res.send(docDOM.serialize());
+  } else {
+    // not logged in - no session and no access, redirect to root.
+    res.redirect("/login");
+  }
+}
+
+app.get("/admin", function (req, res) {
+  if (req.session.loggedIn && req.session.userlevel == 1) {
+    sendAdminPage(req, res);
+  } else {
+    res.redirect("/");
+  }
+});
+
+
 //dynamic navbars
 function getNavBar(req) {
   if (req.session.loggedIn) {
@@ -87,7 +125,7 @@ function getNavBar(req) {
       </label>
       <div class="logo"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></div>
       <ul>
-          <li><a href="/home">Home</a></li>
+          <li><a href="/home">Search</a></li>
           <li><a href="/createPost">Write a review</a></li>
           <li><a href="/profile">Profile</a></li>
           <li><a href="/logout" id="logout">Logout</a></li>
@@ -100,7 +138,8 @@ function getNavBar(req) {
       <div class="logo"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></div>
       <ul>
           <li><a href="/admin">Admin</a></li>
-          <li><a href="#">Reviews</a></li>
+          <li><a href="/home">Search</a></li>
+          <li><a href="#">Create Post</a></li>
           <li><a href="/profile">Profile</a></li>
           <li><a href="/logout" id="logout">Logout</a></li>
       </ul>`
@@ -110,9 +149,7 @@ function getNavBar(req) {
   }
 }
 
-app.get("/profile", function (req, res) {
-  sendProfilePage(req, res);
-});
+
 
 async function sendProfilePage(req, res) {
   let doc = 0;
@@ -215,9 +252,76 @@ async function sendReviews(req, res) {
   res.send(docDOM.serialize());
 }
 
-app.get("/admin", function (req, res) {
-  if (req.session.loggedIn && req.session.userlevel == 1) {
-    sendAdminPage(req, res);
+app.get("/history", function (req, res) {
+  if (req.session.loggedIn) {
+    sendHistory(req, res);
+  } else {
+    res.redirect("/login")
+  }
+});
+
+async function sendHistory(req, res) {
+  let doc = fs.readFileSync("./html/userTimeLine.html", "utf8");
+  let docDOM = new JSDOM(doc);
+  const connection = await mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "COMP2800",
+    multipleStatements: true
+  });
+
+  connection.connect();
+
+  // query for relative data from DB
+  const [rows, fields] = await connection.execute("SELECT BBY_37_location.unit_number, BBY_37_location.street_number, BBY_37_location.prefix, BBY_37_location.street_name, BBY_37_location.street_type, BBY_37_location.city, BBY_37_location.province, BBY_37_post.user_id, BBY_37_post.date_created, BBY_37_post.last_edited_date, BBY_37_post.content, BBY_37_post.photo1 FROM BBY_37_post INNER JOIN BBY_37_location ON BBY_37_location.location_id=BBY_37_post.location_id WHERE user_id=" + req.session.userid
+  );
+
+  await connection.end();
+  let historyItems = ""; 
+  // empty reviews div
+  docDOM.window.document.getElementById("userHistory").innerHTML = historyItems;
+
+  // check for if user has no posts
+  if (rows[0]?.street_number === undefined) {
+    docDOM.window.document.getElementById("userHistory").innerHTML += "no posts";
+    // unecessary check?
+  } else if (rows[0].street_number != null) {
+    for (let j = rows.length - 1; j > -1; j--) {
+      // for each item, define the address
+      let address = "";
+      if (rows[j].unit_number != null) {
+        address = rows[j].unit_number + " " + rows[j].street_number + " " + rows[j].street_name + " " + rows[j].street_type + " " + rows[j].prefix + " " + rows[j].city + " " + rows[j].province;
+      } else {
+        address = rows[j].street_number + " " + rows[j].street_name + " " + rows[j].street_type + " " + rows[j].prefix + " " + rows[j].city + " " + rows[j].province;
+      }
+      // for each row, make a new review
+      historyItems += "<div class='timeLineItem'>";
+      historyItems += "<div class='address'>" + address + "</div>";
+      if (rows[j].photo1 != null) {
+        historyItems += "<div class='image'> " + rows[j].photo1 + "</div>";
+      }
+      historyItems += "<div class='review'>" + rows[j].content + "</div>";
+      historyItems += "<div class='message'></div>";
+      historyItems += "<div class='initPostTime'>Posted: " + rows[j].date_created + "</div>";
+      if (rows[j].last_edited_date != "Invalid Date") {
+        historyItems += "<div class='lastEditTime'>Edited: " + rows[j].last_edited_date + "</div>";
+      } else {
+        historyItems += "<div class='lastEditTime'></div>";
+      }
+      historyItems += "<div class='editBtn'></div>";
+      historyItems += "</div>";
+      }
+    docDOM.window.document.getElementById("userHistory").innerHTML = historyItems;
+  } else {
+    // error 
+  }
+      res.send(docDOM.serialize());
+}
+
+app.get("/results", function (req, res) {
+  if (req.session.loggedIn) {
+    executeSearch(req, res);
   } else {
     res.redirect("/");
   }
@@ -262,6 +366,45 @@ async function sendAdminPage(req, res) {
   res.send(docDOM.serialize());
 }
 
+app.get("/userTimeLine", function (req, res) {
+  if (req.session.loggedIn) {
+    sendTimeLine(req, res);
+  } else {
+    res.redirect("/login")
+  }
+});
+
+async function sendTimeLine(req, res) {
+  let doc = fs.readFileSync("./html/userTimeLine.html", "utf8");
+  let docDOM = new JSDOM(doc);
+  const connection = await mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "COMP2800",
+    multipleStatements: true
+  });
+  let unit_id = 1;
+  connection.connect();
+  const [rows, fields] = await connection.execute("SELECT * FROM bby_37_post WHERE bby_37_post.user_id = " + req.session.userid
+  );
+
+  await connection.end();
+  let historyItem = "";
+  for (let j = 0; j < rows.length; j++) {
+    // for each row, make a timeline item
+    historyItem += "<div class='review'>";
+    // information to be added
+    historyItem += "";
+    historyItem += "";
+    historyItem += "";
+    historyItem += "";
+  }
+  docDOM.window.document.getElementById("user_history").innerHTML += historyItem;
+
+      res.send(docDOM.serialize());
+}
+
 app.post("/login", function (req, res) {
   authenticateUser(req, res);
 });
@@ -274,6 +417,10 @@ app.post("/signup", function (req, res) {
 app.post('/update-profile', function (req, res) {
   res.setHeader('Content-Type', 'application/json');
   editUserProfile(req, res);
+});
+
+app.post('/search', function (req, res) {
+  storeSearch(req, res);
 });
 
 async function editUserProfile(req, res) {
@@ -293,6 +440,112 @@ async function editUserProfile(req, res) {
       status: "success",
       msg: "Profile info updated."
     });
+  } else {
+    res.redirect("/");
+  }
+}
+
+async function storeSearch(req, res) {
+  res.setHeader("Content-Type", "application/json");
+  if (req.session.loggedIn) {
+    req.session.unit = req.body.unit;
+    req.session.streetNum = req.body.streetNum;
+    req.session.prefix = req.body.prefix;
+    req.session.streetName = req.body.streetName;
+    req.session.streetType = req.body.streetType;
+    req.session.city = req.body.city;
+    req.session.province = req.body.province;
+    res.send({
+      status: "success",
+      msg: "Search parameters stored."
+    });
+  } else {
+    res.send({
+      status: "fail",
+      msg: "Not logged in."
+    });
+  }
+}
+
+async function executeSearch(req, res) {
+  if (req.session.loggedIn) {
+    let doc = fs.readFileSync("./html/results.html", "utf8");
+    let docDOM = new JSDOM(doc);
+
+    const connection = await mysql.createConnection({
+      host: 'localhost',
+      user: 'root',
+      database: 'COMP2800',
+      multipleStatements: true
+    });
+    connection.connect();
+
+    let query = `SELECT * FROM BBY_37_location WHERE 
+      unit_number LIKE ? AND 
+      street_number LIKE ? AND 
+      prefix LIKE ? AND 
+      street_name LIKE ? AND 
+      street_type LIKE ? AND 
+      city LIKE ? AND 
+      province LIKE ?`;
+    
+    let values = [req.session.unit, req.session.streetNum, req.session.prefix, req.session.streetName, req.session.streetType, req.session.city, req.session.province];
+
+    const [rows, fields] = await connection.query(query, values);
+
+    
+    if(rows.length > 0){
+      let query2 = `SELECT COUNT(post_id) AS post_count FROM BBY_37_post WHERE location_id = ?`;
+      let rows2;
+      let fields2;
+      for (let i = 0; i < rows.length; i++) {
+        [rows2, fields2] = await connection.query(query2, [rows[i].location_id]);
+
+        let postNumStr;
+        if(rows2.length == 0){
+          postNumStr = "There are 0 posts for this address.";
+        } else if(rows2[0].post_count == 1){
+          postNumStr = "There is 1 post for this address.";
+        } else {
+          postNumStr = "There are " + rows2[0].post_count + " posts for this address.";
+        }
+
+        let prefixStr;
+        if(rows[i].prefix == "N/A"){
+          prefixStr = "";
+        } else {
+          prefixStr = rows[i].prefix;
+        }
+        
+
+        docDOM.window.document.getElementById("results").innerHTML += `
+        <div class="resultBox">
+                    <div class="resultHead">
+                        <h2>` + rows[i].unit_number + "-" + rows[i].street_number + " " + prefixStr + " " + rows[i].street_name + " " + rows[i].street_type + " " + `</h2>
+                        <p class="address">` + rows[i].city + ", " + rows[i].province + `</p>
+                    </div>
+                    <div class="resultBody">
+                        <p class="description">` + postNumStr + `</p>
+                        <div>
+                            <a class="resultButton more" href="/unitview?id=[` + rows[i].location_id + `]">See more</a>
+                        </div>
+                    </div>
+        </div>`;
+
+      }
+    } else {
+      docDOM.window.document.getElementById("results").innerHTML += `
+      <div id="noResults">
+        <h1>No results found!</h1>
+        <p>We couldn't find any results for that search, sorry!</p>
+        <p>Maybe you'd like to make a post for it though?</p>
+        <button class="resultButton create" type="button">Create a post</button>
+      </div>`;
+    }
+    await connection.end();
+
+    docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
+    res.send(docDOM.serialize());
   } else {
     res.redirect("/");
   }
@@ -363,15 +616,6 @@ const upload = multer({
   storage: storage
 });
 
-
-app.get('/', function (req, res) {
-  let doc = fs.readFileSync('./app/html/index.html', "utf8");
-
-  res.set('Server', 'Wazubi Engine');
-  res.set('X-Powered-By', 'Wazubi');
-  res.send(doc);
-
-});
 
 app.post('/upload-images', upload.array("files"), function (req, res) {
 

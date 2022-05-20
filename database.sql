@@ -13,11 +13,11 @@ CREATE TABLE IF NOT EXISTS `BBY_37_user` (
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
-INSERT INTO `BBY_37_user` (`user_id`, `username`, `first_name`, `last_name`, `email_address`, `password`, `role_id`) VALUES (1, 'sam_a', 'Sam', 'A', 'sam@email.com', 'password1', 0);
-INSERT INTO `BBY_37_user` (`user_id`, `username`, `first_name`, `last_name`, `email_address`, `password`, `role_id`) VALUES (2, 'eric_d', 'Eric', 'D', 'eric_d@email.com', 'password2', 1);
-INSERT INTO `BBY_37_user` (`user_id`, `username`, `first_name`, `last_name`, `email_address`, `password`, `role_id`) VALUES (3, 'eric_h', 'Eric', 'H', 'eric@email.com', 'password3', 0);
-INSERT INTO `BBY_37_user` (`user_id`, `username`, `first_name`, `last_name`, `email_address`, `password`, `role_id`) VALUES (4, 'kiefer_t', 'Kiefer', 'T', 'keifer@email.com', 'password4', 1);
-INSERT INTO `BBY_37_user` (`user_id`, `username`, `first_name`, `last_name`, `email_address`, `password`, `role_id`) VALUES (5, 'will_w', 'Will', 'W', 'will@email.com', 'password5', 0);
+-- INSERT INTO `BBY_37_user` (`user_id`, `username`, `first_name`, `last_name`, `email_address`, `password`, `role_id`) VALUES (1, 'sam_a', 'Sam', 'A', 'sam@email.com', 'password1', 0);
+-- INSERT INTO `BBY_37_user` (`user_id`, `username`, `first_name`, `last_name`, `email_address`, `password`, `role_id`) VALUES (2, 'eric_d', 'Eric', 'D', 'eric_d@email.com', 'password2', 1);
+-- INSERT INTO `BBY_37_user` (`user_id`, `username`, `first_name`, `last_name`, `email_address`, `password`, `role_id`) VALUES (3, 'eric_h', 'Eric', 'H', 'eric@email.com', 'password3', 0);
+-- INSERT INTO `BBY_37_user` (`user_id`, `username`, `first_name`, `last_name`, `email_address`, `password`, `role_id`) VALUES (4, 'kiefer_t', 'Kiefer', 'T', 'keifer@email.com', 'password4', 1);
+-- INSERT INTO `BBY_37_user` (`user_id`, `username`, `first_name`, `last_name`, `email_address`, `password`, `role_id`) VALUES (5, 'will_w', 'Will', 'W', 'will@email.com', 'password5', 0);
 
 
 CREATE TABLE IF NOT EXISTS `BBY_37_location` (
@@ -32,18 +32,18 @@ CREATE TABLE IF NOT EXISTS `BBY_37_location` (
   PRIMARY KEY (`location_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
-INSERT INTO `BBY_37_location` (`location_id`, `unit_number`, `street_number`, `prefix`, `street_name`, `street_type`, `city`, `province`) VALUES (1, '4', '920', 'W', '14th', 'Ave', 'Vancouver', 'British Columbia');
-INSERT INTO `BBY_37_location` (`location_id`, `unit_number`, `street_number`, `prefix`, `street_name`, `street_type`, `city`, `province`) VALUES (2, '6', '125', 'W', '10th', 'Ave', 'Vancouver', 'British Columbia');
-INSERT INTO `BBY_37_location` (`location_id`, `unit_number`, `street_number`, `prefix`, `street_name`, `street_type`, `city`, `province`) VALUES (3, '124', '2200', 'N/A', 'Douglas', 'Rd', 'Burnaby', 'British Columbia');
-INSERT INTO `BBY_37_location` (`location_id`, `unit_number`, `street_number`, `prefix`, `street_name`, `street_type`, `city`, `province`) VALUES (4, '52', '16686', 'N/A', '31', 'Ave', 'Surrey', 'British Columbia');
-INSERT INTO `BBY_37_location` (`location_id`, `street_number`, `prefix`, `street_name`, `street_type`, `city`, `province`) VALUES (5, '9566', 'N/A', 'Tomicki', 'Ave', 'Richmond', 'British Columbia');
+INSERT INTO `BBY_37_location` (`location_id`, `unit_number`, `street_number`, `prefix`, `street_name`, `street_type`, `city`, `province`) VALUES (1, '4', '920', 'W', '14th', 'Ave', 'Vancouver', 'BC');
+INSERT INTO `BBY_37_location` (`location_id`, `unit_number`, `street_number`, `prefix`, `street_name`, `street_type`, `city`, `province`) VALUES (2, '6', '125', 'W', '14th', 'Ave', 'Vancouver', 'BC');
+INSERT INTO `BBY_37_location` (`location_id`, `unit_number`, `street_number`, `prefix`, `street_name`, `street_type`, `city`, `province`) VALUES (3, '124', '2200', 'N/A', 'Douglas', 'Rd', 'Burnaby', 'BC');
+INSERT INTO `BBY_37_location` (`location_id`, `unit_number`, `street_number`, `prefix`, `street_name`, `street_type`, `city`, `province`) VALUES (4, '52', '16686', 'N/A', '31', 'Ave', 'Surrey', 'BC');
+INSERT INTO `BBY_37_location` (`location_id`, `unit_number`, `street_number`, `prefix`, `street_name`, `street_type`, `city`, `province`) VALUES (5, '6', '9566', 'N/A', 'Tomicki', 'Ave', 'Richmond', 'BC');
 
 
 CREATE TABLE IF NOT EXISTS `BBY_37_post` (
   `post_id` int(16) NOT NULL AUTO_INCREMENT,
   `user_id` int(16) NOT NULL,
-  `date_created` TIMESTAMP NOT NULL,
-  `last_edited_date` TIMESTAMP,
+  `date_created` DATETIME NOT NULL,
+  `last_edited_date` DATETIME,
   `content` BLOB,
   `location_id` int(16) NOT NULL,
   `photo1` varchar(1024),
