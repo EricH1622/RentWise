@@ -27,7 +27,7 @@ body {
 /**************** Grid Elements ****************/
 
 #container {
-  background-color: rgb(255, 255, 255);
+  background-color: rgba(197, 197, 197, 0.589);
   display: grid;
   height: 100vh;
   grid-template-columns: 20% 20% 20% 20% 20%; 
@@ -217,6 +217,7 @@ transition: 0.6s;
 #content {
   display: grid;
   grid-template-columns: 5% 90% 5%;
+  background-image: url("/assets/images/city4.jpg");
 }
 
 #userHistory {
@@ -226,72 +227,84 @@ transition: 0.6s;
 
 #userHistory > * {
   font-size: 20px;
+
 }
 
 .timeLineItem {
   display: grid;
   grid-template-rows: 12.5% 12.5% 12.5% 12.5% 12.5% 12.5% 12.5% 12.5%;
-  grid-template-columns: 16.7% 16.7% 16.7% 16.7% 16.7% 16.7%;
+  grid-template-columns: 16.7% 16.7% 16.7% 16.7% 16.7% 16.7% 16.7%;
   border-style: solid;
-  border-radius: 10px;
-  border-color: aqua;
+  border-radius: 20px;
+  border-width: 3.7px;
   padding: 10px;
   margin: 15px;
+  border-color: rgba(103, 103, 250, 0.452);
+  background-color: rgb(165, 165, 228);
+  
 }
 
 .address {
   grid-column: 2 / span 4;
   grid-row: 1;
   text-align: center;
-  border-style: solid;
-  border-color: aqua;
+  /* border-style: solid; */
+  /* border-color: aqua; */
+
   
 }
 
 .image {
   grid-column: 3 / span 2;
   grid-row: 2 / span 2;
-  border-style: solid;
-  border-color: aqua;
+  /* border-style: solid; */
+  /* border-color: aqua; */
+  background-color: rgb(168, 168, 168);
 }
 
 .review {
   grid-column: 1 / span 6;
   grid-row: 4 / span 3;
-  border-style: solid;
-  border-color: aqua;
+  /* border-style: solid; */
+  /* border-color: aqua; */
+
 }
 
 .message {
   grid-column: 2 / span 4;
   grid-row: 7;
-  border-style: solid;
-  border-color: aqua;
+  /* border-style: solid; */
+  /* border-color: aqua; */
   font-size: 15px;
+
 }
 
 .initPostTime {
   grid-column: 1 / span 2;
-  grid-row: 8;
-  border-style: solid;
-  border-color: aqua;
+  grid-row: 9;
+  /* border-style: solid; */
+  /* border-color: aqua; */
   font-size: 15px;
+
 }
 
 .lastEditTime {
   grid-column: 3 / span 2;
-  grid-row: 8;
-  border-style: solid;
-  border-color: aqua;
+  grid-row: 9;
+  /* border-style: solid; */
+  /* border-color: aqua; */
   font-size: 15px;
+
 }
 
 .editBtn {
   grid-column: 6;
-  grid-row: 8;
-  border-style: solid;
-  border-color: aqua;
+  grid-row: 9;
+  /* border-style: solid; */
+  /* border-color: aqua; */
+
 }
+
 
 @media only screen and (max-width : 1040px) and (min-width : 401px) {
 
