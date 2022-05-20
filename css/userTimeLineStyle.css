@@ -219,9 +219,13 @@ transition: 0.6s;
   grid-template-columns: 5% 90% 5%;
 }
 
-#user_history {
+#userHistory {
   grid-column: 2;
   padding: 10px;
+}
+
+#userHistory > * {
+  font-size: 20px;
 }
 
 .timeLineItem {
@@ -241,6 +245,7 @@ transition: 0.6s;
   text-align: center;
   border-style: solid;
   border-color: aqua;
+  
 }
 
 .image {
@@ -262,6 +267,7 @@ transition: 0.6s;
   grid-row: 7;
   border-style: solid;
   border-color: aqua;
+  font-size: 15px;
 }
 
 .initPostTime {
@@ -269,6 +275,7 @@ transition: 0.6s;
   grid-row: 8;
   border-style: solid;
   border-color: aqua;
+  font-size: 15px;
 }
 
 .lastEditTime {
@@ -276,6 +283,7 @@ transition: 0.6s;
   grid-row: 8;
   border-style: solid;
   border-color: aqua;
+  font-size: 15px;
 }
 
 .editBtn {
