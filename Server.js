@@ -227,8 +227,16 @@ async function sendReviews(req, res) {
     u_name[k] = rows3[0].username;
   }
 
+  //Remove "N/A" prefix
+  let prefixStr;
+  if(rows2[0].prefix == "N/A"){
+    prefixStr = "";
+  } else {
+    prefixStr = rows2[0].prefix;
+  }
+
   // load address into page
-  let address = rows2[0].unit_number + " " + rows2[0].street_number + " " + rows2[0].street_name + " " + rows2[0].street_type + " " + rows2[0].prefix + " " + rows2[0].city + " " + rows2[0].province; 
+  let address = rows2[0].unit_number + "-" + rows2[0].street_number + " " + rows2[0].street_name + " " + rows2[0].street_type + " " + prefixStr + " " + rows2[0].city + " " + rows2[0].province; 
 
   await connection.end();
   let currentReview = "";
@@ -527,7 +535,7 @@ async function executeSearch(req, res) {
                     <div class="resultBody">
                         <p class="description">` + postNumStr + `</p>
                         <div>
-                            <a class="resultButton more" href="/unitview?id=[` + rows[i].location_id + `]">See more</a>
+                            <a class="resultButton more" href="/unitview?id=` + rows[i].location_id + `">See more</a>
                         </div>
                     </div>
         </div>`;
