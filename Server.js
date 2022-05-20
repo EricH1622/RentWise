@@ -244,13 +244,7 @@ app.get("/userTimeline", function (req, res) {
 async function sendHistory(req, res) {
   let doc = fs.readFileSync("./html/userTimeLine.html", "utf8");
   let docDOM = new JSDOM(doc);
-  const connection = await mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "COMP2800",
-    multipleStatements: true
-  });
+  const connection = await mysql.createConnection(connectConfig);
 
   connection.connect();
 
