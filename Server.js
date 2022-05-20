@@ -229,15 +229,13 @@ async function sendTimeLine(req, res) {
   });
   let unit_id = 1;
   connection.connect();
-  // test val
-  let u_id = 1;
-  const [rows, fields] = await connection.execute("SELECT * FROM bby_37_post WHERE bby_37_post.user_id = " + u_id
+  const [rows, fields] = await connection.execute("SELECT * FROM bby_37_post WHERE bby_37_post.user_id = " + req.session.userid
   );
 
   await connection.end();
   let historyItem = "";
   for (let j = 0; j < rows.length; j++) {
-    // for each row, make a new review
+    // for each row, make a timeline item
     historyItem += "<div class='review'>";
     // information to be added
     historyItem += "";
