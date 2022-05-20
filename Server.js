@@ -221,7 +221,7 @@ async function sendReviews(req, res) {
     currentReview += "<div class='name'><strong>" + u_name[j] + "</strong></div>";
     currentReview += "<div class='rev'><strong>" + rows[j].content + "</strong></div>";
     currentReview += "<div class='createTime'> Original Post: " + rows[j].date_created + "</div>";
-    if (rows[j].last_edited_date) {
+    if (rows[j].last_edited_date != "Invalid Date") {
       currentReview += "<div class='editTime'> Last edit:" + rows[j].last_edited_date + "</div>";
     }
     // currentReview += "<div class='images'>" + IMAGE TO GO HERE + "</div>";
