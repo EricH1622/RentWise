@@ -319,14 +319,6 @@ async function sendHistory(req, res) {
       res.send(docDOM.serialize());
 }
 
-app.get("/admin", function (req, res) {
-  if (req.session.loggedIn && req.session.userlevel == 1) {
-    sendAdminPage(req, res);
-  } else {
-    res.redirect("/");
-  }
-});
-
 app.get("/results", function (req, res) {
   if (req.session.loggedIn) {
     executeSearch(req, res);
