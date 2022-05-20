@@ -374,45 +374,6 @@ async function sendAdminPage(req, res) {
   res.send(docDOM.serialize());
 }
 
-app.get("/userTimeLine", function (req, res) {
-  if (req.session.loggedIn) {
-    sendTimeLine(req, res);
-  } else {
-    res.redirect("/login")
-  }
-});
-
-async function sendTimeLine(req, res) {
-  let doc = fs.readFileSync("./html/userTimeLine.html", "utf8");
-  let docDOM = new JSDOM(doc);
-  const connection = await mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "COMP2800",
-    multipleStatements: true
-  });
-  let unit_id = 1;
-  connection.connect();
-  const [rows, fields] = await connection.execute("SELECT * FROM bby_37_post WHERE bby_37_post.user_id = " + req.session.userid
-  );
-
-  await connection.end();
-  let historyItem = "";
-  for (let j = 0; j < rows.length; j++) {
-    // for each row, make a timeline item
-    historyItem += "<div class='review'>";
-    // information to be added
-    historyItem += "";
-    historyItem += "";
-    historyItem += "";
-    historyItem += "";
-  }
-  docDOM.window.document.getElementById("user_history").innerHTML += historyItem;
-
-      res.send(docDOM.serialize());
-}
-
 app.post("/login", function (req, res) {
   authenticateUser(req, res);
 });
