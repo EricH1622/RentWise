@@ -9,9 +9,6 @@ const mysql = require("mysql2/promise");
 const multer = require("multer");
 const {JSDOM} = require('jsdom');
 
-
-
-
 app.use("/js", express.static("./js"));
 app.use("/css", express.static("./css"));
 app.use("/assets", express.static("./assets"));
@@ -81,31 +78,6 @@ app.get("/profile", function (req, res) {
   sendProfilePage(req, res);
 });
 
-
-async function sendHomePage(req, res) {
-  if (req.session.loggedIn) {
-    let doc = fs.readFileSync("./html/home.html", "utf8");
-    let docDOM = new JSDOM(doc);
-    const connection = await mysql.createConnection({
-      host: "localhost",
-      user: "root",
-      database: "COMP2800",
-      multipleStatements: true
-    });
-    connection.connect();
-    const [rows, fields] = await connection.execute(
-      "SELECT first_name FROM BBY_37_user " +
-      "WHERE BBY_37_user.user_id = " + req.session.userid);
-    await connection.end();
-    docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
-
-    res.send(docDOM.serialize());
-  } else {
-    // not logged in - no session and no access, redirect to root.
-    res.redirect("/login");
-  }
-}
-
 app.get("/admin", function (req, res) {
   if (req.session.loggedIn && req.session.userlevel == 1) {
     sendAdminPage(req, res);
@@ -126,7 +98,7 @@ function getNavBar(req) {
       <div class="logo"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></div>
       <ul>
           <li><a href="/home">Search</a></li>
-          <li><a href="/createPost">Write a review</a></li>
+          <li><a href="/createPost">Create Post</a></li>
           <li><a href="/profile">Profile</a></li>
           <li><a href="/userTimeline">Timeline</a></li>
           <li><a href="/logout" id="logout">Logout</a></li>
@@ -403,6 +375,57 @@ async function editUserProfile(req, res) {
       multipleStatements: true
     });
     connection.connect();
+
+    if(!valid_username(req.body.username)){
+      res.send({
+        status: "fail",
+        msg: "Invalid username."
+      });
+      return;
+    }
+    if(!valid_password(req.body.password)){
+      res.send({
+        status: "fail",
+        msg: "Invalid password."
+      });
+      return;
+    }
+    if(!valid_name(req.body.firstName)){
+      res.send({
+        status: "fail",
+        msg: "Invalid first name."
+      });
+      return;
+    }
+    if(!valid_name(req.body.lastName)){
+      res.send({
+        status: "fail",
+        msg: "Invalid last name."
+      });
+      return;
+    }
+    if(!valid_email(req.body.email)){
+      res.send({
+        status: "fail",
+        msg: "Invalid Email Address."
+      });
+      return;
+    }
+    if(!valid_email(req.body.email)){
+      res.send({
+        status: "fail",
+        msg: "Invalid Email Address."
+      });
+      return;
+    }
+    if(!valid_userID(req.session.userid)){
+      res.send({
+        status: "fail",
+        msg: "Invalid User ID."
+      });
+      return;
+    }
+
     connection.query('UPDATE BBY_37_user SET username = ?, first_name =?, last_name = ?,email_address = ?,password = ? WHERE user_id = ?',
       [req.body.username, req.body.firstName, req.body.lastName, req.body.email, req.body.password, req.session.userid])
     connection.end();
@@ -564,6 +587,53 @@ async function createUser(req, res) {
     multipleStatements: true
   });
   connection.connect();
+
+  //Checks for valid user values
+  if(!valid_username(req.body.username)){
+    res.send({
+      status: "fail",
+      msg: "Invalid username."
+    });
+    return;
+  }
+  if(!valid_password(req.body.password)){
+    res.send({
+      status: "fail",
+      msg: "Invalid password."
+    });
+    return;
+  }
+  if(!valid_name(req.body.firstName)){
+    res.send({
+      status: "fail",
+      msg: "Invalid first name."
+    });
+    return;
+  }
+
+  if(!valid_name(req.body.lastName)){
+    res.send({
+      status: "fail",
+      msg: "Invalid last name."
+    });
+    return;
+  }
+
+  if(!valid_email(req.body.email)){
+    res.send({
+      status: "fail",
+      msg: "Invalid Email Address."
+    });
+    return;
+  }
+  if(!valid_usertype(req.body.role_id)){
+    res.send({
+      status: "fail",
+      msg: "Invalid user type."
+    });
+    return;
+  }
+
   connection.query('INSERT INTO BBY_37_user (username,password,first_name,last_name,email_address,role_id) values (?, ?, ?, ?, ?, ?)',
     [req.body.username, req.body.password, req.body.firstName, req.body.lastName, req.body.email, req.body.role_id]);
   connection.end();
@@ -617,6 +687,7 @@ async function deleteUser(req, res) {
     multipleStatements: true
   });
   connection.connect();
+
   let [rows, fields] = await connection.query(
     "SELECT role_id FROM BBY_37_user WHERE BBY_37_user.user_id = ?",
     [req.body.userID]);
@@ -649,6 +720,7 @@ async function doDeleteUser(req, res) {
     multipleStatements: true
   });
   connection.connect();
+  
   await connection.query('DELETE FROM BBY_37_user WHERE BBY_37_user.user_id = ?',
     [req.body.userID]);
   await connection.end();
@@ -680,6 +752,7 @@ async function adminUpdateUsers(req, res) {
     multipleStatements: true
   });
   connection.connect();
+
   let [rows, fields] = await connection.query(
     "SELECT user_id, role_id FROM BBY_37_user WHERE BBY_37_user.user_id = ?",
     [req.body.userID]);
@@ -719,6 +792,50 @@ async function doUpdateUser(req, res) {
     multipleStatements: true
   });
   connection.connect();
+
+  if(!valid_username(req.body.username)){
+    res.send({
+      status: "fail",
+      msg: "Invalid username."
+    });
+    return;
+  }
+  if(!valid_password(req.body.password)){
+    res.send({
+      status: "fail",
+      msg: "Invalid password."
+    });
+    return;
+  }
+  if(!valid_name(req.body.firstname)){
+    res.send({
+      status: "fail",
+      msg: "Invalid first name."
+    });
+    return;
+  }
+  if(!valid_name(req.body.lastname)){
+    res.send({
+      status: "fail",
+      msg: "Invalid last name."
+    });
+    return;
+  }
+  if(!valid_email(req.body.email)){
+    res.send({
+      status: "fail",
+      msg: "Invalid Email Address."
+    });
+    return;
+  }
+  if(!valid_usertype(req.body.usertype)){
+    res.send({
+      status: "fail",
+      msg: "Invalid user type."
+    });
+    return;
+  }
+
   await connection.query('UPDATE BBY_37_user ' +
     'SET username = ?, first_name = ?, last_name = ?, email_address = ?, password = ?, role_id = ? ' +
     'WHERE BBY_37_user.user_id = ?',
@@ -765,6 +882,50 @@ async function adminAddUser(req, res) {
       msg: "Username already exists."
     });
     connection.end();
+    return;
+  }
+
+  //Checks for valid user values
+  if(!valid_username(req.body.username)){
+    res.send({
+      status: "fail",
+      msg: "Invalid username."
+    });
+    return;
+  }
+  if(!valid_password(req.body.password)){
+    res.send({
+      status: "fail",
+      msg: "Invalid password."
+    });
+    return;
+  }
+  if(!valid_name(req.body.firstName)){
+    res.send({
+      status: "fail",
+      msg: "Invalid first name."
+    });
+    return;
+  }
+  if(!valid_name(req.body.lastName)){
+    res.send({
+      status: "fail",
+      msg: "Invalid last name."
+    });
+    return;
+  }
+  if(!valid_email(req.body.email)){
+    res.send({
+      status: "fail",
+      msg: "Invalid Email Address."
+    });
+    return;
+  }
+  if(!valid_usertype(req.body.role_id)){
+    res.send({
+      status: "fail",
+      msg: "Invalid user type."
+    });
     return;
   }
 
@@ -821,7 +982,6 @@ app.get("/createPost", function (req, res) {
 });
 
 app.post("/submitPost", function (req,res){
-  console.log(req.body.review);
   if (req.session.loggedIn) {
     submitPost(req,res);
   }else{
@@ -853,11 +1013,28 @@ async function submitPost(req,res){
 
       //Grab the location_id of the new address added to location table
       locationid = row[0].location_id;
+
+      if(!valid_userID(req.session.userid)){
+        res.send({
+          status: "fail",
+          msg: "Invalid User ID."
+        });
+        return;
+      }
+
       await connection.execute("INSERT INTO BBY_37_post (user_id, date_created, content, location_id) values (?, ?, ?, ?)",[req.session.userid,new Date(),req.body.review,locationid]);
       await connection.end();
 
       //if the address already exist, only add the review with the user id and the location id of this address
     }else{
+      if(!valid_userID(req.session.userid)){
+        res.send({
+          status: "fail",
+          msg: "Invalid User ID."
+        });
+        return;
+      }
+
       locationid = rows[0].location_id;
       await connection.execute("INSERT INTO BBY_37_post (user_id, date_created, content, location_id) values (?, ?, ?, ?)",[req.session.userid,new Date(),req.body.review,locationid]);
       await connection.end();
@@ -867,6 +1044,141 @@ async function submitPost(req,res){
       message:"The post has been created.",
       location_id:locationid
     }); 
+}
+
+function valid_email (email) {
+  // allowed: a-z A-Z 0-9 _-.@
+  // email should be trimmed before sending here.
+
+  if (!email) return false;
+  if (email.length > 100) return false;
+
+  const emailParts = email.split('@');
+  if (emailParts.length !== 2  ||
+      emailParts[0].length < 1 ||
+      emailParts[1].length < 3 ||
+      !emailParts[1].includes(".") ) {
+    return false;
+  }
+
+  const charList = email.split("");
+  if (charList[0] == '.' || charList[charList.length - 1] == '.') return false;
+
+  for (let i = 0; i < charList.length; i++) {
+    let char = charList[i];
+    if ((char >= 'a' && char <= 'z') ||
+        (char >= '@' && char <= 'Z') ||
+        (char >= '0' && char <= '9') ||
+        char == '-' ||
+        char == '_' ||
+        char == '.' ) {
+      // continue...
+    } else {
+      return false;
+    }
+  }
+  return true;
+}
+
+
+function valid_username (username) {
+  // allowed: a-z A-Z 0-9 _-.
+  // username should be trimmed before sending here.
+
+  if (!username) return false;
+  if (username.length > 50) return false;
+
+  const charList = username.split("");
+  if (charList[0] == '.' || charList[charList.length - 1] == '.') return false;
+
+  for (let i = 0; i < charList.length; i++) {
+    let char = charList[i];
+    if ((char >= 'a' && char <= 'z') ||
+        (char >= 'A' && char <= 'Z') ||
+        (char >= '0' && char <= '9') ||
+        char == '-' ||
+        char == '_' ||
+        char == '.' ) {
+      // continue...
+    } else {
+      return false;
+    }
+  }
+  return true;
+}
+
+
+function valid_password (password) {
+  // * allowed: A-Z a-z 0-9 ~!@#$%^&* -=_+,. space
+  // * password should NOT be trimmed before sending here.
+  // * password can contain consecutive spaces, therefore when displayed on page,
+  //   it must be put in <pre> or <code> tags.
+
+  if (!password) return false;
+  if (password.length > 100) return false;
+
+  const charList = password.split("");
+  if (charList[0] == " " || charList[charList.length - 1] == " ") return false;
+
+  for (let i = 0; i < charList.length; i++) {
+    let char = charList[i];
+    if ((char >= 'a' && char <= 'z') ||
+        (char >= '@' && char <= 'Z') ||
+        (char >= '0' && char <= '9') ||
+        (char >= ' ' && char <= '&' && char != '"') ||
+        (char >= '*' && char <= '.') ||
+        
+        char == '=' ||
+        char == '^' ||
+        char == '_' ||
+        char == '~'  ) {
+      // continue...
+    } else {
+      return false;
+    }
+  }
+  return true;
+}
+
+
+function valid_name (name) {
+  // allowed: a-z A-Z .
+  // username should be trimmed before sending here.
+
+  if (!name) return false;
+  if (name.length > 100) return false;
+
+  const charList = name.split("");
+  if (charList[0] == " " || charList[charList.length - 1] == " ") return false;
+
+  for (let i = 0; i < charList.length; i++) {
+    let char = charList[i];
+    if ((char >= 'a' && char <= 'z') ||
+        (char >= 'A' && char <= 'Z')) {
+      // continue...
+
+    } else if (char == ' ') {
+      if (charList[i + 1] == " ") {
+        return false;
+      }
+      // continue...
+    } else {
+      return false;
+    }
+  }
+  return true;
+}
+
+
+function valid_usertype(userType) {
+  if (userType == 0 || userType == 1) return true;
+  return false;
+}
+
+
+function valid_userID (userID) {
+  if (typeof(userID) == "number") return true;
+  return false;
 }
 
 let port = 8000;
