@@ -7,6 +7,45 @@
     background-size:cover;
 }
 
+#easterEgg{
+    background-color: rgba(3, 0, 22, 0.8);
+    grid-row: 1 / span 3;
+    grid-column: 1 / span 5;
+    z-index: 5;
+    color: white;
+    display: none;
+    transition: all 1s;
+    grid-template-rows: 10% 10% 70% 10%;
+    grid-template-columns: 10% 80% 10%;
+}
+
+#easterEgg > h1{
+    grid-column: 2;
+    grid-row: 2;
+}
+
+#closeEgg{
+    align-self: center;
+    justify-self: center;
+    filter: invert();
+    width: 25%;
+    height: auto;
+    grid-column: 3;
+    grid-row: 1;
+    cursor: pointer;
+}
+
+#easterEggVideo{
+    grid-column: 2;
+    grid-row: 3;
+    width: 80vw;
+    height: 45vw;
+    max-width: 1120px;
+    max-height: 630px;
+    justify-self: center;
+    align-self: center;
+}
+
 @media only screen and (min-width : 451px){
     #content{
         grid-template-columns: 25% 50% 25%;

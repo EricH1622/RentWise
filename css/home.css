@@ -51,27 +51,120 @@ body {
   width: 100%;
   padding: 10px;
   display: grid;
-  grid-template-columns: 30% 70%;
+  grid-template-columns: 40% 60%;
   grid-template-rows: 100%;
-  text-align: right;
 }
 
-#t1 {
-  grid-row: 1 / span 1;
-  grid-column: 1 / span 1;
-  background-color: rgb(153, 190, 228);
-
+h2 {
+  font-family: 'Roboto', sans-serif;
+  font-size: 3vw;
+  color: white;
+  filter: drop-shadow(5px 7px 2.5px #000000);
+  margin: 0 auto;
+  margin-bottom: 2%;
+}
+#tagline {
+  font-family: 'Roboto', sans-serif;
+  margin:0 auto;
 }
 
-#t2 {
+input[type=text],select {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+#form {
+  font-family: 'Roboto', sans-serif;
+  width: 100%;
+  margin: 1rem 0 3em 0;
+  border-radius: 10px;
+  background-color: #001d3d;
+  color: white;
+  font-weight: bolder;
+  display: grid;
+  grid-template-rows: 2rem 1fr 1fr 1fr 1fr 1fr 1fr 1fr 2rem;
+  grid-template-columns: 2rem 1fr 2rem 1fr 2rem;
+  box-shadow: 15px 15px 5px 0px rgba(0,0,0,0.85);
+}
+
+#h3 {
+  font-family: 'Roboto', sans-serif !important;
+  text-align: center;
   grid-row: 2 / span 1;
-  background-color:rgb(90, 156, 221);
+  grid-column: 2 / span 3;
 }
 
-#t3 {
-  grid-row: 3 / span 1;
-  background-color: rgb(255, 255, 255);
-  
+#unit {
+  grid-row: 3 /span 1;
+  grid-column: 2 /span 1;
+}
+
+#streetNum {
+  grid-row: 4 /span 1;
+  grid-column: 2 /span 1;
+}
+
+#prefix{
+  grid-row: 4 / span 1;
+  grid-column: 4 / span 1;
+}
+
+#streetName {
+  grid-row: 5 / span 1;
+  grid-column: 2 / span 1;
+}
+#streetType{
+  grid-row: 5 / span 1;
+  grid-column: 4 / span 1;
+}
+#city {
+  grid-row: 6 / span 1;
+  grid-column: 2 / span 3;
+}
+
+#province {
+  grid-row: 7 / span 1;
+  grid-column: 2 / span 3;
+}
+
+
+#submit {
+  grid-row: 8 / span 1;
+  grid-column: 2 / span 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#btn{
+  background-color: rgb(255, 157, 0); /* Green */
+  border: none;
+  border-radius: 10px;
+  color: white;
+  padding: 15px 80px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+
+#formContainer {
+  grid-row: 2 / span 1;
+  grid-column: 1 / span 1;
+  background-image: url(../assets/images/city2.jpeg);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  opacity: 0.9;
 }
 
 #footer {
@@ -89,7 +182,6 @@ body {
 /**************** Navbar Styling ****************/
 .logo{
   height: 100%;
-  justify-self: left;
 }
 
 #logo1{
@@ -100,8 +192,6 @@ body {
 #nav > ul {
 grid-column: 2;
 grid-row: 1;
-margin: 0;
-align-self: center;
 }
 
 #nav ul li {
@@ -113,7 +203,6 @@ color:rgb(255, 255, 255);
 text-decoration: none;
 border-radius: 5px;
 padding: 7px 13px;
-font-size: 20px;
 }
 
 #logout{
@@ -160,6 +249,7 @@ padding: 6px 10px;
 margin-top: 8px;
 margin-right: 16px;
 background: #ddd;
+font-size: 17px;
 border: none;
 cursor: pointer;
 }
@@ -194,13 +284,11 @@ font-weight: bold;
 transition: 0.6s;
 }
 
-#footer #copyright {
+#footer .copyright {
   margin: 0;
   text-align: center;
   color: rgb(255, 255, 255);
   font-size: 1.5vmin;
-  user-select: none;
-  cursor: pointer;
 }
 
 .hamburger{
@@ -210,7 +298,7 @@ transition: 0.6s;
 
 #searchIcon{
   width: auto;
-  height: 17px;
+  height: 1.8vh;
   justify-self: center;
   align-self: center;
 }
@@ -273,18 +361,12 @@ transition: 0.6s;
 }
 
 #nav .search-container button {
-  float: none;
-  margin: 0;
-  display: inline-block;
+float: none;
 }
 
-#nav input[type=text] {
-  padding: 6px;
-  height: 80%;
-  margin: 0;
-  font-size: 17px;
-  border: none;
-  }
+
+
+
 }
 
 @media only screen and (max-width : 400px) {
