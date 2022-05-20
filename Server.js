@@ -139,7 +139,7 @@ function getNavBar(req) {
       <ul>
           <li><a href="/admin">Admin</a></li>
           <li><a href="/home">Search</a></li>
-          <li><a href="#">Create Post</a></li>
+          <li><a href="/createPost">Create Post</a></li>
           <li><a href="/profile">Profile</a></li>
           <li><a href="/logout" id="logout">Logout</a></li>
       </ul>`
