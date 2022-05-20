@@ -128,6 +128,7 @@ function getNavBar(req) {
           <li><a href="/home">Search</a></li>
           <li><a href="/createPost">Write a review</a></li>
           <li><a href="/profile">Profile</a></li>
+          <li><a href="/userTimeline">Timeline</a></li>
           <li><a href="/logout" id="logout">Logout</a></li>
       </ul>`
     } else {
