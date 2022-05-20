@@ -157,6 +157,7 @@ app.get("/unitView", function (req, res) {
 });
 
 async function sendReviews(req, res) {
+  let address_id = req.query["id"];
   let doc = fs.readFileSync("./html/unitView.html", "utf8");
   let docDOM = new JSDOM(doc);
   const connection = await mysql.createConnection({
@@ -167,7 +168,7 @@ async function sendReviews(req, res) {
     multipleStatements: true
   });
   // replace unit_id with selected option
-  let unit_id = 1;
+  let unit_id = address_id;
 
   connection.connect();
   // get relative data and save into constants
@@ -182,12 +183,11 @@ async function sendReviews(req, res) {
 
   // users
   let u_name = [];
-
   // for each post, the user id is used to query the user db for usernames
-  for (let k = 0; k < rows2.length; k++) {
-    const [rows2, fields2] = await connection.execute("SELECT * FROM BBY_37_user WHERE BBY_37_user.user_id = " + rows[k].user_id
+  for (let k = 0; k < rows.length; k++) {
+    const [rows3, fields3] = await connection.execute("SELECT * FROM BBY_37_user WHERE BBY_37_user.user_id = " + rows[k].user_id
     );
-    u_name[k] = rows2[k].username;
+    u_name[k] = rows3[0].username;
   }
 
   // load address into page
@@ -211,8 +211,8 @@ async function sendReviews(req, res) {
   }
   docDOM.window.document.getElementById("address").innerHTML= address;
   docDOM.window.document.getElementById("reviews").innerHTML += currentReview;
-
-      res.send(docDOM.serialize());
+  docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
+  res.send(docDOM.serialize());
 }
 
 app.get("/admin", function (req, res) {
@@ -629,7 +629,8 @@ async function submitPost(req,res){
     "SELECT * FROM BBY_37_location WHERE BBY_37_location.unit_number = ? AND BBY_37_location.street_number = ? AND BBY_37_location.prefix = ? AND BBY_37_location.street_name = ? AND BBY_37_location.street_type = ? AND BBY_37_location.city = ? AND BBY_37_location.province = ?",
     [req.body.unit_number, req.body.street_number, req.body.prefix, req.body.street_name, req.body.street_type, req.body.city, req.body.province]);
 
-    //if the addres does not exist in the database, create a new entry in the location table, grab that location id and add a new entry to the post table
+    //if the address does not exist in the database, create a new entry in the location table, grab that location id and add a new entry to the post table
+    var locationid;
     if (rows.length === 0) {
       await connection.execute("INSERT INTO BBY_37_location (unit_number,street_number,prefix,street_name,street_type,city,province) values (?, ?, ?, ?, ?, ?, ?)",[req.body.unit_number, req.body.street_number, req.body.prefix, req.body.street_name, req.body.street_type, req.body.city, req.body.province]);
       const [row, fields] = await connection.query(
@@ -637,18 +638,20 @@ async function submitPost(req,res){
         [req.body.unit_number, req.body.street_number, req.body.prefix, req.body.street_name, req.body.street_type, req.body.city, req.body.province]);
 
       //Grab the location_id of the new address added to location table
-      let newLocationid = row[0].location_id;
-      await connection.execute("INSERT INTO BBY_37_post (user_id, date_created, content, location_id) values (?, ?, ?, ?)",[req.session.userid,new Date(),req.body.review,newLocationid]);
+      locationid = row[0].location_id;
+      await connection.execute("INSERT INTO BBY_37_post (user_id, date_created, content, location_id) values (?, ?, ?, ?)",[req.session.userid,new Date(),req.body.review,locationid]);
       await connection.end();
 
       //if the address already exist, only add the review with the user id and the location id of this address
     }else{
-      await connection.execute("INSERT INTO BBY_37_post (user_id, date_created, content, location_id) values (?, ?, ?, ?)",[req.session.userid,new Date(),req.body.review,rows[0].location_id]);
+      locationid = rows[0].location_id;
+      await connection.execute("INSERT INTO BBY_37_post (user_id, date_created, content, location_id) values (?, ?, ?, ?)",[req.session.userid,new Date(),req.body.review,locationid]);
       await connection.end();
     }
     res.send({
       status:"success",
-      message:"The post has been created."
+      message:"The post has been created.",
+      location_id:locationid
     }); 
 }
 
