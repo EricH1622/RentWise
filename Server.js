@@ -8,6 +8,7 @@ const fs = require("fs");
 const mysql = require("mysql2/promise");
 const multer = require("multer");
 const {JSDOM} = require('jsdom');
+const sanitizeHtml = require('sanitize-html');
 
 app.use("/js", express.static("./js"));
 app.use("/css", express.static("./css"));
@@ -223,7 +224,7 @@ async function sendReviews(req, res) {
     if ((rows[j].last_edited_date != "Invalid Date") && (rows[j].last_edited_date != null)) {
       currentReview += "<div class='editTime'> Last edit:" + rows[j].last_edited_date + "</div>";
     }
-    // currentReview += "<div class='images'>" + IMAGE TO GO HERE + "</div>";
+    currentReview += "<div class='images'><img id='photo1' src='" + rows[j].photo1 + "'></img></div>";
     currentReview += "</div>";
   }
   docDOM.window.document.getElementById("address").innerHTML= address;
@@ -1004,6 +1005,8 @@ async function submitPost(req,res){
 
     //if the address does not exist in the database, create a new entry in the location table, grab that location id and add a new entry to the post table
     var locationid;
+    const sanitizedReview = sanitizeHtml(req.body.review);
+    
     if (rows.length === 0) {
       await connection.execute("INSERT INTO BBY_37_location (unit_number,street_number,prefix,street_name,street_type,city,province) values (?, ?, ?, ?, ?, ?, ?)",[req.body.unit_number, req.body.street_number, req.body.prefix, req.body.street_name, req.body.street_type, req.body.city, req.body.province]);
       const [row, fields] = await connection.query(
@@ -1021,7 +1024,7 @@ async function submitPost(req,res){
         return;
       }
 
-      await connection.execute("INSERT INTO BBY_37_post (user_id, date_created, content, location_id) values (?, ?, ?, ?)",[req.session.userid,new Date(),req.body.review,locationid]);
+      await connection.execute("INSERT INTO BBY_37_post (user_id, date_created, content, location_id) values (?, ?, ?, ?)",[req.session.userid,new Date(),sanitizedReview,locationid]);
       await connection.end();
 
       //if the address already exist, only add the review with the user id and the location id of this address
@@ -1035,7 +1038,7 @@ async function submitPost(req,res){
       }
 
       locationid = rows[0].location_id;
-      await connection.execute("INSERT INTO BBY_37_post (user_id, date_created, content, location_id) values (?, ?, ?, ?)",[req.session.userid,new Date(),req.body.review,locationid]);
+      await connection.execute("INSERT INTO BBY_37_post (user_id, date_created, content, location_id) values (?, ?, ?, ?)",[req.session.userid,new Date(),sanitizedReview,locationid]);
       await connection.end();
     }
     res.send({
