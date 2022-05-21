@@ -1,0 +1,302 @@
+/***************** Content Styling ****************/
+
+#content {
+  display: grid;
+  grid-column: 1 / span 5;
+  grid-row: 2;
+  grid-template-columns: 100%;
+  grid-template-rows: 10% 10% 70% 10%;
+  background-color: rgb(16, 0, 37);
+  overflow-x: hidden;
+}
+
+#content * {
+  color: white;
+}
+
+#prop {
+  background-image: url("/assets/images/city1.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position-x: center;
+  background-position-y: center;
+}
+
+#prop > h1 {
+  font-size: 6vmin;
+  margin: 0 auto;
+  filter: drop-shadow(7px 7px 3px #000000);
+}
+
+h3{
+  font-size: 5vh;
+  margin: 0 auto;
+}
+
+
+#reviews {
+  overflow: auto;
+  padding: 1rem 2rem 1rem 2rem;
+  grid-gap: 10px;
+  background-color: rgb(255, 255, 255);
+  overflow-x: hidden;
+}
+
+.review {
+  min-height: 160px;
+  border-style: solid;
+  border-color: rgb(0, 124, 161);
+  background-color: rgb(0, 195, 255);
+  border-radius: 10px;
+  padding: 15px;
+  display: grid;
+  grid-template-columns: 160px 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 16.7% 16.7% 16.7% 16.7% 16.7% 16.7%;
+}
+#photo1{
+  width:80%;
+  height:80%;
+  border-radius: 8px;
+}
+.name {
+  grid-column: 2 / span 1;
+  grid-row: 1 / span 2;
+}
+
+.rev {
+  grid-column: 2 / span 7;
+  grid-row: 3 / span 2;
+}
+
+.images {
+  grid-column: 1 / span 1;
+  grid-row: 1/ span 6;
+}
+
+.createTime {
+  grid-column: 2 / span 3;
+  grid-row: 5 /  span 2;
+  /* display: flex;
+  flex-direction: column;
+  justify-content: flex-end; */
+}
+
+.editTime {
+  grid-column: 5 / span 3;
+  grid-row: 5 /  span 2;
+  /* display: flex;
+  flex-direction: column;
+  justify-content: flex-end; */
+}
+
+/* .editBtn {
+  grid-column: 7 / span 2;
+  grid-row: 6;
+  display: none;
+} */
+#buttons {
+  display: grid;
+  grid-template-columns: 20% 60% 20%;
+  border-radius: 10px;
+  overflow: hidden;
+  padding: 1.5vmin;
+}
+
+#load {
+  grid-column: 1;
+}
+
+#post {
+  grid-column: 3;
+  margin-right: 0;
+  margin-left: auto;
+}
+
+button {
+  font-size: 2.3vh;
+  background-color: rgb(255, 157, 0);
+  border-style: none;
+  padding: 10px 24px;
+  
+  color: white;
+  height: 95%;
+}
+
+button:hover {
+  background-color: rgb(218, 134, 0);
+  cursor: pointer;
+}
+
+.viewButton {
+  border-radius: 10px;
+}
+
+@media only screen and (max-width: 1024px) and (min-width: 401px) {
+  #content {
+    grid-template-columns: 100%;
+    grid-template-rows: 10% 10% 70% 10%;
+  }
+
+  #reviews {
+    overflow: auto;
+    padding: 1rem 2rem 1rem 2rem;
+    grid-gap: 10px;
+    background-color: rgb(255, 255, 255);
+    overflow-x: hidden;
+  }
+  
+  .review {
+    min-height: 290px;
+    border-style: solid;
+    border-color: rgb(0, 124, 161);
+    background-color: rgb(0, 195, 255);
+    border-radius: 10px;
+    padding: 15px;
+    display: grid;
+    grid-template-columns: 160px 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 16.7% 16.7% 16.7% 16.7% 16.7% 16.7%;
+  }
+  #photo1{
+    width:80%;
+    max-height: 50%;
+    border-radius: 8px;
+    
+  }
+  .name {
+    grid-column: 2 / span 1;
+    grid-row: 1 / span 2;
+  }
+  
+  .rev {
+    grid-column: 2 / span 7;
+    grid-row: 3 / span 2;
+  }
+  
+  .images {
+    grid-column: 1 / span 1;
+    grid-row: 1/ span 6;
+  }
+  
+  .createTime {
+    grid-column: 2 / span 3;
+    grid-row: 5 /  span 2;
+  }
+  
+  .editTime {
+    grid-column: 5 / span 3;
+    grid-row: 5 /  span 2;
+  }
+  #buttons {
+    grid-template-columns: 100%;
+  }
+
+  #load {
+    grid-column: 1;
+    grid-row: 1;
+    display: none;
+  }
+  
+  #post {
+    grid-column: 1;
+    grid-row: 2;
+    margin-left: 0;
+  }  
+
+  .viewButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40%;
+    border-radius: 10px;
+    margin: 0 auto;
+  }
+
+  #filler {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 400px) {
+  #content {
+    grid-template-columns: 100%;
+    grid-template-rows: 10% 10% 70% 10%;
+  }
+
+  #reviews {
+    overflow: auto;
+    padding: 1rem 2rem 1rem 2rem;
+    grid-gap: 10px;
+    background-color: rgb(255, 255, 255);
+    overflow-x: hidden;
+  }
+  
+  .review {
+    min-height: 300px;
+    border-style: solid;
+    border-color: rgb(0, 124, 161);
+    background-color: rgb(0, 195, 255);
+    border-radius: 10px;
+    padding: 15px;
+    display: grid;
+    grid-template-columns: 200px 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 16.7% 16.7% 16.7% 16.7% 16.7% 16.7%;
+  }
+  #photo1{
+    width:80%;
+    max-height: 50%;
+    border-radius: 8px;
+    
+  }
+  .name {
+    grid-column: 2 / span 1;
+    grid-row: 1 / span 2;
+  }
+  
+  .rev {
+    grid-column: 2 / span 7;
+    grid-row: 3 / span 2;
+  }
+  
+  .images {
+    grid-column: 1 / span 1;
+    grid-row: 1/ span 6;
+  }
+  
+  .createTime {
+    grid-column: 2 / span 3;
+    grid-row: 5 /  span 2;
+  }
+  
+  .editTime {
+    grid-column: 5 / span 3;
+    grid-row: 5 /  span 2;
+  }
+  
+
+  #buttons {
+    grid-template-columns: 100%;
+    grid-template-rows: 50% 50%;
+  }
+
+  #load {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  
+  #post {
+    grid-column: 1;
+    grid-row: 2;
+    margin-left: 0;
+  }  
+
+  .viewButton {
+    display: block;
+    width: 50%;
+    border-radius: 10px;
+    margin: 0 auto;
+  }
+
+  #filler {
+    display: none;
+  }
+}

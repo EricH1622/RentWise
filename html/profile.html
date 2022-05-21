@@ -8,21 +8,18 @@
     <link rel="stylesheet" href="/css/templateStyle.css">
     <link rel="stylesheet" href="/css/allPages.css">
     <link rel="stylesheet" href="/css/profile.css">
-
-    <!-- Icons -->
-    <script src="https://kit.fontawesome.com/f1147c558e.js" crossorigin="anonymous"></script>
-
+    <link rel="icon" href="/assets/images/favicon.ico">
+    
 </head>
 
 <body>
 
-    <div id="container">
+  <div id="container">
 
-        <div id="nav">
-            
+    <div id="nav">
                 <input type="checkbox" id="check">
                 <label for="check" class="checkbtn">
-                    <i class="fas fa-bars fa-lg"></i>
+                    <i><img src="/assets/images/menuIcon.png" class="hamburger"/></i>
                 </label>
                 <div class="logo"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></div>
                 <ul>
@@ -33,49 +30,76 @@
                         <div class="search-container">
                             <form action="#">
                                 <input type="text" placeholder="Search.." name="search">
-                                <button type="submit"><i class="fa fa-search"></i></button>
+                                <button type="submit"><img src="/assets/images/searchIcon.png" id="searchIcon"/></button>
                             </form>
                       </div>
                     </li>
                 </ul>
-        </div>
+    </div>
+    <div id="content">
+      <div id="profileInfo">
+        <h1>Profile Info</h1>
+        <form id="pictureForm">
+          <img id="profilePhoto" src="/assets/images/placholderprofilephoto.jpg">
+          <input id="imageUpload" type="file" value="Upload Image" accept="image/png, image/gif, image/jpeg"/>
+          <input id="submit" type="submit" value="Submit"/>
+          <span id="pictureMsg"></span>
+        </form>
+        <form id="profileForm">
+          
+          <label>
+            First Name: <input id="firstName" placeholder="firstName">
+          </label>
+          <label>
+            Last Name: <input id="lastName" placeholder="lastName">
+          </label>
+          <label>
+            Username: <input id="username" placeholder="userName">
+          </label>
+          <label>
+            Password: <input id="password" placeholder="password">
+          </label>
+          <label>
+            Email: <input id="email" placeholder="email">
+          </label>
+          <p id="msg"></p>
+          <div id="submitContainer">
+            <button type="button" id="editButton">Submit Changes</button>
+          </div>
+        </form>
 
-        <div id="content">
-            <div id="profileInfo">
-                <h1>Profile Info</h1>
-                <p id="username">Username: nameGoesHere</p>
-                <p id="password">Password: passwordGoesHere</p>
-                <p id="email">Email: emailGoesHere</p>
-                <div id="editContainer">
-                    <a href="#" id="editButton">Edit</a>
-                </div>
-            </div>
-            <div id="timeline">
-                <h1>Timeline</h1>
-            </div>
-        </div>
-        
+      </div>
+      <div id="timeline">
+        <h1>Timeline</h1>
+      </div>
+    </div>
 
-        <div id="footer">
-            
-            <ul class="footerList">
-                <li>
-                    <a href="#">Home</a>
-                </li>
-                <li>
-                    <a href="#">Contact</a>
-                </li>
-                <li>
-                    <a href="#">About</a>
-                </li>
-            </ul>
+            <p class="copyright">RentWise © 2022&emsp; | &emsp;BBY 37&emsp; | &emsp;App icons created by Google - Flaticon</p>
 
-            <p class="copyright">RentWise © 2022&emsp; | &emsp;BBY 37</p>
+    <div id="footer">
 
-        </div>
+      <ul class="footerList">
+        <li>
+          <a href="#">Home</a>
+        </li>
+        <li>
+          <a href="#">Contact</a>
+        </li>
+        <li>
+          <a href="#">About</a>
+        </li>
+      </ul>
+      
+      <!-- This weird span stuff is done to make the easter egg work, trust me -->
+      <p id="copyright"><span id="c1">Rent</span><span id="c2">Wise </span><span id="c3">© </span><span id="c4">2022</span><span id="c5">&emsp; | &emsp;</span><span id="c6">BBY</span><span id="c7"> 37</span></p>
 
     </div>
 
-</body>
+    <div id="easterEgg">
+    </div>
 
+  </div>
+  <script src="./js/profile.js"></script>
+  <script src="./js/easterEgg.js"></script>
+</body>
 </html>
