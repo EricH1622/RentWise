@@ -142,8 +142,8 @@ async function sendProfilePage(req, res) {
   if (req.session.loggedIn) {
     let doc = fs.readFileSync("./html/profile.html", "utf8");
     let docDOM = new JSDOM(doc);
-    const connection = await mysql.createConnection(connectConfig);
-    connection.connect();
+    // const connection = await mysql.createConnection(connectConfig);
+    // connection.connect();
     const [rows, fields] = await connection.execute(
       "SELECT first_name, last_name, username, email_address, password FROM BBY_37_user " +
       "WHERE BBY_37_user.user_id = " + req.session.userid);
@@ -176,11 +176,11 @@ async function sendReviews(req, res) {
   let address_id = req.query["id"];
   let doc = fs.readFileSync("./html/unitView.html", "utf8");
   let docDOM = new JSDOM(doc);
-  const connection = await mysql.createConnection(connectConfig);
+  // const connection = await mysql.createConnection(connectConfig);
   // replace unit_id with selected option
   let unit_id = address_id;
 
-  connection.connect();
+  // connection.connect();
   // get relative data and save into constants
 
   // posts
@@ -244,9 +244,9 @@ app.get("/userTimeline", function (req, res) {
 async function sendHistory(req, res) {
   let doc = fs.readFileSync("./html/userTimeLine.html", "utf8");
   let docDOM = new JSDOM(doc);
-  const connection = await mysql.createConnection(connectConfig);
+  // const connection = await mysql.createConnection(connectConfig);
 
-  connection.connect();
+  // connection.connect();
 
   // query for relative data from DB
   const [rows, fields] = await connection.execute("SELECT BBY_37_location.unit_number, BBY_37_location.street_number, BBY_37_location.prefix, BBY_37_location.street_name, BBY_37_location.street_type, BBY_37_location.city, BBY_37_location.province, BBY_37_post.user_id, BBY_37_post.date_created, BBY_37_post.last_edited_date, BBY_37_post.content, BBY_37_post.photo1 FROM BBY_37_post INNER JOIN BBY_37_location ON BBY_37_location.location_id=BBY_37_post.location_id WHERE user_id=" + req.session.userid
@@ -305,8 +305,8 @@ app.get("/results", function (req, res) {
 async function sendAdminPage(req, res) {
   let doc = fs.readFileSync("./html/admin.html", "utf8");
   let docDOM = new JSDOM(doc);
-  const connection = await mysql.createConnection(connectConfig);
-  connection.connect();
+  // const connection = await mysql.createConnection(connectConfig);
+  // connection.connect();
   const [rows, fields] = await connection.execute("SELECT * FROM BBY_37_user ");
   await connection.end();
   // `user_id`, `username`, `first_name`, `last_name`, `email_address`, `password`, `role_id`
@@ -355,8 +355,8 @@ app.post('/search', function (req, res) {
 
 async function editUserProfile(req, res) {
   if (req.session.loggedIn) {
-    const connection = await mysql.createConnection(connectConfig);
-    connection.connect();
+    // const connection = await mysql.createConnection(connectConfig);
+    // connection.connect();
 
     if(!valid_username(req.body.username)){
       res.send({
@@ -446,8 +446,8 @@ async function executeSearch(req, res) {
     let doc = fs.readFileSync("./html/results.html", "utf8");
     let docDOM = new JSDOM(doc);
 
-    const connection = await mysql.createConnection(connectConfig);
-    connection.connect();
+    // const connection = await mysql.createConnection(connectConfig);
+    // connection.connect();
 
     let query = `SELECT * FROM BBY_37_location WHERE 
       unit_number LIKE ? AND 
@@ -545,8 +545,8 @@ async function authenticateUser(req, res) {
 }
 
 async function createUser(req, res) {
-  const connection = await mysql.createConnection(connectConfig);
-  connection.connect();
+  // const connection = await mysql.createConnection(connectConfig);
+  // connection.connect();
 
   //Checks for valid user values
   if(!valid_username(req.body.username)){
@@ -638,8 +638,8 @@ app.post("/delete_user", function (req, res) {
 
 
 async function deleteUser(req, res) {
-  const connection = await mysql.createConnection(connectConfig);
-  connection.connect();
+  // const connection = await mysql.createConnection(connectConfig);
+  // connection.connect();
 
   let [rows, fields] = await connection.query(
     "SELECT role_id FROM BBY_37_user WHERE BBY_37_user.user_id = ?",
@@ -665,8 +665,8 @@ async function deleteUser(req, res) {
 
 
 async function doDeleteUser(req, res) {
-  const connection = await mysql.createConnection(connectConfig);
-  connection.connect();
+  // const connection = await mysql.createConnection(connectConfig);
+  // connection.connect();
   
   await connection.query('DELETE FROM BBY_37_user WHERE BBY_37_user.user_id = ?',
     [req.body.userID]);
@@ -691,8 +691,8 @@ app.post("/update_user_data", function (req, res) {
 
 async function adminUpdateUsers(req, res) {
 
-  const connection = await mysql.createConnection(connectConfig);
-  connection.connect();
+  // const connection = await mysql.createConnection(connectConfig);
+  // connection.connect();
 
   let [rows, fields] = await connection.query(
     "SELECT user_id, role_id FROM BBY_37_user WHERE BBY_37_user.user_id = ?",
@@ -725,8 +725,8 @@ async function adminUpdateUsers(req, res) {
 }
 
 async function doUpdateUser(req, res) {
-  const connection = await mysql.createConnection(connectConfig);
-  connection.connect();
+  // const connection = await mysql.createConnection(connectConfig);
+  // connection.connect();
 
   if(!valid_username(req.body.username)){
     res.send({
@@ -798,8 +798,8 @@ app.post("/add_user", function (req, res) {
 
 
 async function adminAddUser(req, res) {
-  const connection = await mysql.createConnection(connectConfig);
-  connection.connect();
+  // const connection = await mysql.createConnection(connectConfig);
+  // connection.connect();
   // check if username exists
   let [rows, fields] = await connection.query(
     "SELECT user_id FROM BBY_37_user WHERE BBY_37_user.username = ?",
@@ -918,8 +918,8 @@ app.post("/submitPost", function (req,res){
   }
 });
 async function submitPost(req,res){
-  const connection = await mysql.createConnection(connectConfig);
-  connection.connect();
+  // const connection = await mysql.createConnection(connectConfig);
+  // connection.connect();
 
   //Read into database to see if the address entered by user already exsits
   const [rows, fields] = await connection.query(
@@ -1104,7 +1104,7 @@ function valid_userID (userID) {
   return false;
 }
 
-let port = process.env.PORT;
+let port = process.env.PORT || 8000;
 app.listen(port, function () {
   console.log("RentWise server running on port: " + port);
 });
