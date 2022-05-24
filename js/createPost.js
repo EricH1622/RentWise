@@ -59,7 +59,23 @@ ready(() => {
       });
     } else {
       e.preventDefault();
-      document.getElementById("msg").innerText = "Only unit number is optional. Please fill out all other required fields.";
+      let formData=[streetNumData, streetNameData, cityData, provinceData, reviewData];
+      let inputBoxId=["streetNumInput", "streetNameInput","cityInput","provinceInput","mytextarea"];
+      for(let i=0;i<=4;i++){
+        if(formData[i] === null || formData[i].trim()===""){
+          if(i != 4){
+            document.getElementById(inputBoxId[i]).setAttribute("style","border: 3px solid #DB3A34");
+          }else{
+            tinymce.get("mytextarea").getContentAreaContainer().setAttribute("style","border: 3px solid #DB3A34");
+          }
+        }else{
+          if(i != 4){
+            document.getElementById(inputBoxId[i]).removeAttribute("style","border: 3px solid #DB3A34");
+          }else{
+            tinymce.get("mytextarea").getContentAreaContainer().removeAttribute("style","border: 3px solid #DB3A34");
+          }
+        }
+      };
     }
   })
 })

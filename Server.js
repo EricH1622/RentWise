@@ -468,6 +468,7 @@ async function executeSearch(req, res) {
     const connection = await mysql.createConnection({
       host: 'localhost',
       user: 'root',
+      password: '',
       database: 'COMP2800',
       multipleStatements: true
     });

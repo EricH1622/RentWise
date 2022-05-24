@@ -33,7 +33,7 @@
                 <input type="text" name="unit" id="unitInput">
               </div>
               <div id="streetNum">
-                <label for="streetNum">Street Number</label>
+                <label for="streetNum">Street Number <span class="required">* required</span></label>
                 <input type="text" name="streetNum" id="streetNumInput">
               </div>
               <div id="prefix">
@@ -51,7 +51,7 @@
                 </select>
               </div>
               <div id="streetName">
-                <label for="streetName">Street Name</label>
+                <label for="streetName">Street Name <span class="required">* required</span></label>
                 <input type="text" name="streetName" id="streetNameInput">
               </div>
               <div id="streetType">
@@ -74,11 +74,11 @@
                 </select>
               </div>
               <div id="city">
-                <label for="city">City</label>
+                <label for="city">City <span class="required">* required</span></label>
                 <input type="text" name="city" id="cityInput">
               </div>
               <div id="province">
-                <label for="province">Province/Territory</label>
+                <label for="province">Province/Territory <span class="required">* required</span></label>
                 <select name="province" id="provinceInput">
                   <!-- In order of likelyhood to be selected-->
                   <option value="BC">British Columbia</option>
@@ -100,7 +100,7 @@
                 <button type="button" id="uploadBtn">Upload</button>
               </div>
               <div id="richText">
-                <p>Please enter your review for this property:</p>
+                <p>Please enter your review for this property: <span class="required">* required</span></p>
                 <form method="post">
                   <textarea id="mytextarea"></textarea>
                 </form>
