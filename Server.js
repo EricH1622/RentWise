@@ -8,6 +8,7 @@ const fs = require("fs");
 const mysql = require("mysql2/promise");
 const multer = require("multer");
 const {JSDOM} = require('jsdom');
+const { connect } = require("http2");
 
 app.use("/js", express.static("./js"));
 app.use("/css", express.static("./css"));
@@ -301,7 +302,7 @@ async function sendHistory(req, res) {
 
 app.get("/results", function (req, res) {
   if (req.session.loggedIn) {
-    executeSearch(req, res);
+    //executeSearch(req, res);
   } else {
     res.redirect("/");
   }
@@ -440,13 +441,16 @@ async function editUserProfile(req, res) {
 async function storeSearch(req, res) {
   res.setHeader("Content-Type", "application/json");
   if (req.session.loggedIn) {
-    req.session.unit = req.body.unit;
-    req.session.streetNum = req.body.streetNum;
-    req.session.prefix = req.body.prefix;
-    req.session.streetName = req.body.streetName;
-    req.session.streetType = req.body.streetType;
-    req.session.city = req.body.city;
-    req.session.province = req.body.province;
+    const connection = await mysql.createConnection({
+      host: 'localhost',
+      user: 'root',
+      password: '',
+      database: 'COMP2800',
+      multipleStatements: true
+    });
+    connection.connect();
+    connection.execute('INSERT INTO BBY_37_search (time_searched, user_id, unit_number, street_number, prefix, street_name, street_type, city, province) values (NOW(), ?, ?, ?, ?, ?, ?, ?, ?)',
+    [req.session.userid, req.body.unit, req.body.streetNum, req.body.prefix, req.body.streetName, req.body.streetType, req.body.city, req.body.province]);
     res.send({
       status: "success",
       msg: "Search parameters stored."
@@ -472,16 +476,17 @@ async function executeSearch(req, res) {
     });
     connection.connect();
 
-    let query = `SELECT * FROM BBY_37_location WHERE 
-      unit_number LIKE ? AND 
-      street_number LIKE ? AND 
-      prefix LIKE ? AND 
-      street_name LIKE ? AND 
-      street_type LIKE ? AND 
-      city LIKE ? AND 
-      province LIKE ?`;
+    let query = `SELECT * FROM BBY_37_location AS L, BBY_37_search AS S WHERE 
+      L.unit_number LIKE S.unit_number AND 
+      L.street_number LIKE S.street_number AND 
+      L.prefix LIKE S.prefix AND 
+      L.street_name LIKE S.street_name AND 
+      L.street_type LIKE S.street_type AND 
+      L.city LIKE S.city AND 
+      L.province LIKE S.province
+      AND S >= ALL (SELECT * FROM BBY_37_search WHERE user_id LIKE ?)`;
     
-    let values = [req.session.unit, req.session.streetNum, req.session.prefix, req.session.streetName, req.session.streetType, req.session.city, req.session.province];
+    let values = [req.session.userid];
 
     const [rows, fields] = await connection.query(query, values);
 
