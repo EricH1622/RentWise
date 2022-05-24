@@ -217,7 +217,7 @@ async function sendReviews(req, res) {
   docDOM.window.document.getElementById("reviews").innerHTML = currentReview;
   for (let j = 0; j < rows.length; j++) {
     // for each row, make a new review
-    currentReview += "<div class='review'>";
+    currentReview += "<div class='review' id=" + rows[j].post_id + ">";
     currentReview += "<div class='name'><strong>" + u_name[j] + "</strong></div>";
     currentReview += "<div class='rev'><strong>" + rows[j].content + "</strong></div>";
     currentReview += "<div class='createTime'> Original Post: " + rows[j].date_created + "</div>";
@@ -225,6 +225,9 @@ async function sendReviews(req, res) {
       currentReview += "<div class='editTime'> Last edit:" + rows[j].last_edited_date + "</div>";
     }
     currentReview += "<div class='images'><img id='photo1' src='" + rows[j].photo1 + "'></img></div>";
+    if (req.session.userid == rows[j].user_id) {
+      currentReview += "<div class='editBtn' onclick='edit_init()'>Edit</div>";
+    }
     currentReview += "</div>";
   }
   docDOM.window.document.getElementById("address").innerHTML= address;
