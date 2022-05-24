@@ -15,39 +15,42 @@ async function searchQuery(data) {
       window.location.replace("/results");
     }
 
-  } catch (error) {
-  }
+  } catch (error) {}
 }
 
-ready(document.getElementById("btn").addEventListener("click", function(e) {
-  e.preventDefault();
+ready(document.getElementById("btn").addEventListener("click", function (e) {
   let unit = document.getElementById("unitVal").value;
   let streetNum = document.getElementById("streetNumVal").value;
   let streetName = document.getElementById("streetNameVal").value;
   let city = document.getElementById("cityVal").value;
+  let province = document.getElementById("provinceVal").value;
+  if (streetName && city && province) {
+    searchQuery({
+      "unit": unit,
+      "streetNum": streetNum,
+      "prefix": document.getElementById("prefixInput").value,
+      "streetName": streetName,
+      "streetType": document.getElementById("streetTypeInput").value,
+      "city": city,
+      "province": province
+    });
+  } else {
+    e.preventDefault();
+    //Save user inputs and input box ids into two arrays
+    let formData = [streetName, city, province];
+    let inputBoxId = ["streetNameVal", "cityVal", "provinceVal"];
+    //use a for loop to mark all mandatory fields that have no data with red border
+    for (let i = 0; i <= 2; i++) {
+      if (formData[i] === null || formData[i].trim() === "") {
+        document.getElementById(inputBoxId[i]).setAttribute("style", "border: 3px solid #DB3A34");
+        //remove red border for fields that have data
+      } else {
+        document.getElementById(inputBoxId[i]).removeAttribute("style", "border: 3px solid #DB3A34");
+      }
+    };
+    document.getElementById("msg").innerText = "Please fill in all required fields."
+  }
 
-  if (unit === "") {
-    unit = "%";
-  }
-  if (streetNum === "") {
-    streetNum = "%";
-  }
-  if (streetName === "") {
-    streetName = "%";
-  }
-  if (city === "") {
-    city = "%";
-  }
-
-  searchQuery({
-    "unit": unit,
-    "streetNum": streetNum,
-    "prefix": document.getElementById("prefixInput").value,
-    "streetName": streetName,
-    "streetType":document.getElementById("streetTypeInput").value,
-    "city": city,
-    "province":document.getElementById("provinceInput").value
-  });
 }))
 
 function ready(callback) {

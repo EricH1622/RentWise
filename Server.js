@@ -487,7 +487,6 @@ async function executeSearch(req, res) {
 
     const [rows, fields] = await connection.query(query, values);
 
-    
     if(rows.length > 0){
       let query2 = `SELECT COUNT(post_id) AS post_count FROM BBY_37_post WHERE location_id = ?`;
       let rows2;
@@ -505,7 +504,7 @@ async function executeSearch(req, res) {
         }
 
         let prefixStr;
-        if(rows[i].prefix == "N/A"){
+        if(rows[i].prefix == "%"){
           prefixStr = "";
         } else {
           prefixStr = rows[i].prefix;

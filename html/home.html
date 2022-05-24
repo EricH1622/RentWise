@@ -51,7 +51,7 @@
                 </select>
               </div>
               <div id="streetName">
-                <label for="streetName">Street Name</label>
+                <label for="streetName">Street Name <span class="required">* required</span></label>
                 <input type="text" name="streetName" id="streetNameVal">
               </div>
               <div id="streetType">
@@ -74,12 +74,12 @@
                 </select>
               </div>
               <div id="city">
-                <label for="city">City</label>
+                <label for="city">City <span class="required">* required</span></label>
                 <input type="text" name="city" id="cityVal">
               </div>
               <div id="province">
-                <label for="province">Province/Territory</label>
-                <select name="province" id="provinceInput">
+                <label for="province">Province/Territory <span class="required">* required</span></label>
+                <select name="province" id="provinceVal">
                   <!-- In order of likelyhood to be selected-->
                   <option value="BC">British Columbia</option>
                   <option value="ON">Ontario</option>
@@ -96,6 +96,7 @@
                   <option value="NU">Nunavut</option>
                 </select>
               </div>
+              <div id="msg"></div>
               <div id="submit">
                 <button type="submit" id="btn">Search</button>
               </div>

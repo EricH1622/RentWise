@@ -93,7 +93,7 @@ input[type=text],select {
   grid-column: 2 / span 3;
 }
 .required{
-  color:red;
+  color:#DB3A34;
   font-weight: lighter;
   font-size: small;
 }

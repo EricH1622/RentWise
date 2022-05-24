@@ -1,5 +1,4 @@
 "use strict";
-console.log(new Date().toLocaleString());
 tinymce.init({
   selector: '#mytextarea',
   plugins: [
