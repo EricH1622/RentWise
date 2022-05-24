@@ -449,8 +449,18 @@ async function storeSearch(req, res) {
       multipleStatements: true
     });
     connection.connect();
-    connection.execute('INSERT INTO BBY_37_search (time_searched, user_id, unit_number, street_number, prefix, street_name, street_type, city, province) values (NOW(), ?, ?, ?, ?, ?, ?, ?, ?)',
+
+    let [rows3, fields3] = await connection.query('SELECT * FROM BBY_37_search WHERE user_id = ' + req.session.userid);
+    while (rows3.length > 4){
+      await connection.execute('DELETE FROM BBY_37_search WHERE user_id = ? AND time_searched <= ALL (SELECT time_searched FROM BBY_37_search WHERE user_id LIKE ?)', [req.session.userid, req.session.userid]);
+      [rows3, fields3] = await connection.query('SELECT * FROM BBY_37_search WHERE user_id = ' + req.session.userid);
+    }
+    
+    await connection.execute('INSERT INTO BBY_37_search (time_searched, user_id, unit_number, street_number, prefix, street_name, street_type, city, province) values (NOW(), ?, ?, ?, ?, ?, ?, ?, ?)',
     [req.session.userid, req.body.unit, req.body.streetNum, req.body.prefix, req.body.streetName, req.body.streetType, req.body.city, req.body.province]);
+    
+    await connection.end();
+
     res.send({
       status: "success",
       msg: "Search parameters stored."
@@ -484,7 +494,7 @@ async function executeSearch(req, res) {
       L.street_type LIKE S.street_type AND 
       L.city LIKE S.city AND 
       L.province LIKE S.province
-      AND S >= ALL (SELECT * FROM BBY_37_search WHERE user_id LIKE ?)`;
+      AND S.time_searched >= ALL (SELECT * FROM BBY_37_search WHERE user_id LIKE ?)`;
     
     let values = [req.session.userid];
 
