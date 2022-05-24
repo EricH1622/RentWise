@@ -59,8 +59,10 @@ ready(() => {
       });
     } else {
       e.preventDefault();
+      //Save user inputs and input box ids into two arrays
       let formData=[streetNumData, streetNameData, cityData, provinceData, reviewData];
       let inputBoxId=["streetNumInput", "streetNameInput","cityInput","provinceInput","mytextarea"];
+      //use a for loop to mark all mandatory fields that have no data with red border
       for(let i=0;i<=4;i++){
         if(formData[i] === null || formData[i].trim()===""){
           if(i != 4){
@@ -68,6 +70,7 @@ ready(() => {
           }else{
             tinymce.get("mytextarea").getContentAreaContainer().setAttribute("style","border: 3px solid #DB3A34");
           }
+          //remove red border for fields that have data
         }else{
           if(i != 4){
             document.getElementById(inputBoxId[i]).removeAttribute("style","border: 3px solid #DB3A34");
@@ -76,6 +79,7 @@ ready(() => {
           }
         }
       };
+      document.getElementById("msg").innerText="Please fill in all required fields."
     }
   })
 })
