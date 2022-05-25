@@ -9,6 +9,7 @@ const mysql = require("mysql2/promise");
 const multer = require("multer");
 const {JSDOM} = require('jsdom');
 const sanitizeHtml = require('sanitize-html');
+const { connect } = require("http2");
 
 app.use("/js", express.static("./js"));
 app.use("/css", express.static("./css"));
@@ -124,7 +125,53 @@ function getNavBar(req) {
   }
 }
 
+async function sendHomePage(req, res) {
+  if (req.session.loggedIn) {
+    let doc = fs.readFileSync("./html/home.html", "utf8");
+    let docDOM = new JSDOM(doc);
+    const connection = await mysql.createConnection({
+      host: "localhost",
+      user: "root",
+      password: "",
+      database: "COMP2800",
+      multipleStatements: true
+    });
+    connection.connect();
+    const [rows, fields] = await connection.execute(
+      "SELECT * FROM BBY_37_search " +
+      "WHERE user_id = " + req.session.userid + " ORDER BY time_searched DESC");
+    await connection.end();
 
+    if(rows.length > 0){
+      for (let i = 0; i < rows.length; i++) {
+        if(rows[i].unit_number == "%"){
+          rows[i].unit_number = "_"
+        }
+        if(rows[i].street_number == "%"){
+          rows[i].street_number = "_"
+        }
+        if(rows[i].prefix == "%"){
+          rows[i].prefix = "_"
+        }
+        if(rows[i].street_type == "%"){
+          rows[i].street_type = "_"
+        }
+        docDOM.window.document.getElementById("previousSearches").innerHTML += 
+        `<button type="button" onclick="searchUpdate({'searchID': ` + rows[i].search_id + `})">` + 
+        rows[i].unit_number + ` ` + rows[i].street_number + ` ` + rows[i].prefix + ` ` + rows[i].street_name + ` ` + rows[i].street_type + `, ` + rows[i].city + `, ` + rows[i].province + `
+        </button>`;
+      }
+    } else {
+
+    }
+
+    docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
+
+    res.send(docDOM.serialize());
+  } else {
+    res.redirect("/");
+  }
+}
 
 async function sendProfilePage(req, res) {
   if (req.session.loggedIn) {
@@ -264,17 +311,23 @@ async function sendHistory(req, res) {
   docDOM.window.document.getElementById("userHistory").innerHTML = historyItems;
 
   // check for if user has no posts
-  if (rows[0].street_number === undefined) {
+  if (rows.length < 1) {
     docDOM.window.document.getElementById("userHistory").innerHTML += "no posts";
-    // unecessary check?
-  } else if (rows[0].street_number != null) {
+  } else {
     for (let j = rows.length - 1; j > -1; j--) {
       // for each item, define the address
       let address = "";
+
+      if(rows[j].prefix == "%"){
+        rows[j].prefix = ""
+      }
+      if(rows[j].street_type == "%"){
+        rows[j].street_type = ""
+      }
       if (rows[j].unit_number != null) {
-        address = rows[j].unit_number + " " + rows[j].street_number + " " + rows[j].street_name + " " + rows[j].street_type + " " + rows[j].prefix + " " + rows[j].city + " " + rows[j].province;
+        address = rows[j].unit_number + " " + rows[j].street_number + " " + rows[j].prefix + " " + rows[j].street_name + " " + rows[j].street_type +  " " + rows[j].city + " " + rows[j].province;
       } else {
-        address = rows[j].street_number + " " + rows[j].street_name + " " + rows[j].street_type + " " + rows[j].prefix + " " + rows[j].city + " " + rows[j].province;
+        address = rows[j].street_number + " " + rows[j].prefix + " " + rows[j].street_name + " " + rows[j].street_type + " " + rows[j].city + " " + rows[j].province;
       }
       // for each row, make a new review
       historyItems += "<div class='timeLineItem'>";
@@ -294,8 +347,6 @@ async function sendHistory(req, res) {
       historyItems += "</div>";
       }
     docDOM.window.document.getElementById("userHistory").innerHTML = historyItems;
-  } else {
-    // error 
   }
       res.send(docDOM.serialize());
 }
@@ -363,6 +414,10 @@ app.post('/update-profile', function (req, res) {
 
 app.post('/search', function (req, res) {
   storeSearch(req, res);
+});
+
+app.post('/searchUpdate', function (req, res) {
+  updateSearch(req, res);
 });
 
 async function editUserProfile(req, res) {
@@ -438,16 +493,59 @@ async function editUserProfile(req, res) {
   }
 }
 
+async function updateSearch(req, res) {
+  res.setHeader("Content-Type", "application/json");
+  if (req.session.loggedIn) {
+    const connection = await mysql.createConnection({
+      host: 'localhost',
+      user: 'root',
+      password: '',
+      database: 'COMP2800',
+      multipleStatements: true
+    });
+    connection.connect();
+
+    await connection.execute('UPDATE BBY_37_search SET time_searched = NOW() WHERE search_id = ?',
+    [req.body.searchID]);
+    
+    await connection.end();
+
+    res.send({
+      status: "success",
+      msg: "Search time updated."
+    });
+  } else {
+    res.send({
+      status: "fail",
+      msg: "Not logged in."
+    });
+  }
+}
+
 async function storeSearch(req, res) {
   res.setHeader("Content-Type", "application/json");
   if (req.session.loggedIn) {
-    req.session.unit = req.body.unit;
-    req.session.streetNum = req.body.streetNum;
-    req.session.prefix = req.body.prefix;
-    req.session.streetName = req.body.streetName;
-    req.session.streetType = req.body.streetType;
-    req.session.city = req.body.city;
-    req.session.province = req.body.province;
+    const connection = await mysql.createConnection({
+      host: 'localhost',
+      user: 'root',
+      password: '',
+      database: 'COMP2800',
+      multipleStatements: true
+    });
+    connection.connect();
+
+    let [rows3, fields3] = await connection.query('SELECT * FROM BBY_37_search WHERE user_id = ' + req.session.userid);
+    while (rows3.length > 4){
+      await connection.execute('DELETE FROM BBY_37_search WHERE user_id = ? AND time_searched <= ALL (SELECT time_searched FROM BBY_37_search WHERE user_id LIKE ?)', [req.session.userid, req.session.userid]);
+      [rows3, fields3] = await connection.query('SELECT * FROM BBY_37_search WHERE user_id = ' + req.session.userid);
+    }
+    let params = [req.session.userid, req.body.unit, req.body.streetNum, req.body.prefix, req.body.streetName, req.body.streetType, req.body.city, req.body.province];
+    
+    await connection.execute('INSERT INTO BBY_37_search (time_searched, user_id, unit_number, street_number, prefix, street_name, street_type, city, province) values (NOW(), ?, ?, ?, ?, ?, ?, ?, ?)',
+    [req.session.userid, req.body.unit, req.body.streetNum, req.body.prefix, req.body.streetName, req.body.streetType, req.body.city, req.body.province]);
+    
+    await connection.end();
+
     res.send({
       status: "success",
       msg: "Search parameters stored."
@@ -473,17 +571,17 @@ async function executeSearch(req, res) {
       multipleStatements: true
     });
     connection.connect();
-
-    let query = `SELECT * FROM BBY_37_location WHERE 
-      unit_number LIKE ? AND 
-      street_number LIKE ? AND 
-      prefix LIKE ? AND 
-      street_name LIKE ? AND 
-      street_type LIKE ? AND 
-      city LIKE ? AND 
-      province LIKE ?`;
+    let query = `SELECT L.location_id, L.unit_number, L.street_number, L.prefix, L.street_name, L.street_type, L.city, L.province FROM BBY_37_location AS L, BBY_37_search AS S WHERE 
+      L.unit_number LIKE S.unit_number AND 
+      L.street_number LIKE S.street_number AND 
+      L.prefix LIKE S.prefix AND 
+      L.street_name LIKE S.street_name AND 
+      L.street_type LIKE S.street_type AND 
+      L.city LIKE S.city AND 
+      L.province LIKE S.province
+      AND S.time_searched >= ALL (SELECT time_searched FROM BBY_37_search WHERE user_id LIKE ?)`;
     
-    let values = [req.session.unit, req.session.streetNum, req.session.prefix, req.session.streetName, req.session.streetType, req.session.city, req.session.province];
+    let values = [req.session.userid];
 
     const [rows, fields] = await connection.query(query, values);
     if(rows.length > 0){
@@ -960,10 +1058,7 @@ async function adminAddUser(req, res) {
 
 app.get("/home",function (req, res) {
   if (req.session.loggedIn) {
-    let doc = fs.readFileSync("./html/home.html", "utf8");
-    let docDOM = new JSDOM(doc);
-    docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
-    res.send(docDOM.serialize());
+    sendHomePage(req, res);
   }else{
     res.redirect("/login");
   }
