@@ -6,7 +6,7 @@
   grid-column: 1 / span 5;
   display: grid;
   grid-template-columns: 100%;
-  grid-template-rows: 100%;
+  grid-template-rows: 100% 50%;
 }
 
 h2 {

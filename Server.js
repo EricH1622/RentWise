@@ -124,7 +124,41 @@ function getNavBar(req) {
   }
 }
 
+async function sendHomePage(req, res) {
+  if (req.session.loggedIn) {
+    let doc = fs.readFileSync("./html/home.html", "utf8");
+    let docDOM = new JSDOM(doc);
+    const connection = await mysql.createConnection({
+      host: "localhost",
+      user: "root",
+      password: "",
+      database: "COMP2800",
+      multipleStatements: true
+    });
+    connection.connect();
+    const [rows, fields] = await connection.execute(
+      "SELECT * FROM BBY_37_search " +
+      "WHERE user_id = " + req.session.userid + " ORDER BY time_searched DESC");
+    await connection.end();
 
+    if(rows.length > 0){
+      for (let i = 0; i < rows.length; i++) {
+        docDOM.window.document.getElementById("previousSearches").innerHTML += 
+        `<button type="button" onclick="searchUpdate({'searchID': ` + rows[i].search_id + `})">` + 
+        rows[i].unit_number + ` ` + rows[i].street_number + ` ` + rows[i].prefix + ` ` + rows[i].street_name + ` ` + rows[i].street_type + `,` + rows[i].city + `,` + rows[i].province + `
+        </button>`;
+      }
+    } else {
+
+    }
+
+    docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
+
+    res.send(docDOM.serialize());
+  } else {
+    res.redirect("/");
+  }
+}
 
 async function sendProfilePage(req, res) {
   if (req.session.loggedIn) {
@@ -302,7 +336,7 @@ async function sendHistory(req, res) {
 
 app.get("/results", function (req, res) {
   if (req.session.loggedIn) {
-    //executeSearch(req, res);
+    executeSearch(req, res);
   } else {
     res.redirect("/");
   }
@@ -363,6 +397,10 @@ app.post('/update-profile', function (req, res) {
 
 app.post('/search', function (req, res) {
   storeSearch(req, res);
+});
+
+app.post('/searchUpdate', function (req, res) {
+  updateSearch(req, res);
 });
 
 async function editUserProfile(req, res) {
@@ -438,6 +476,35 @@ async function editUserProfile(req, res) {
   }
 }
 
+async function updateSearch(req, res) {
+  res.setHeader("Content-Type", "application/json");
+  if (req.session.loggedIn) {
+    const connection = await mysql.createConnection({
+      host: 'localhost',
+      user: 'root',
+      password: '',
+      database: 'COMP2800',
+      multipleStatements: true
+    });
+    connection.connect();
+
+    await connection.execute('UPDATE BBY_37_search SET time_searched = NOW() WHERE search_id = ?',
+    [req.body.searchID]);
+    
+    await connection.end();
+
+    res.send({
+      status: "success",
+      msg: "Search time updated."
+    });
+  } else {
+    res.send({
+      status: "fail",
+      msg: "Not logged in."
+    });
+  }
+}
+
 async function storeSearch(req, res) {
   res.setHeader("Content-Type", "application/json");
   if (req.session.loggedIn) {
@@ -455,6 +522,7 @@ async function storeSearch(req, res) {
       await connection.execute('DELETE FROM BBY_37_search WHERE user_id = ? AND time_searched <= ALL (SELECT time_searched FROM BBY_37_search WHERE user_id LIKE ?)', [req.session.userid, req.session.userid]);
       [rows3, fields3] = await connection.query('SELECT * FROM BBY_37_search WHERE user_id = ' + req.session.userid);
     }
+    let params = [req.session.userid, req.body.unit, req.body.streetNum, req.body.prefix, req.body.streetName, req.body.streetType, req.body.city, req.body.province];
     
     await connection.execute('INSERT INTO BBY_37_search (time_searched, user_id, unit_number, street_number, prefix, street_name, street_type, city, province) values (NOW(), ?, ?, ?, ?, ?, ?, ?, ?)',
     [req.session.userid, req.body.unit, req.body.streetNum, req.body.prefix, req.body.streetName, req.body.streetType, req.body.city, req.body.province]);
@@ -485,8 +553,7 @@ async function executeSearch(req, res) {
       multipleStatements: true
     });
     connection.connect();
-
-    let query = `SELECT * FROM BBY_37_location AS L, BBY_37_search AS S WHERE 
+    let query = `SELECT L.location_id, L.unit_number, L.street_number, L.prefix, L.street_name, L.street_type, L.city, L.province FROM BBY_37_location AS L, BBY_37_search AS S WHERE 
       L.unit_number LIKE S.unit_number AND 
       L.street_number LIKE S.street_number AND 
       L.prefix LIKE S.prefix AND 
@@ -494,7 +561,7 @@ async function executeSearch(req, res) {
       L.street_type LIKE S.street_type AND 
       L.city LIKE S.city AND 
       L.province LIKE S.province
-      AND S.time_searched >= ALL (SELECT * FROM BBY_37_search WHERE user_id LIKE ?)`;
+      AND S.time_searched >= ALL (SELECT time_searched FROM BBY_37_search WHERE user_id LIKE ?)`;
     
     let values = [req.session.userid];
 
@@ -975,10 +1042,7 @@ async function adminAddUser(req, res) {
 
 app.get("/home",function (req, res) {
   if (req.session.loggedIn) {
-    let doc = fs.readFileSync("./html/home.html", "utf8");
-    let docDOM = new JSDOM(doc);
-    docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
-    res.send(docDOM.serialize());
+    sendHomePage(req, res);
   }else{
     res.redirect("/login");
   }

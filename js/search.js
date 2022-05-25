@@ -19,6 +19,26 @@ async function searchQuery(data) {
   }
 }
 
+async function searchUpdate(data) {
+  try {
+    let responseObject = await fetch("/searchUpdate", {
+      method: 'POST',
+      headers: {
+        "Accept": 'application/json',
+        "Content-Type": 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+    let parsedJSON = await responseObject.json();
+
+    if (parsedJSON.status === "success") {
+      window.location.replace("/results");
+    }
+
+  } catch (error) {
+  }
+}
+
 ready(document.getElementById("btn").addEventListener("click", function(e) {
   e.preventDefault();
   let unit = document.getElementById("unitVal").value;
