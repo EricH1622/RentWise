@@ -264,7 +264,7 @@ async function sendHistory(req, res) {
   docDOM.window.document.getElementById("userHistory").innerHTML = historyItems;
 
   // check for if user has no posts
-  if (rows[0]?.street_number === undefined) {
+  if (rows[0].street_number === undefined) {
     docDOM.window.document.getElementById("userHistory").innerHTML += "no posts";
     // unecessary check?
   } else if (rows[0].street_number != null) {
