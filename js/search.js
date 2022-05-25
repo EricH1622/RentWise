@@ -24,7 +24,20 @@ ready(document.getElementById("btn").addEventListener("click", function (e) {
   let streetName = document.getElementById("streetNameVal").value;
   let city = document.getElementById("cityVal").value;
   let province = document.getElementById("provinceVal").value;
+  
   if (streetName && city && province) {
+    if (unit === "") {
+      unit = "%";
+    }
+    if (streetNum === "") {
+      streetNum = "%";
+    }
+    if (streetName === "") {
+      streetName = "%";
+    }
+    if (city === "") {
+      city = "%";
+    }
     searchQuery({
       "unit": unit,
       "streetNum": streetNum,

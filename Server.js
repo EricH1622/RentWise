@@ -202,7 +202,7 @@ async function sendReviews(req, res) {
 
   //Remove "N/A" prefix
   let prefixStr;
-  if(rows2[0].prefix == "N/A"){
+  if(rows2[0].prefix == "%"){
     prefixStr = "";
   } else {
     prefixStr = rows2[0].prefix;
@@ -486,7 +486,6 @@ async function executeSearch(req, res) {
     let values = [req.session.unit, req.session.streetNum, req.session.prefix, req.session.streetName, req.session.streetType, req.session.city, req.session.province];
 
     const [rows, fields] = await connection.query(query, values);
-
     if(rows.length > 0){
       let query2 = `SELECT COUNT(post_id) AS post_count FROM BBY_37_post WHERE location_id = ?`;
       let rows2;
