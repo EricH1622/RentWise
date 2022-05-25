@@ -1047,7 +1047,20 @@ async function submitPost(req,res){
     }); 
 }
 
-function valid_email (email) {
+
+let port = 8000;
+app.listen(port, function () {
+  console.log("RentWise server running on port: " + port);
+});
+
+
+
+
+
+/************ USER INPUT VALIDITY CHECKS & OTHER STRING FUNCTIONS *************
+ ******************************************************************************/
+
+ function valid_email(email) {
   // allowed: a-z A-Z 0-9 _-.@
   // email should be trimmed before sending here.
 
@@ -1055,10 +1068,13 @@ function valid_email (email) {
   if (email.length > 100) return false;
 
   const emailParts = email.split('@');
-  if (emailParts.length !== 2  ||
-      emailParts[0].length < 1 ||
-      emailParts[1].length < 3 ||
-      !emailParts[1].includes(".") ) {
+  if (
+    emailParts.length !== 2  ||
+    emailParts[0].length < 1 ||
+    emailParts[1].length < 3 ||
+    !emailParts[1].includes(".") ||
+    emailParts[1].charAt(0) == "."
+    ) {
     return false;
   }
 
@@ -1067,12 +1083,14 @@ function valid_email (email) {
 
   for (let i = 0; i < charList.length; i++) {
     let char = charList[i];
-    if ((char >= 'a' && char <= 'z') ||
-        (char >= '@' && char <= 'Z') ||
-        (char >= '0' && char <= '9') ||
-        char == '-' ||
-        char == '_' ||
-        char == '.' ) {
+    if (
+      (char >= 'a' && char <= 'z') ||
+      (char >= '@' && char <= 'Z') ||
+      (char >= '0' && char <= '9') ||
+      char == '-' ||
+      char == '_' ||
+      char == '.'
+      ) {
       // continue...
     } else {
       return false;
@@ -1082,7 +1100,7 @@ function valid_email (email) {
 }
 
 
-function valid_username (username) {
+function valid_username(username) {
   // allowed: a-z A-Z 0-9 _-.
   // username should be trimmed before sending here.
 
@@ -1094,12 +1112,14 @@ function valid_username (username) {
 
   for (let i = 0; i < charList.length; i++) {
     let char = charList[i];
-    if ((char >= 'a' && char <= 'z') ||
-        (char >= 'A' && char <= 'Z') ||
-        (char >= '0' && char <= '9') ||
-        char == '-' ||
-        char == '_' ||
-        char == '.' ) {
+    if (
+      (char >= 'a' && char <= 'z') ||
+      (char >= 'A' && char <= 'Z') ||
+      (char >= '0' && char <= '9') ||
+      char == '-' ||
+      char == '_' ||
+      char == '.'
+      ) {
       // continue...
     } else {
       return false;
@@ -1109,30 +1129,36 @@ function valid_username (username) {
 }
 
 
-function valid_password (password) {
+function valid_password(password) {
   // * allowed: A-Z a-z 0-9 ~!@#$%^&* -=_+,. space
   // * password should NOT be trimmed before sending here.
-  // * password can contain consecutive spaces, therefore when displayed on page,
-  //   it must be put in <pre> or <code> tags.
+  // * spaces cannot be consecutive.
 
   if (!password) return false;
   if (password.length > 100) return false;
 
   const charList = password.split("");
-  if (charList[0] == " " || charList[charList.length - 1] == " ") return false;
+  if (hasSpaceBeforeAfter(charList)) return false;
 
   for (let i = 0; i < charList.length; i++) {
     let char = charList[i];
-    if ((char >= 'a' && char <= 'z') ||
-        (char >= '@' && char <= 'Z') ||
-        (char >= '0' && char <= '9') ||
-        (char >= ' ' && char <= '&' && char != '"') ||
-        (char >= '*' && char <= '.') ||
-        
-        char == '=' ||
-        char == '^' ||
-        char == '_' ||
-        char == '~'  ) {
+    if (
+      (char >= 'a' && char <= 'z') ||
+      (char >= '@' && char <= 'Z') ||
+      (char >= '0' && char <= '9') ||
+      (char >= '#' && char <= '&') ||
+      (char >= '*' && char <= '.') ||
+      char == '=' ||
+      char == '^' ||
+      char == '_' ||
+      char == '~' ||
+      char == '!'
+      ) {
+      // continue...
+    } else if (char == ' ' ) {
+      if (charList[i + 1] == ' ') {
+        return false;
+      }
       // continue...
     } else {
       return false;
@@ -1142,7 +1168,7 @@ function valid_password (password) {
 }
 
 
-function valid_name (name) {
+function valid_name(name) {
   // allowed: a-z A-Z .
   // username should be trimmed before sending here.
 
@@ -1150,14 +1176,13 @@ function valid_name (name) {
   if (name.length > 100) return false;
 
   const charList = name.split("");
-  if (charList[0] == " " || charList[charList.length - 1] == " ") return false;
+  if (hasSpaceBeforeAfter(charList)) return false;
 
   for (let i = 0; i < charList.length; i++) {
     let char = charList[i];
     if ((char >= 'a' && char <= 'z') ||
         (char >= 'A' && char <= 'Z')) {
       // continue...
-
     } else if (char == ' ') {
       if (charList[i + 1] == " ") {
         return false;
@@ -1177,12 +1202,223 @@ function valid_usertype(userType) {
 }
 
 
-function valid_userID (userID) {
+function valid_userID(userID) {
   if (typeof(userID) == "number") return true;
   return false;
 }
 
-let port = 8000;
-app.listen(port, function () {
-  console.log("RentWise server running on port: " + port);
-});
+
+function valid_province(province) {
+  if (
+    province == "AB" ||
+    province == "BC" ||
+    province == "ON" ||
+    province == "QC" ||
+    province == "SK" ||
+    province == "MB" ||
+    province == "NS" ||
+    province == "PE" ||
+    province == "NB" ||
+    province == "NL" ||
+    province == "YT" ||
+    province == "NT" ||
+    province == "NU"
+  ) {
+    return true;
+  }
+  return false;
+}
+
+
+function valid_prefix(prefix) {
+  if (
+    prefix == "%" ||
+    prefix == "N" ||
+    prefix == "S" ||
+    prefix == "E" ||
+    prefix == "W" ||
+    prefix == "NE" ||
+    prefix == "NW" ||
+    prefix == "SE" ||
+    prefix == "SW"
+  ) {
+    return true;
+  }
+  return false;
+}
+
+
+function valid_streetType(streetType) {
+  if (
+    streetType == "%" ||
+    streetType == "St." ||
+    streetType == "Ave." ||
+    streetType == "Rd." ||
+    streetType == "Dr." ||
+    streetType == "Ln." ||
+    streetType == "Pl." ||
+    streetType == "Ct." ||
+    streetType == "Cst." ||
+    streetType == "Way" ||
+    streetType == "Blvd." ||
+    streetType == "Hwy." ||
+    streetType == "Other"
+    ) {
+    return true;
+  }
+  return false;
+}
+
+
+function valid_streetNum(streetNum) {
+  // allowed: number
+  // value should be trimmed before sending here.
+
+  if (!streetNum) return false;
+  if (streetNum.length > 12) return false;
+  if (typeof(streetNum) == "number") return true;
+
+  return false;
+}
+
+
+function valid_unitNum(unitNum) {
+  // allowed: 0-9 a-z A-Z -
+  // value should be trimmed before sending here.
+
+  if (!unitNum) return false;
+  if (unitNum.length > 12) return false;
+
+  const charList = unitNum.split("");
+
+  for (let i = 0; i < charList.length; i++) {
+    let char = charList[i];
+    if ((char >= '0' && char <= '9') ||
+        (char >= 'A' && char <= 'Z') ||
+        (char >= 'a' && char <= 'z')
+      ) {
+      // continue...
+    } else if (char == "-") {
+      if (charList[i + 1] == "-") {
+        return false;
+      }
+      // continue...
+    } else {
+      return false;
+    }
+  }
+  return true;
+}
+
+
+function valid_streetName(streetName) {
+  // allowed: 0-9 a-z A-Z & space -
+  // value should be trimmed before sending here.
+
+  if (!streetName) return false;
+  if (streetName.length > 100) return false;
+
+  const charList = streetName.split("");
+  if (hasSpaceBeforeAfter(charList)) return false;
+
+  for (let i = 0; i < charList.length; i++) {
+    let char = charList[i];
+    if ((char >= '0' && char <= '9') ||
+        (char >= 'a' && char <= 'z') ||
+        (char >= 'A' && char <= 'Z') ||
+        (char == '&') ||
+        (char == '-')
+      ) {
+      // continue...
+    } else if (char == ' ') {
+      if (charList[i + 1] == ' ') {
+        return false;
+      }
+      // continue...
+    } else {
+      return false;
+    }
+  }
+  return true;
+}
+
+
+function valid_cityName(cityName) {
+  // allowed: 0-9 a-z A-Z & space - '
+  // value should be trimmed before sending here.
+
+  if (!cityName) return false;
+  if (cityName.length > 86) return false;
+
+  const charList = cityName.split("");
+  if (hasSpaceBeforeAfter(charList)) return false;
+
+  for (let i = 0; i < charList.length; i++) {
+    let char = charList[i];
+    if ((char >= '0' && char <= '9') ||
+        (char >= 'a' && char <= 'z') ||
+        (char >= 'A' && char <= 'Z') ||
+        (char == '&') ||
+        (char == `'`) ||
+        (char == '-')
+      ) {
+      // continue...
+    } else if (char == ' ') {
+      if (charList[i + 1] == ' ') {
+        return false;
+      }
+      // continue...
+    } else {
+      return false;
+    }
+  }
+  return true;
+}
+
+
+// converts a string to title case.
+function toTitleCase(string) {
+  const charList = string.split("");
+  for (let i = 0; i < charList.length; i++) {
+    if (i == 0 || charList[i - 1] == ' ' || charList[i - 1] == '-') {
+      charList[i] = charList[i].toUpperCase();
+    } else {
+      charList[i] = charList[i].toLowerCase();
+    }
+  }
+  const result = charList.join('');
+  return result;
+}
+
+
+// designed to sanitize the search entries from users
+function sanitizeText(string) {
+
+  let ar = [];
+  let char = "";
+  let x = -1;
+  for (let i = 0; i < string.length; i++) {
+    char = string.charAt(i);
+    if (
+      (char >= 'a' && char <= 'z') ||
+      (char >= 'A' && char <= 'Z') ||
+      (char >= '0' && char <= '9') ||
+      (char == '&') ||
+      (char == `'`) ||
+      (char == '-')
+      ) {
+      ar[++x] = char;
+    } else if (char == ' ' && string.charAt(i + 1) != ' ') {
+      ar[++x] = char;
+    }
+  }
+  return ar.join('');
+}
+
+
+// accepts an array of single characters.
+// Checks if the beginning or end of the array are not spaces.
+function hasSpaceBeforeAfter(charList) {
+  if (charList[0] == " " || charList[charList.length - 1] == " ") return true;
+  return false;
+}
