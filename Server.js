@@ -20,7 +20,6 @@ app.use(express.urlencoded({
   extended: true
 }));
 
-
 app.use(session({
   secret: "secret phrase for encoding",
   name: "BBY37-SessionID",
@@ -86,6 +85,13 @@ app.get("/admin", function (req, res) {
   } else {
     res.redirect("/");
   }
+});
+
+app.get("/notFound", function (req, res) {
+  let doc = fs.readFileSync("./html/notFound.html", "utf8");
+    let docDOM = new JSDOM(doc);
+    docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
+    res.send(docDOM.serialize());
 });
 
 
@@ -1141,6 +1147,13 @@ async function submitPost(req,res){
       location_id:locationid
     }); 
 }
+
+//This is the 404 route
+//I found the basis for this code here: https://stackoverflow.com/questions/6528876/how-to-redirect-404-errors-to-a-page-in-expressjs
+//I understand how it works, and it is now heavily changed from its base form, but providing credit is important.
+app.get('*', function(req, res){
+  res.redirect("/notFound");
+});
 
 
 let port = 8000;
