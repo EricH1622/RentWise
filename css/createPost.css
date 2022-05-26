@@ -88,6 +88,8 @@ input[type=text],select {
 
 #h3 {
   font-family: 'Roboto', sans-serif !important;
+  font-size: xx-large;
+  font-weight: bold;
   text-align: center;
   grid-row: 2 / span 1;
   grid-column: 2 / span 3;
