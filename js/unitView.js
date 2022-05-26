@@ -1,5 +1,5 @@
 "use strict";
-
+console.log('loaded');
 // define variables
 let editing = false;
 let editBox;
@@ -9,6 +9,9 @@ let options;
 function edit_init() {
   if (!editing) {
     editing = true;
+
+    // testing 
+    var editingReview = (document.getElementById("editBtn").parentNode.id);
     // CREATE EDIT DIV
     // initial set up
     editBox = document.createElement("div");
@@ -18,12 +21,12 @@ function edit_init() {
     // editBox.innerHTML += document.getElementById("1").querySelector(".rev").innerHTML;
     // make the review item invisible
     // set review item to hidden
-    document.getElementById("1").classList.add('hidden');
+    document.getElementById(editingReview).classList.add('hidden');
     // editRow.classList.add("hidden");
     // richtext editor
-    editBox.innerHTML += '<div id="richText"><form method="post"><textarea id="mytextarea">' + document.getElementById("1").querySelector(".rev").innerHTML + ' </textarea></form></div>';
+    editBox.innerHTML += '<div id="richText"><form method="post"><textarea id="mytextarea">' + document.getElementById(editingReview).querySelector(".rev").innerHTML + ' </textarea></form></div>';
     // image collection
-    editBox.innerHTML += '<div id="photoCollection">' +  document.getElementById("1").querySelector(".images").innerHTML + '</div>';
+    editBox.innerHTML += '<div id="photoCollection">' +  document.getElementById(editingReview).querySelector(".images").innerHTML + '</div>';
     // Add image button
     editBox.innerHTML += '<div id="imgUpload">Upload image: <button type="button" id="uploadBtn">Upload</button></div>';
     // Cancel button
@@ -38,9 +41,9 @@ function edit_init() {
 }
 
 async function submit_data() {
+  var editingReview = (document.getElementById("editBtn").parentNode.id);
   data = {"content" : document.getElementById('mytextarea').value,
-                "post_id": 1}; //1 = div id
-  console.log("submit");
+                "post_id": editingReview}; 
   options = {
     method: 'POST',
     headers: {
@@ -51,16 +54,16 @@ async function submit_data() {
   }
   const response = await fetch('/submitEdit', options);
   const status = await response.json();
-  console.log(status.status);
   if (status.status == "success") {
     // successful update
     editBox.style.display = "none";
-    document.getElementById("1").classList.remove('hidden');
+    document.getElementById(editingReview).querySelector(".rev").innerHTML = data.content;
+    document.getElementById(editingReview).classList.remove('hidden');
     editing = false;
   } 
   if (status.status == "fail") {
     // did not update (review is empty)
-    document.getElementById('errMsg').innerHTML="Error, review content invalid";
+    document.getElementById('errMsg').innerHTML="*Error, review content invalid";
   }
 }
 

@@ -431,7 +431,6 @@ app.post('/search', function (req, res) {
 });
 
 app.post('/submitEdit', async function (req, res) {
-  console.log(req.body.content.length); // recieves json 
   if (req.body.content.length > 0) {
     sanitizeHtml(req.body.content); //sanitize review
     // update db
@@ -442,7 +441,7 @@ app.post('/submitEdit', async function (req, res) {
       database: "COMP2800",
       multipleStatements: true
     });
-    connection.query('UPDATE BBY_37_post SET content = "' + req.body.content + '" WHERE user_id = ' + req.body.post_id)
+    connection.query('UPDATE BBY_37_post SET content = "' + req.body.content + '" WHERE post_id = ' + req.body.post_id);
     connection.end();
     res.json({
       "status" : "success"
@@ -453,6 +452,7 @@ app.post('/submitEdit', async function (req, res) {
     })
   }
   res.end();
+});
   
 app.post('/searchUpdate', function (req, res) {
   updateSearch(req, res);
