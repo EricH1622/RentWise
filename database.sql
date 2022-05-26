@@ -60,6 +60,11 @@ INSERT INTO `BBY_37_post` (`post_id`, `user_id`, `date_created`, `content`, `loc
 INSERT INTO `BBY_37_post` (`post_id`, `user_id`, `date_created`, `content`, `location_id`, `photo1`) VALUES (4, 3, '2022-05-10 16:53:55', 'Awesome place, very peaceful and quiet.', 4, '/assets/images/post4.jpg');
 INSERT INTO `BBY_37_post` (`post_id`, `user_id`, `date_created`, `content`, `location_id`, `photo1`) VALUES (5, 1, '2022-05-10 17:16:23', 'I enjoyed the house, but the landlord was unresponsive and never fixed anything, then they tried to increase myrent at the end of the year. Had to move out because I could not deal with them', 5, '/assets/images/post5.jpeg');
 
+-- TEST
+-- INSERT INTO `BBY_37_post` (`post_id`, `user_id`, `date_created`, `content`, `location_id`, `photo1`) VALUES (6, 1, '2022-05-10 13:23:44', 'Great property the landlord was always nice and very responsive.', 1, '/assets/images/post1.jpg');
+-- INSERT INTO `BBY_37_post` (`post_id`, `user_id`, `date_created`, `content`, `location_id`, `photo1`) VALUES (7, 1, '2022-05-10 13:23:44', 'Great property the landlord was always nice and very responsive.', 1, '/assets/images/post1.jpg');
+
+
 CREATE TABLE IF NOT EXISTS `BBY_37_search` (
   `search_id` int(16) NOT NULL AUTO_INCREMENT,
   `time_searched` DATETIME NOT NULL,

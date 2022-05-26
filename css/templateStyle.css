@@ -31,7 +31,7 @@ body {
   display: grid;
   height: 100vh;
   grid-template-columns: 20% 20% 20% 20% 20%; 
-  grid-template-rows: 12% 80% 8%;
+  grid-template-rows: 8% 92% 6%;
 }
 
 #content{
@@ -41,7 +41,7 @@ body {
 }
 
 #nav {
-  position: sticky;
+  
   background-color: rgb(16, 0, 37);
   grid-column: 1 / span 5;
   grid-row: 1 / span 1;
@@ -185,7 +185,7 @@ color: rgb(255, 255, 255);
 
 #footer ul li {
 display: inline-block;
-padding: 1%;
+padding: 0.5%;
 }
 
 #footer ul li a:hover {
