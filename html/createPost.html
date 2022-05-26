@@ -26,68 +26,72 @@
           <form>
             <div id="form">
               <div id="h3">
-                <p>Write a review</p>
+                <p>Write a Review</p>
               </div>
               <div id="unit">
                 <label for="unit">Unit/Apt#</label>
                 <input type="text" name="unit" id="unitInput">
               </div>
               <div id="streetNum">
-                <label for="streetNum">Street Number</label>
+                <label for="streetNum">Street Number <span class="required">* required</span></label>
                 <input type="text" name="streetNum" id="streetNumInput">
               </div>
               <div id="prefix">
                 <label for="prefix">Prefix</label>
                 <select name="prefix" id="prefixInput">
-                  <option value="N/A">N/A</option>
+                  <option value="%">--</option>
                   <option value="N">N</option>
                   <option value="E">E</option>
                   <option value="S">S</option>
                   <option value="W">W</option>
-                  <option value="N">NE</option>
-                  <option value="E">NW</option>
-                  <option value="S">SE</option>
-                  <option value="W">SW</option>
+                  <option value="NE">NE</option>
+                  <option value="NW">NW</option>
+                  <option value="SE">SE</option>
+                  <option value="SW">SW</option>
                 </select>
               </div>
               <div id="streetName">
-                <label for="streetName">Street Name</label>
+                <label for="streetName">Street Name <span class="required">* required</span></label>
                 <input type="text" name="streetName" id="streetNameInput">
               </div>
               <div id="streetType">
                 <label for="streetName">Street type</label>
                 <select name="streetType" id="streetTypeInput">
-                  <option value="St">Street</option>
-                  <option value="Rd">Road</option>
-                  <option value="Ave">Avenue</option>
-                  <option value="Dr">Drive</option>
-                  <option value="Ct">Court</option>
-                  <option value="Cst">Cresent</option>
-                  <option value="Bld">Boulevard</option>
+                  <!-- In order of popularity -->
+                  <option value="%">--</option>
+                  <option value="St.">Street</option>
+                  <option value="Ave.">Avenue</option>
+                  <option value="Rd.">Road</option>
+                  <option value="Dr.">Drive</option>
+                  <option value="Blvd.">Boulevard</option>
                   <option value="Way">Way</option>
-                  <option value="Pl">Place</option>
-                  <option value="Hwy">Hwy</option>
-                  <option value="Ln">Lane</option>
-                  <option value="Other">other</option>
+                  <option value="Pl.">Place</option>
+                  <option value="Ct.">Court</option>
+                  <option value="Cst.">Cresent</option>
+                  <option value="Ln.">Lane</option>
+                  <option value="Hwy.">Hwy</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
               <div id="city">
-                <label for="city">City</label>
+                <label for="city">City <span class="required">* required</span></label>
                 <input type="text" name="city" id="cityInput">
               </div>
               <div id="province">
-                <label for="province">Province/Territory</label>
+                <label for="province">Province/Territory <span class="required">* required</span></label>
                 <select name="province" id="provinceInput">
+                  <!-- In order of likelyhood to be selected-->
                   <option value="BC">British Columbia</option>
-                  <option value="AB">Alberta</option>
                   <option value="ON">Ontario</option>
                   <option value="QC">Quebec</option>
+                  <option value="AB">Alberta</option>
                   <option value="SK">Saskatchewan</option>
                   <option value="MB">Manitoba</option>
                   <option value="NS">Nova Scotia</option>
-                  <option value="PE">Prince Edward Island</option>
                   <option value="NB">New Brunswick</option>
-                  <option value="Yukon">Yukon</option>
+                  <option value="NL">Newfoundland & Labrador</option>
+                  <option value="PE">Prince Edward Island</option>
+                  <option value="YT">Yukon</option>
                   <option value="NT">Northwest Territories</option>
                   <option value="NU">Nunavut</option>
                 </select>
@@ -96,7 +100,7 @@
                 <button type="button" id="uploadBtn">Upload</button>
               </div>
               <div id="richText">
-                <p>Please enter your review for this property:</p>
+                <p>Please enter your review for this property: <span class="required">* required</span></p>
                 <form method="post">
                   <textarea id="mytextarea"></textarea>
                 </form>

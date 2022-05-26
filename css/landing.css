@@ -8,14 +8,16 @@
     grid-column: 1 / span 5;
     display: grid;
     grid-template-columns: 100%;
-    grid-template-rows: 70% 35% 70% 70% 70% 40% 8%;
+    grid-template-rows: 70% 35% 70% 70% 70% 38% 10%;
     background-size: 100%;
 }
 
 #footer {
     background-color: rgb(16, 0, 37);
     grid-column: 1;
-    grid-row: none;
+    grid-row: 7 / span 1 ;
+    color: white;
+    text-align: center;
   }
 
 #hero1{
