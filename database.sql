@@ -77,3 +77,11 @@ CREATE TABLE IF NOT EXISTS `BBY_37_search` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 INSERT INTO `BBY_37_search` (`search_id`, `time_searched`, `user_id`, `unit_number`, `street_number`, `prefix`, `street_name`, `street_type`, `city`, `province`) VALUES (1, NOW(), 5, '4', '920', 'W', '14th', 'Ave', 'Vancouver', 'BC');
+
+CREATE TABLE IF NOT EXISTS `BBY_37_postImage` (
+  `postImage_id` int(16) NOT NULL AUTO_INCREMENT,
+  `post_id` int(16) NOT NULL,
+  `filename` varchar(1024),
+  PRIMARY KEY (`postImage_id`),
+  FOREIGN KEY(post_id) REFERENCES BBY_37_post(post_id)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;

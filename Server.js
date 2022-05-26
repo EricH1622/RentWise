@@ -202,7 +202,14 @@ async function sendProfilePage(req, res) {
     docDOM.window.document.getElementById("email").setAttribute("value", rows[0].email_address);
 
     docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
-    docDOM.window.document.getElementById("profilePhoto").src = "/assets/uploads/profilePicture_" + req.session.userid;
+
+    var imagePath = "./assets/uploads/profilePicture_" + req.session.userid;
+
+      if (fs.existsSync(imagePath)) {
+        docDOM.window.document.getElementById("profilePhotoDiv").innerHTML = '<img id="profilePhoto" src="./assets/uploads/profilePicture_' + req.session.userid + '"></img>';
+      } else {
+        docDOM.window.document.getElementById("profilePhotoDiv").innerHTML = '<img id="profilePhoto" src="./assets/images/placeholder1.png></img>';
+      }
 
     res.send(docDOM.serialize());
   } else {
