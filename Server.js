@@ -165,7 +165,7 @@ async function sendHomePage(req, res) {
         docDOM.window.document.getElementById("previousSearches").innerHTML += 
         `<button type="button" onclick="searchUpdate({'searchID': ` + rows[i].search_id + `})">` + 
         rows[i].unit_number + ` ` + rows[i].street_number + ` ` + rows[i].prefix + ` ` + rows[i].street_name + ` ` + rows[i].street_type + `, ` + rows[i].city + `, ` + rows[i].province + `
-        </button><br>`;
+        </button>`;
       }
     } else {
 
