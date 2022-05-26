@@ -255,14 +255,19 @@ async function sendReviews(req, res) {
 
   //Remove "N/A" prefix
   let prefixStr;
+  let stTypeStr;
   if(rows2[0].prefix == "%"){
     prefixStr = "";
   } else {
     prefixStr = rows2[0].prefix;
+  }if(rows2[0].street_type == "%"){
+    stTypeStr = "";
+  } else {
+    stTypeStr = rows2[0].prefix;
   }
 
   // load address into page
-  let address = rows2[0].unit_number + "-" + rows2[0].street_number + " " + rows2[0].street_name + " " + rows2[0].street_type + " " + prefixStr + " " + rows2[0].city + " " + rows2[0].province; 
+  let address = rows2[0].unit_number + " " + rows2[0].street_number + " " + rows2[0].street_name + " " + stTypeStr + " " + prefixStr + ", " + rows2[0].city + ", " + rows2[0].province; 
 
   await connection.end();
   let currentReview = "";
@@ -613,11 +618,17 @@ async function executeSearch(req, res) {
           prefixStr = rows[i].prefix;
         }
         
+        let stTypeStr;
+        if(rows[i].street_type == "%"){
+          stTypeStr = "";
+        } else {
+          stTypeStr = rows[i].street_type;
+        }
 
         docDOM.window.document.getElementById("results").innerHTML += `
         <div class="resultBox">
                     <div class="resultHead">
-                        <h2>` + rows[i].unit_number + "-" + rows[i].street_number + " " + prefixStr + " " + rows[i].street_name + " " + rows[i].street_type + " " + `</h2>
+                        <h2>` + rows[i].unit_number + " " + rows[i].street_number + " " + prefixStr + " " + rows[i].street_name + " " + stTypeStr + " " + `</h2>
                         <p class="address">` + rows[i].city + ", " + rows[i].province + `</p>
                     </div>
                     <div class="resultBody">
@@ -1088,7 +1099,63 @@ app.post("/submitPost", function (req,res){
     res.redirect("/login");
   }
 });
+
 async function submitPost(req,res){
+  //Check if data sent from createPost page is valid
+  let DataValid = true;
+  let unit_valid = true;
+  let streetNum_valid = true;
+  let prefix_valid = true;
+  let streetName_valid = true;
+  let streetType_valid = true;
+  let city_valid = true;
+  let province_valid = true;
+
+  console.log(req.body.unit_number,req.body.street_number,req.body.prefix,req.body.street_name,req.body.street_type,req.body.city,req.body.province);
+  if(!valid_unitNum(req.body.unit_number)){
+    unit_valid = false;
+    DataValid = false;
+  }
+
+  if(!valid_streetNum(req.body.street_number)){
+    streetNum_valid = false;
+    DataValid = false;
+  }
+  if(!valid_prefix(req.body.prefix)){
+    prefix_valid = false;
+    DataValid = false;
+  }
+  if(!valid_streetName(req.body.street_name)){
+    streetName_valid = false;
+    DataValid = false;
+  }else{
+    var streetNameTitleCase = toTitleCase(req.body.street_name);
+  }
+  if(!valid_streetType(req.body.street_type)){
+    streetType_valid = false;
+    DataValid = false;
+  }
+  if(!valid_cityName(req.body.city)){
+    city_valid = false;
+    DataValid = false;
+  }else{
+    var cityTitleCase = toTitleCase(req.body.city);
+  }
+  if(!valid_province(req.body.province)){
+    province_valid = false;
+    DataValid = false;
+  }
+  console.log([unit_valid,streetNum_valid,prefix_valid,streetName_valid,streetType_valid,city_valid,province_valid]);
+  //If any of the inputs is invalid, send the array indicating which inputs are invalid
+  if(!DataValid){
+    res.send({
+      status:"Invalid data",
+      validation:[unit_valid,streetNum_valid,prefix_valid,streetName_valid,streetType_valid,city_valid,province_valid]
+    });
+    return;
+  }
+
+  //If all the inputs are valid, create connection to the database
   const connection = await mysql.createConnection({
     host: "localhost",
     user: "root",
@@ -1101,17 +1168,17 @@ async function submitPost(req,res){
   //Read into database to see if the address entered by user already exsits
   const [rows, fields] = await connection.query(
     "SELECT * FROM BBY_37_location WHERE BBY_37_location.unit_number = ? AND BBY_37_location.street_number = ? AND BBY_37_location.prefix = ? AND BBY_37_location.street_name = ? AND BBY_37_location.street_type = ? AND BBY_37_location.city = ? AND BBY_37_location.province = ?",
-    [req.body.unit_number, req.body.street_number, req.body.prefix, req.body.street_name, req.body.street_type, req.body.city, req.body.province]);
+    [req.body.unit_number, req.body.street_number, req.body.prefix, streetNameTitleCase, req.body.street_type, cityTitleCase, req.body.province]);
 
     //if the address does not exist in the database, create a new entry in the location table, grab that location id and add a new entry to the post table
     var locationid;
     const sanitizedReview = sanitizeHtml(req.body.review);
     
     if (rows.length === 0) {
-      await connection.execute("INSERT INTO BBY_37_location (unit_number,street_number,prefix,street_name,street_type,city,province) values (?, ?, ?, ?, ?, ?, ?)",[req.body.unit_number, req.body.street_number, req.body.prefix, req.body.street_name, req.body.street_type, req.body.city, req.body.province]);
+      await connection.execute("INSERT INTO BBY_37_location (unit_number,street_number,prefix,street_name,street_type,city,province) values (?, ?, ?, ?, ?, ?, ?)",[req.body.unit_number, req.body.street_number, req.body.prefix, streetNameTitleCase, req.body.street_type, cityTitleCase, req.body.province]);
       const [row, fields] = await connection.query(
         "SELECT * FROM BBY_37_location WHERE BBY_37_location.unit_number = ? AND BBY_37_location.street_number = ? AND BBY_37_location.prefix = ? AND BBY_37_location.street_name = ? AND BBY_37_location.street_type = ? AND BBY_37_location.city = ? AND BBY_37_location.province = ?",
-        [req.body.unit_number, req.body.street_number, req.body.prefix, req.body.street_name, req.body.street_type, req.body.city, req.body.province]);
+        [req.body.unit_number, req.body.street_number, req.body.prefix, streetNameTitleCase, req.body.street_type, cityTitleCase, req.body.province]);
 
       //Grab the location_id of the new address added to location table
       locationid = row[0].location_id;
@@ -1377,24 +1444,29 @@ function valid_streetType(streetType) {
   return false;
 }
 
-
 function valid_streetNum(streetNum) {
-  // allowed: number
-  // value should be trimmed before sending here.
+  // allowed: integers as strings
 
   if (!streetNum) return false;
   if (streetNum.length > 12) return false;
-  if (typeof(streetNum) == "number") return true;
 
-  return false;
+  const charList = streetNum.split("");
+
+  for (let i = 0; i < charList.length; i++) {
+    let char = charList[i];
+    if (char >= '0' && char <= '9') {
+      // continue...
+    }  else {
+      return false;
+    }
+  }
+  return true;
 }
-
 
 function valid_unitNum(unitNum) {
   // allowed: 0-9 a-z A-Z -
   // value should be trimmed before sending here.
 
-  if (!unitNum) return false;
   if (unitNum.length > 12) return false;
 
   const charList = unitNum.split("");
