@@ -1,5 +1,5 @@
 #container {
-    grid-template-rows: 12% 88%;
+    grid-template-rows: 8% 92%;
 }
 
 #footer {
@@ -50,7 +50,7 @@ h2{
     border-radius: 7px;
     margin: 4% 2%;
     height: 30vh;
-    background: linear-gradient(180deg, rgb(16, 0, 37) 30%, #b8f9ff 30%);
+    background: linear-gradient(180deg, rgb(16, 0, 37) 30%, rgb(235, 235, 235) 30%);
     align-content: center;
     justify-content: center;
     text-align: center;
@@ -61,7 +61,7 @@ h2{
     margin: 2vh 2vw;
     display: grid;
     grid-template-rows: 40% 60%;
-    background: linear-gradient(180deg, rgb(16, 0, 37) 40%, #b8f9ff 40%);
+    background: linear-gradient(180deg, rgb(16, 0, 37) 40%, rgb(235, 235, 235) 40%);
 }
 
 
