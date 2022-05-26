@@ -275,14 +275,17 @@ async function sendReviews(req, res) {
   docDOM.window.document.getElementById("reviews").innerHTML = currentReview;
   for (let j = 0; j < rows.length; j++) {
     // for each row, make a new review
-    currentReview += "<div class='review'>";
-    currentReview += "<div class='name'><strong>" + u_name[j] + "</strong></div>";
-    currentReview += "<div class='rev'><strong>" + rows[j].content + "</strong></div>";
-    currentReview += "<div class='createTime'> Posted: " + rows[j].date_created + "</div>";
+    currentReview += "<div class='review' id=" + rows[j].post_id + ">";
+    currentReview += "<div class='name'>" + u_name[j] + "</div>";
+    currentReview += "<div class='rev'>" + rows[j].content + "</div>";
+    currentReview += "<div class='createTime'> Original Post: " + rows[j].date_created + "</div>";
     if ((rows[j].last_edited_date != "Invalid Date") && (rows[j].last_edited_date != null)) {
       currentReview += "<div class='editTime'> Last edit:" + rows[j].last_edited_date + "</div>";
     }
     currentReview += "<div class='images'><img id='photo1' src='" + rows[j].photo1 + "'></img></div>";
+    if (req.session.userid == rows[j].user_id) {
+      currentReview += "<div class='editBtn' id='editBtn' onclick='edit_init()'>Edit</div>";
+    }
     currentReview += "</div>";
   }
   docDOM.window.document.getElementById("address").innerHTML= address;
@@ -427,6 +430,30 @@ app.post('/search', function (req, res) {
   storeSearch(req, res);
 });
 
+app.post('/submitEdit', async function (req, res) {
+  if (req.body.content.length > 0) {
+    sanitizeHtml(req.body.content); //sanitize review
+    // update db
+    const connection = await mysql.createConnection({
+      host: "localhost",
+      user: "root",
+      password: "",
+      database: "COMP2800",
+      multipleStatements: true
+    });
+    connection.query('UPDATE BBY_37_post SET content = "' + req.body.content + '" WHERE post_id = ' + req.body.post_id);
+    connection.end();
+    res.json({
+      "status" : "success"
+    });
+  } else {
+    res.json({
+      "status" : "fail"
+    })
+  }
+  res.end();
+});
+  
 app.post('/searchUpdate', function (req, res) {
   updateSearch(req, res);
 });
