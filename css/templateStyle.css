@@ -129,7 +129,7 @@ font-size: 20px;
 float: right;
 }
 
-#nav a.active, #nav a:hover {
+#nav a.active:not(#logo), #nav a:hover:not(#logo) {
 background-color: rgba(255, 145, 0, 0.829);
 color: white;
 transition: 0.9s;

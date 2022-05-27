@@ -171,7 +171,7 @@ function getNavBar(req) {
       <label for="check" class="checkbtn">
           <i><img src="/assets/images/menuIcon.png" class="hamburger"/></i>
       </label>
-      <div class="logo"><a href="./home"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></a></div>
+      <div class="logo"><a id="logo" href="./home"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></a></div>
       <ul>
           <li><a href="/home">Search</a></li>
           <li><a href="/createPost">Create Post</a></li>
@@ -444,6 +444,7 @@ async function sendHistory(req, res) {
       }
     docDOM.window.document.getElementById("userHistory").innerHTML = historyItems;
   }
+  docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
       res.send(docDOM.serialize());
 }
 
