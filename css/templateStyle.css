@@ -245,6 +245,7 @@ transition: 0.6s;
 
 #nav ul {
   position: fixed;
+  z-index: 100;
   width: 100%;
   background: rgba(16, 0, 37, 0.808);
   top: 7vh;
@@ -254,12 +255,14 @@ transition: 0.6s;
 }
 
 #nav ul li {
+  z-index: 101;
   display: block;
   padding-top: 2%;
   padding-bottom: 2%;
 }
 
-#nav ul li a{
+#nav ul li *{
+  z-index: 102;
   color: white;
 }
 
