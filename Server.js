@@ -351,11 +351,13 @@ async function sendReviews(req, res) {
   // load address into page
   let address = rows2[0].unit_number + " " + rows2[0].street_number + " " + rows2[0].street_name + " " + stTypeStr + " " + prefixStr + ", " + rows2[0].city + ", " + rows2[0].province; 
 
-  await connection.end();
   let currentReview = "";
   // empty reviews div
   docDOM.window.document.getElementById("reviews").innerHTML = currentReview;
   for (let j = 0; j < rows.length; j++) {
+    //Images
+    let [rows3, fields3] = await connection.execute("SELECT * FROM BBY_37_postImage WHERE post_id = " + rows[j].post_id);
+
     // for each row, make a new review
     currentReview += "<div class='review' id=" + rows[j].post_id + ">";
     currentReview += "<div class='name'>" + u_name[j] + "</div>";
@@ -364,12 +366,18 @@ async function sendReviews(req, res) {
     if ((rows[j].last_edited_date != "Invalid Date") && (rows[j].last_edited_date != null)) {
       currentReview += "<div class='editTime'> Last edit:" + (new Date(rows[j].last_edited_date)).toLocaleString() + "</div>";
     }
-    currentReview += "<div class='images'><img id='photo1' src='" + rows[j].photo1 + "'></img></div>";
+    currentReview += "<div class='images'>";
+    for (let i = 0; i < rows3.length; i++) {
+      let imgName = rows3[i];
+      currentReview +="<img src='./assets/uploads/" + rows3[i].filename + "'></img>";
+    }
+    currentReview += "</div>";
     if (req.session.userid == rows[j].user_id) {
       currentReview += "<div class='editBtn' id='editBtn' onclick='edit_init()'>Edit</div>";
     }
     currentReview += "</div>";
   }
+  await connection.end();
   docDOM.window.document.getElementById("address").innerHTML= address;
   docDOM.window.document.getElementById("reviews").innerHTML += currentReview;
   docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
