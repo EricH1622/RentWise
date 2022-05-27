@@ -27,6 +27,15 @@ const upload = multer({
 });
 
 
+const connectConfig = {
+  host: "remotemysql.com",
+  user: "ZT2gXxE8UI",
+  password: "dcXru9j3DE",
+  database: "ZT2gXxE8UI",
+  multipleStatements: true
+  };
+
+
 
 app.use("/js", express.static("./js"));
 app.use("/css", express.static("./css"));
@@ -36,14 +45,6 @@ app.use(express.json());
 app.use(express.urlencoded({
   extended: true
 }));
-
-const connectConfig = {
-  host: "remotemysql.com",
-  user: "ZT2gXxE8UI",
-  password: "dcXru9j3DE",
-  database: "ZT2gXxE8UI",
-  multipleStatements: true
-  };
 
 app.use(session({
   secret: "secret phrase for encoding",
@@ -63,13 +64,7 @@ app.post('/upload-images', upload.array("images"), function (req, res) {
 });
 
 async function addImagePathToDB(req, res) {
-  const connection = await mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'COMP2800',
-    multipleStatements: true
-  });
+  const connection = await mysql.createConnection(connectConfig);
   connection.connect(); 
 
   if (req.body.submitType == "profile") { // if the image upload is a profile pic
