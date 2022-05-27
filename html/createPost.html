@@ -55,7 +55,7 @@
                 <input type="text" name="streetName" id="streetNameInput">
               </div>
               <div id="streetType">
-                <label for="streetName">Street type</label>
+                <label for="streetType">Street type</label>
                 <select name="streetType" id="streetTypeInput">
                   <!-- In order of popularity -->
                   <option value="%">--</option>
@@ -97,7 +97,8 @@
                 </select>
               </div>
               <div id="imgUpload">
-                <button type="button" id="uploadBtn">Upload</button>
+                <!-- <button type="button" id="uploadBtn">Upload</button> -->
+                <input id="uploadBtn" type="file" value="Upload Image" accept="image/png, image/gif, image/jpeg" multiple="multiple"/>
               </div>
               <div id="richText">
                 <p>Please enter your review for this property: <span class="required">* required</span></p>
@@ -113,27 +114,26 @@
           </form>
         </div>
       </div>
-      </div>
-    
-      <div id="footer">
-
-        <ul class="footerList">
-          <li>
-            <a href="#">Home</a>
-          </li>
-          <li>
-            <a href="#">Contact</a>
-          </li>
-          <li>
-            <a href="#">About</a>
-          </li>
-        </ul>
-
-        <p class="copyright">RentWise © 2022&emsp; | &emsp;BBY 37</p>
-
-      </div>
     </div>
+    
+    <div id="footer">
 
+      <ul class="footerList">
+        <li>
+          <a href="#">Home</a>
+        </li>
+        <li>
+          <a href="#">Contact</a>
+        </li>
+        <li>
+          <a href="#">About</a>
+        </li>
+      </ul>
+
+      <p class="copyright">RentWise © 2022&emsp; | &emsp;BBY 37</p>
+
+    </div>
+  </div>
 
 
   <script src="./js/createPost.js"></script>

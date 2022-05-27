@@ -14,7 +14,7 @@ async function submitCredentials(data) {
     if (parsedJSON.status === "fail") {
       document.getElementById("errorMsg").innerHTML = parsedJSON.msg;
     } else {
-      window.location.replace("/profile");
+      window.location.replace("/home");
     }
 
   } catch (error){}

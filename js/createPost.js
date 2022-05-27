@@ -24,10 +24,13 @@ async function createPost(data) {
       body: JSON.stringify(data)
     });
     let parsedJSON = await responseObject.json();
+
     //If all required fields are filled and all the data are valid, page gets redirected
     if (parsedJSON.status === "success") {
       document.getElementById("msg").innerHTML = parsedJSON.msg;
+      await sendFiles(parsedJSON.postID);
       window.location.replace(`/unitView?id=${parsedJSON.location_id}`);
+
       //If server finds any invalid data, highlight correpsonding input boxes with red border and display a message
     } else if (parsedJSON.status === "Invalid data") {
       for (let i = 0; i <= 6; i++) {
@@ -41,6 +44,28 @@ async function createPost(data) {
     }
 
   } catch (error) {}
+}
+
+
+async function sendFiles(postID) {
+
+  const filesInput = document.getElementById("uploadBtn");
+      
+  if (filesInput.files.length > 0) {
+
+    const formData = new FormData();
+    formData.append("postID", postID);
+    formData.append("submitType", "post");
+
+    for (let i =0; i < filesInput.files.length; i++) {
+        formData.append("images", filesInput.files[i]);
+    }
+
+    await fetch("/upload-images", {
+      method: 'POST',
+      body: formData
+    });
+  }
 }
 
 

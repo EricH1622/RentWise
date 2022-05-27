@@ -42,8 +42,8 @@ INSERT INTO `BBY_37_location` (`location_id`, `unit_number`, `street_number`, `p
 CREATE TABLE IF NOT EXISTS `BBY_37_post` (
   `post_id` int(16) NOT NULL AUTO_INCREMENT,
   `user_id` int(16) NOT NULL,
-  `date_created` DATETIME NOT NULL,
-  `last_edited_date` DATETIME,
+  `date_created` BIGINT(20) NOT NULL,
+  `last_edited_date` BIGINT(20),
   `content` BLOB,
   `location_id` int(16) NOT NULL,
   `photo1` varchar(1024),
