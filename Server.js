@@ -345,7 +345,7 @@ async function sendReviews(req, res) {
   }if(rows2[0].street_type == "%"){
     stTypeStr = "";
   } else {
-    stTypeStr = rows2[0].prefix;
+    stTypeStr = rows2[0].street_type;
   }
 
   // load address into page
@@ -657,13 +657,31 @@ async function storeSearch(req, res) {
 
     let [rows3, fields3] = await connection.query('SELECT * FROM BBY_37_search WHERE user_id = ' + req.session.userid);
     while (rows3.length > 4){
-      await connection.execute('DELETE FROM BBY_37_search WHERE user_id = ? AND time_searched <= ALL (SELECT time_searched FROM BBY_37_search WHERE user_id LIKE ?)', [req.session.userid, req.session.userid]);
+      await connection.execute('DELETE FROM BBY_37_search WHERE user_id = ? AND time_searched <= ALL (SELECT s2.time_searched FROM BBY_37_search AS s2 WHERE s2.user_id LIKE ?)', [req.session.userid, req.session.userid]);
       [rows3, fields3] = await connection.query('SELECT * FROM BBY_37_search WHERE user_id = ' + req.session.userid);
     }
-    let params = [req.session.userid, req.body.unit, req.body.streetNum, req.body.prefix, req.body.streetName, req.body.streetType, req.body.city, req.body.province];
+    //Sanitize user inputs before saving them into database
+    let prefixSanitized;
+    let streetTypeSanitized;
+    let provinceSanitized;
+    if(valid_prefix(req.body.prefix)){
+      prefixSanitized = req.body.prefix;
+    }else{
+      prefixSanitized = "%";
+    }
+    if(valid_streetType(req.body.streetType)){
+      streetTypeSanitized = req.body.streetType;
+    }else{
+      streetTypeSanitized = "%";
+    }
+    if(valid_province(req.body.province)){
+      provinceSanitized = req.body.province;
+    }else{
+      provinceSanitized = "BC";
+    }
+    let params = [req.session.userid, req.body.unit, req.body.streetNum, prefixSanitized, sanitizeText(req.body.streetName), streetTypeSanitized, sanitizeText(req.body.city), provinceSanitized];
     
-    await connection.execute('INSERT INTO BBY_37_search (time_searched, user_id, unit_number, street_number, prefix, street_name, street_type, city, province) values (NOW(), ?, ?, ?, ?, ?, ?, ?, ?)',
-    [req.session.userid, req.body.unit, req.body.streetNum, req.body.prefix, req.body.streetName, req.body.streetType, req.body.city, req.body.province]);
+    await connection.execute('INSERT INTO BBY_37_search (time_searched, user_id, unit_number, street_number, prefix, street_name, street_type, city, province) values (NOW(), ?, ?, ?, ?, ?, ?, ?, ?)', params);
     
     await connection.end();
 
@@ -1197,7 +1215,6 @@ async function submitPost(req,res){
   let city_valid = true;
   let province_valid = true;
 
-  // console.log(req.body.unit_number,req.body.street_number,req.body.prefix,req.body.street_name,req.body.street_type,req.body.city,req.body.province);
   if(!valid_unitNum(req.body.unit_number)){
     unit_valid = false;
     DataValid = false;
@@ -1231,8 +1248,8 @@ async function submitPost(req,res){
     province_valid = false;
     DataValid = false;
   }
-  // console.log([unit_valid,streetNum_valid,prefix_valid,streetName_valid,streetType_valid,city_valid,province_valid]);
-  //If any of the inputs is invalid, send the array indicating which inputs are invalid
+
+  //If any of the inputs is invalid, send an array indicating which inputs are invalid
   if(!DataValid){
     res.send({
       status:"Invalid data",
