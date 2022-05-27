@@ -129,7 +129,7 @@ font-size: 20px;
 float: right;
 }
 
-#nav a.active, #nav a:hover {
+#nav a.active:not(#logo), #nav a:hover:not(#logo) {
 background-color: rgba(255, 145, 0, 0.829);
 color: white;
 transition: 0.9s;
@@ -245,6 +245,7 @@ transition: 0.6s;
 
 #nav ul {
   position: fixed;
+  z-index: 100;
   width: 100%;
   background: rgba(16, 0, 37, 0.808);
   top: 7vh;
@@ -254,12 +255,14 @@ transition: 0.6s;
 }
 
 #nav ul li {
+  z-index: 101;
   display: block;
   padding-top: 2%;
   padding-bottom: 2%;
 }
 
-#nav ul li a{
+#nav ul li *{
+  z-index: 102;
   color: white;
 }
 

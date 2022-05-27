@@ -11,6 +11,23 @@ const {JSDOM} = require('jsdom');
 const sanitizeHtml = require('sanitize-html');
 const { connect } = require("http2");
 
+
+
+const storage = multer.diskStorage({
+  destination: function (req, file, callback) {
+    callback(null, "./assets/uploads/")
+  },
+  filename: function (req, file, callback) {
+    callback(null, req.session.userid + "-" + Date.now() + '-' + Math.round(Math.random() * 1E3) +
+    '.' + file.originalname.split('.').pop().trim());
+  }
+});
+const upload = multer({
+  storage: storage
+});
+
+
+
 app.use("/js", express.static("./js"));
 app.use("/css", express.static("./css"));
 app.use("/assets", express.static("./assets"));
@@ -36,9 +53,62 @@ app.use(session({
 }));
 
 
+
+app.post('/upload-images', upload.array("images"), function (req, res) {
+  if (req.session.loggedIn) {
+    addImagePathToDB(req, res);
+  } else {
+    res.redirect("/");
+  }
+});
+
+async function addImagePathToDB(req, res) {
+  const connection = await mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'COMP2800',
+    multipleStatements: true
+  });
+  connection.connect(); 
+
+  if (req.body.submitType == "profile") { // if the image upload is a profile pic
+    // add image to user's database
+    connection.query('UPDATE BBY_37_user SET image_profile = ? WHERE user_id = ?',
+    [req.files[0].filename, req.session.userid]);
+    res.send({status: "success", msg: "Profile picture added.", imagepath: "./assets/uploads/" + req.files[0].filename});
+    
+  } else if (req.body.submitType == "post" && req.body.postID) { // if the image upload is a post
+    // add images to image names to image database.
+    const [rows, fields] = await connection.query('SELECT user_id FROM BBY_37_post WHERE post_id = ?', [req.body.postID]);
+    if (!rows[0]) {
+      console.log("no result after query. The post for which files were uploaded cannot be found.");
+    }
+    if (rows[0] && rows[0].user_id == req.session.userid) {
+      for (let i = 0; i < req.files.length; i++) {
+        await connection.query('INSERT INTO BBY_37_postImage (post_id, user_id, filename) values (?, ?, ?)',
+        [req.body.postID, req.session.userid, req.files[i].filename]);
+      }
+      res.send({status: "success", msg: "Images were added to post."});
+    } else {
+      res.send({status: "fail", msg: "You cannot edit this post."});
+    }
+
+  } else {
+    // file was uploaded by logged-in user but flags are incorrect.
+    res.send({status: "fail", msg: "Metadata is incorrect, don't know what to do with file."});
+  }
+  connection.end()
+}
+
+
+
+
+
+
 app.get("/", function (req, res) {
   if (req.session.loggedIn) {
-    res.redirect("/profile");
+    res.redirect("/home");
   } else {
     let doc = fs.readFileSync("./html/index.html", "utf8");
     let docDOM = new JSDOM(doc);
@@ -83,9 +153,7 @@ app.get("/logout", function (req, res) {
   }
 });
 
-app.get("/profile", function (req, res) {
-  sendProfilePage(req, res);
-});
+
 
 app.get("/admin", function (req, res) {
   if (req.session.loggedIn && req.session.userlevel == 1) {
@@ -111,7 +179,7 @@ function getNavBar(req) {
       <label for="check" class="checkbtn">
           <i><img src="/assets/images/menuIcon.png" class="hamburger"/></i>
       </label>
-      <div class="logo"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></div>
+      <div class="logo"><a id="logo" href="./home"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></a></div>
       <ul>
           <li><a href="/home">Search</a></li>
           <li><a href="/createPost">Create Post</a></li>
@@ -124,7 +192,7 @@ function getNavBar(req) {
       <label for="check" class="checkbtn">
           <i><img src="/assets/images/menuIcon.png" class="hamburger"/></i>
       </label>
-      <div class="logo"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></div>
+      <div class="logo"><a href="./home"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></a></div>
       <ul>
           <li><a href="/admin">Admin</a></li>
           <li><a href="/home">Search</a></li>
@@ -135,7 +203,7 @@ function getNavBar(req) {
       </ul>`
     }
   } else {
-    return `<div class="logo"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></div>`
+    return `<div class="logo"><a href="./home"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></a></div>`
   }
 }
 
@@ -181,33 +249,40 @@ async function sendHomePage(req, res) {
   }
 }
 
+
+app.get("/profile", function (req, res) {
+  sendProfilePage(req, res);
+});
+
+
 async function sendProfilePage(req, res) {
   if (req.session.loggedIn) {
     let doc = fs.readFileSync("./html/profile.html", "utf8");
     let docDOM = new JSDOM(doc);
     const connection = await mysql.createConnection(connectConfig);
     connection.connect();
-    const [rows, fields] = await connection.execute(
-      "SELECT first_name, last_name, username, email_address, password FROM BBY_37_user " +
-      "WHERE BBY_37_user.user_id = " + req.session.userid);
-    await connection.end();
+    let [rows, fields] = await connection.execute("SELECT * FROM BBY_37_user WHERE user_id = " + req.session.userid);
+
     docDOM.window.document.getElementById("firstName").setAttribute("value", rows[0].first_name);
     docDOM.window.document.getElementById("lastName").setAttribute("value", rows[0].last_name);
     docDOM.window.document.getElementById("username").setAttribute("value", rows[0].username);
     docDOM.window.document.getElementById("password").setAttribute("value", rows[0].password);
     docDOM.window.document.getElementById("email").setAttribute("value", rows[0].email_address);
-
     docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
 
-    var imagePath = "./assets/uploads/profilePicture_" + req.session.userid;
+    let imagePath = "./assets/uploads/";
 
-      if (fs.existsSync(imagePath)) {
-        docDOM.window.document.getElementById("profilePhotoDiv").innerHTML = '<img id="profilePhoto" src="./assets/uploads/profilePicture_' + req.session.userid + '"></img>';
-      } else {
-        docDOM.window.document.getElementById("profilePhotoDiv").innerHTML = '<img id="profilePhoto" src="./assets/images/placeholder1.png></img>';
-      }
 
+    if (rows[0] && rows[0].image_profile) {
+      docDOM.window.document.getElementById("profilePhotoDiv").innerHTML =
+      '<img id="profilePhoto" src="' + imagePath + rows[0].image_profile + '" />';
+    } else {
+      docDOM.window.document.getElementById("profilePhotoDiv").innerHTML =
+      '<img id="profilePhoto" src="./assets/images/placeholder1.png" />';
+    }
     res.send(docDOM.serialize());
+    await connection.end();
+
   } else {
     // not logged in - no session and no access, redirect to root.
     res.redirect("/");
@@ -260,31 +335,39 @@ async function sendReviews(req, res) {
   }if(rows2[0].street_type == "%"){
     stTypeStr = "";
   } else {
-    stTypeStr = rows2[0].prefix;
+    stTypeStr = rows2[0].street_type;
   }
 
   // load address into page
   let address = rows2[0].unit_number + " " + rows2[0].street_number + " " + rows2[0].street_name + " " + stTypeStr + " " + prefixStr + ", " + rows2[0].city + ", " + rows2[0].province; 
 
-  await connection.end();
   let currentReview = "";
   // empty reviews div
   docDOM.window.document.getElementById("reviews").innerHTML = currentReview;
   for (let j = 0; j < rows.length; j++) {
+    //Images
+    let [rows3, fields3] = await connection.execute("SELECT * FROM BBY_37_postImage WHERE post_id = " + rows[j].post_id);
+
     // for each row, make a new review
     currentReview += "<div class='review' id=" + rows[j].post_id + ">";
     currentReview += "<div class='name'>" + u_name[j] + "</div>";
     currentReview += "<div class='rev'>" + rows[j].content + "</div>";
-    currentReview += "<div class='createTime'> Original Post: " + rows[j].date_created + "</div>";
+    currentReview += "<div class='createTime'> Original Post: " + (new Date(rows[j].date_created)).toLocaleString() + "</div>";
     if ((rows[j].last_edited_date != "Invalid Date") && (rows[j].last_edited_date != null)) {
-      currentReview += "<div class='editTime'> Last edit:" + rows[j].last_edited_date + "</div>";
+      currentReview += "<div class='editTime'> Last edit:" + (new Date(rows[j].last_edited_date)).toLocaleString() + "</div>";
     }
-    currentReview += "<div class='images'><img id='photo1' src='" + rows[j].photo1 + "'></img></div>";
+    currentReview += "<div class='images'>";
+    for (let i = 0; i < rows3.length; i++) {
+      let imgName = rows3[i];
+      currentReview +="<img src='./assets/uploads/" + rows3[i].filename + "'></img>";
+    }
+    currentReview += "</div>";
     if (req.session.userid == rows[j].user_id) {
       currentReview += "<div class='editBtn' id='editBtn' onclick='edit_init()'>Edit</div>";
     }
     currentReview += "</div>";
   }
+  await connection.end();
   docDOM.window.document.getElementById("address").innerHTML= address;
   docDOM.window.document.getElementById("reviews").innerHTML += currentReview;
   docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
@@ -342,9 +425,9 @@ async function sendHistory(req, res) {
       }
       historyItems += "<div class='review'>" + rows[j].content + "</div>";
       historyItems += "<div class='message'></div>";
-      historyItems += "<div class='initPostTime'>Posted: " + rows[j].date_created + "</div>";
+      historyItems += "<div class='initPostTime'>Posted: " + (new Date(rows[j].date_created)).toLocaleString() + "</div>";
       if (rows[j].last_edited_date != "Invalid Date") {
-        historyItems += "<div class='lastEditTime'>Edited: " + rows[j].last_edited_date + "</div>";
+        historyItems += "<div class='lastEditTime'>Edited: " + (new Date(rows[j].last_edited_date)).toLocaleString() + "</div>";
       } else {
         historyItems += "<div class='lastEditTime'></div>";
       }
@@ -353,6 +436,7 @@ async function sendHistory(req, res) {
       }
     docDOM.window.document.getElementById("userHistory").innerHTML = historyItems;
   }
+  docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
       res.send(docDOM.serialize());
 }
 
@@ -535,13 +619,31 @@ async function storeSearch(req, res) {
 
     let [rows3, fields3] = await connection.query('SELECT * FROM BBY_37_search WHERE user_id = ' + req.session.userid);
     while (rows3.length > 4){
-      await connection.execute('DELETE FROM BBY_37_search WHERE user_id = ? AND time_searched <= ALL (SELECT time_searched FROM BBY_37_search WHERE user_id LIKE ?)', [req.session.userid, req.session.userid]);
+      await connection.execute('DELETE FROM BBY_37_search WHERE user_id = ? AND time_searched <= ALL (SELECT s2.time_searched FROM BBY_37_search AS s2 WHERE s2.user_id LIKE ?)', [req.session.userid, req.session.userid]);
       [rows3, fields3] = await connection.query('SELECT * FROM BBY_37_search WHERE user_id = ' + req.session.userid);
     }
-    let params = [req.session.userid, req.body.unit, req.body.streetNum, req.body.prefix, req.body.streetName, req.body.streetType, req.body.city, req.body.province];
+    //Sanitize user inputs before saving them into database
+    let prefixSanitized;
+    let streetTypeSanitized;
+    let provinceSanitized;
+    if(valid_prefix(req.body.prefix)){
+      prefixSanitized = req.body.prefix;
+    }else{
+      prefixSanitized = "%";
+    }
+    if(valid_streetType(req.body.streetType)){
+      streetTypeSanitized = req.body.streetType;
+    }else{
+      streetTypeSanitized = "%";
+    }
+    if(valid_province(req.body.province)){
+      provinceSanitized = req.body.province;
+    }else{
+      provinceSanitized = "BC";
+    }
+    let params = [req.session.userid, req.body.unit, req.body.streetNum, prefixSanitized, sanitizeText(req.body.streetName), streetTypeSanitized, sanitizeText(req.body.city), provinceSanitized];
     
-    await connection.execute('INSERT INTO BBY_37_search (time_searched, user_id, unit_number, street_number, prefix, street_name, street_type, city, province) values (NOW(), ?, ?, ?, ?, ?, ?, ?, ?)',
-    [req.session.userid, req.body.unit, req.body.streetNum, req.body.prefix, req.body.streetName, req.body.streetType, req.body.city, req.body.province]);
+    await connection.execute('INSERT INTO BBY_37_search (time_searched, user_id, unit_number, street_number, prefix, street_name, street_type, city, province) values (NOW(), ?, ?, ?, ?, ?, ?, ?, ?)', params);
     
     await connection.end();
 
@@ -550,10 +652,7 @@ async function storeSearch(req, res) {
       msg: "Search parameters stored."
     });
   } else {
-    res.send({
-      status: "fail",
-      msg: "Not logged in."
-    });
+    res.redirect("/login");
   }
 }
 
@@ -628,7 +727,7 @@ async function executeSearch(req, res) {
         <h1>No results found!</h1>
         <p>We couldn't find any results for that search, sorry!</p>
         <p>Maybe you'd like to make a post for it though?</p>
-        <button class="resultButton create" type="button">Create a post</button>
+        <a href="./createPost" style="text-decoration :none;"><button class="resultButton create" type="button">Create a post</button></a>
       </div>`;
     }
     await connection.end();
@@ -728,27 +827,6 @@ async function createUser(req, res) {
 }
 
 
-const storage = multer.diskStorage({
-  destination: function (req, file, callback) {
-    callback(null, "./assets/uploads/")
-  },
-  filename: function (req, file, callback) {
-    callback(null, "profilePicture_" + req.session.userid);
-  }
-});
-const upload = multer({
-  storage: storage
-});
-
-
-app.post('/upload-images', upload.array("files"), function (req, res) {
-
-
-  for (let i = 0; i < req.files.length; i++) {
-    req.files[i].filename = req.files[i].originalname;
-  }
-
-});
 
 app.post("/delete_user", function (req, res) {
   if (req.session.loggedIn && req.session.userlevel == 1) {
@@ -1051,7 +1129,6 @@ async function submitPost(req,res){
   let city_valid = true;
   let province_valid = true;
 
-  console.log(req.body.unit_number,req.body.street_number,req.body.prefix,req.body.street_name,req.body.street_type,req.body.city,req.body.province);
   if(!valid_unitNum(req.body.unit_number)){
     unit_valid = false;
     DataValid = false;
@@ -1085,8 +1162,8 @@ async function submitPost(req,res){
     province_valid = false;
     DataValid = false;
   }
-  console.log([unit_valid,streetNum_valid,prefix_valid,streetName_valid,streetType_valid,city_valid,province_valid]);
-  //If any of the inputs is invalid, send the array indicating which inputs are invalid
+
+  //If any of the inputs is invalid, send an array indicating which inputs are invalid
   if(!DataValid){
     res.send({
       status:"Invalid data",
@@ -1102,52 +1179,53 @@ async function submitPost(req,res){
   //Read into database to see if the address entered by user already exsits
   const [rows, fields] = await connection.query(
     "SELECT * FROM BBY_37_location WHERE BBY_37_location.unit_number = ? AND BBY_37_location.street_number = ? AND BBY_37_location.prefix = ? AND BBY_37_location.street_name = ? AND BBY_37_location.street_type = ? AND BBY_37_location.city = ? AND BBY_37_location.province = ?",
+    [req.body.unit_number, req.body.street_number, req.body.prefix, streetNameTitleCase, req.body.street_type, cityTitleCase, req.body.province]
+  );
+
+  //if the address does not exist in the database, create a new entry in the location table, grab that location id and add a new entry to the post table
+  const sanitizedReview = sanitizeHtml(req.body.review);
+  let locationid;
+  let newDate = Date.now();
+
+  if (rows.length === 0) {
+    await connection.execute("INSERT INTO BBY_37_location (unit_number,street_number,prefix,street_name,street_type,city,province) values (?, ?, ?, ?, ?, ?, ?)",
     [req.body.unit_number, req.body.street_number, req.body.prefix, streetNameTitleCase, req.body.street_type, cityTitleCase, req.body.province]);
+    const [rows2, fields2] = await connection.query(
+      "SELECT * FROM BBY_37_location WHERE BBY_37_location.unit_number = ? AND BBY_37_location.street_number = ? AND BBY_37_location.prefix = ? AND BBY_37_location.street_name = ? AND BBY_37_location.street_type = ? AND BBY_37_location.city = ? AND BBY_37_location.province = ?",
+      [req.body.unit_number, req.body.street_number, req.body.prefix, streetNameTitleCase, req.body.street_type, cityTitleCase, req.body.province]);
 
-    //if the address does not exist in the database, create a new entry in the location table, grab that location id and add a new entry to the post table
-    var locationid;
-    const sanitizedReview = sanitizeHtml(req.body.review);
-    
-    if (rows.length === 0) {
-      await connection.execute("INSERT INTO BBY_37_location (unit_number,street_number,prefix,street_name,street_type,city,province) values (?, ?, ?, ?, ?, ?, ?)",[req.body.unit_number, req.body.street_number, req.body.prefix, streetNameTitleCase, req.body.street_type, cityTitleCase, req.body.province]);
-      const [row, fields] = await connection.query(
-        "SELECT * FROM BBY_37_location WHERE BBY_37_location.unit_number = ? AND BBY_37_location.street_number = ? AND BBY_37_location.prefix = ? AND BBY_37_location.street_name = ? AND BBY_37_location.street_type = ? AND BBY_37_location.city = ? AND BBY_37_location.province = ?",
-        [req.body.unit_number, req.body.street_number, req.body.prefix, streetNameTitleCase, req.body.street_type, cityTitleCase, req.body.province]);
+    //Grab the location_id of the new address added to location table
+    locationid = rows2[0].location_id;
 
-      //Grab the location_id of the new address added to location table
-      locationid = row[0].location_id;
+    await connection.execute("INSERT INTO BBY_37_post (user_id, date_created, last_edited_date, content, location_id) values (?, ?, ?, ?, ?)",
+    [req.session.userid, newDate, newDate, sanitizedReview, locationid]);
 
-      if(!valid_userID(req.session.userid)){
-        res.send({
-          status: "fail",
-          msg: "Invalid User ID."
-        });
-        return;
-      }
+    //if the address already exist, only add the review with the user id and the location id of this address
+  }else{
+    locationid = rows[0].location_id;
+    await connection.execute("INSERT INTO BBY_37_post (user_id, date_created, last_edited_date, content, location_id) values (?, ?, ?, ?, ?)",
+    [req.session.userid, newDate, newDate, sanitizedReview, locationid]);
+  }
 
-      await connection.execute("INSERT INTO BBY_37_post (user_id, date_created, content, location_id) values (?, ?, ?, ?)",[req.session.userid,new Date(),sanitizedReview,locationid]);
-      await connection.end();
+  const [rows3, fields3] = await connection.query(
+    "SELECT post_id FROM BBY_37_post WHERE BBY_37_post.user_id = ? AND BBY_37_post.date_created = ? AND BBY_37_post.last_edited_date = ? AND BBY_37_post.location_id = ?",
+    [req.session.userid, newDate, newDate, locationid]);
 
-      //if the address already exist, only add the review with the user id and the location id of this address
-    }else{
-      if(!valid_userID(req.session.userid)){
-        res.send({
-          status: "fail",
-          msg: "Invalid User ID."
-        });
-        return;
-      }
+  let newpostID = null;
+  if (rows3[0]) {
+    newpostID = rows3[0].post_id;
+  }
 
-      locationid = rows[0].location_id;
-      await connection.execute("INSERT INTO BBY_37_post (user_id, date_created, content, location_id) values (?, ?, ?, ?)",[req.session.userid,new Date(),sanitizedReview,locationid]);
-      await connection.end();
-    }
-    res.send({
-      status:"success",
-      message:"The post has been created.",
-      location_id:locationid
-    }); 
+  await connection.end();
+  res.send({
+    status: "success",
+    message: "The post has been created.",
+    location_id: locationid,
+    postID: newpostID
+  });
 }
+
+
 
 //This is the 404 route
 //I found the basis for this code here: https://stackoverflow.com/questions/6528876/how-to-redirect-404-errors-to-a-page-in-expressjs
