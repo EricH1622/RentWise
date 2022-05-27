@@ -9,7 +9,6 @@ const mysql = require("mysql2/promise");
 const multer = require("multer");
 const {JSDOM} = require('jsdom');
 const sanitizeHtml = require('sanitize-html');
-const { connect } = require("http2");
 
 
 //Defining Multer storage
