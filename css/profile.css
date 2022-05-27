@@ -60,14 +60,6 @@ h1{
     font-family: 'Roboto', sans-serif;
 }
 
-#timeline{
-    padding: 2%;
-    background-color: rgb(157, 223, 240);
-    /*Remove the following 2 lines to bring back the timeline once we need it later*/
-    visibility: hidden;
-    position: absolute;
-}
-
 #profileInfo{
     padding: 1%;
     padding-top: 10px;

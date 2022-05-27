@@ -1,6 +1,7 @@
 "use strict";
+
+//requests the server to update the user's profile information.
 async function updateProfile(data) {
-  
   try {
     let responseObject = await fetch("/update-profile", {
       method: 'POST',
@@ -16,8 +17,8 @@ async function updateProfile(data) {
   }
 }
 
+//Makes the submit button edit the user's information on click.
 ready(function(e) {
-
   document.getElementById("editButton").addEventListener("click", function(e) {
     if((document.getElementById("username").value) && (document.getElementById("password").value) && (document.getElementById("firstName").value) && (document.getElementById("lastName").value) && (document.getElementById("email").value)){
       e.preventDefault();
@@ -38,8 +39,7 @@ ready(function(e) {
 })
 
 
-// *****Upload Profile Picture *****
-
+//Requests the server to upload a Profile Picture
 async function uploadImages(e) {
   e.preventDefault();
 
@@ -70,7 +70,7 @@ async function uploadImages(e) {
   });
 }
 
-
+//Executes callback when the document is loaded.
 function ready(callback) {
   if (document.readyState != "loading") {
     callback();

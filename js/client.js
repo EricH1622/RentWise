@@ -1,4 +1,6 @@
 "use strict";
+
+//Requests the server to log the user in using the credentials in the document.
 async function submitCredentials(data) {
   try {
     let responseObject = await fetch("/login", {
@@ -20,6 +22,7 @@ async function submitCredentials(data) {
   } catch (error){}
 }
 
+//Adds a click event to the submit button, to execute the submitCredentials function.
 ready(document.getElementById("btn").addEventListener("click", function (e) {
   submitCredentials({
     "username": document.getElementById("usernameBox").value,
@@ -27,6 +30,7 @@ ready(document.getElementById("btn").addEventListener("click", function (e) {
   });
 }))
 
+//Executes callback when the document is loaded.
 function ready(callback) {
   if (document.readyState != "loading") {
     callback();

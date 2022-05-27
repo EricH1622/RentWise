@@ -1,6 +1,6 @@
 "use strict";
 
-// REQUIRES
+// Npm package requirements
 const express = require("express");
 const session = require("express-session");
 const app = express();
@@ -12,7 +12,7 @@ const sanitizeHtml = require('sanitize-html');
 const { connect } = require("http2");
 
 
-
+//Defining Multer storage
 const storage = multer.diskStorage({
   destination: function (req, file, callback) {
     callback(null, "./assets/uploads/")
@@ -27,7 +27,7 @@ const upload = multer({
 });
 
 
-
+/*-------Express definitions------*/
 app.use("/js", express.static("./js"));
 app.use("/css", express.static("./css"));
 app.use("/assets", express.static("./assets"));
@@ -43,9 +43,9 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }));
+/*-------------------------------*/
 
-
-
+//Redirect for image uploads
 app.post('/upload-images', upload.array("images"), function (req, res) {
   if (req.session.loggedIn) {
     addImagePathToDB(req, res);
@@ -54,6 +54,7 @@ app.post('/upload-images', upload.array("images"), function (req, res) {
   }
 });
 
+//Adds an uploaded image's path to the database.
 async function addImagePathToDB(req, res) {
   const connection = await mysql.createConnection({
     host: 'localhost',
@@ -93,11 +94,7 @@ async function addImagePathToDB(req, res) {
   connection.end()
 }
 
-
-
-
-
-
+//Redirect for the default path (index or home)
 app.get("/", function (req, res) {
   if (req.session.loggedIn) {
     res.redirect("/home");
@@ -109,6 +106,7 @@ app.get("/", function (req, res) {
   }
 });
 
+//Redirect for the login page.
 app.get("/login", function (req, res) {
   if (req.session.loggedIn) {
     res.redirect("/profile");
@@ -120,6 +118,7 @@ app.get("/login", function (req, res) {
   }
 });
 
+//Redirect for the account creation page.
 app.get("/createAccount", function (req, res) {
   if (req.session.loggedIn) {
     res.redirect("/profile");
@@ -131,6 +130,7 @@ app.get("/createAccount", function (req, res) {
   }
 });
 
+//Logs the user out.
 app.get("/logout", function (req, res) {
   if (req.session) {
     req.session.destroy(function (error) {
@@ -145,8 +145,7 @@ app.get("/logout", function (req, res) {
   }
 });
 
-
-
+//Redirect for the admin page
 app.get("/admin", function (req, res) {
   if (req.session.loggedIn && req.session.userlevel == 1) {
     sendAdminPage(req, res);
@@ -155,6 +154,7 @@ app.get("/admin", function (req, res) {
   }
 });
 
+//Loads the error page.
 app.get("/notFound", function (req, res) {
   let doc = fs.readFileSync("./html/notFound.html", "utf8");
     let docDOM = new JSDOM(doc);
@@ -163,7 +163,7 @@ app.get("/notFound", function (req, res) {
 });
 
 
-//dynamic navbars
+//Loading function for a dynamic navbar.
 function getNavBar(req) {
   if (req.session.loggedIn) {
     if (req.session.userlevel == 0) {
@@ -199,6 +199,7 @@ function getNavBar(req) {
   }
 }
 
+//Sends the home page, filled with the user's previous searches.
 async function sendHomePage(req, res) {
   if (req.session.loggedIn) {
     let doc = fs.readFileSync("./html/home.html", "utf8");
@@ -247,12 +248,12 @@ async function sendHomePage(req, res) {
   }
 }
 
-
+//Redirect for the profile page.
 app.get("/profile", function (req, res) {
   sendProfilePage(req, res);
 });
 
-
+//Sends the profile page, filled in with all the user's profile details
 async function sendProfilePage(req, res) {
   if (req.session.loggedIn) {
     let doc = fs.readFileSync("./html/profile.html", "utf8");
@@ -293,6 +294,7 @@ async function sendProfilePage(req, res) {
   }
 }
 
+//Redirect for the unit viewing page.
 app.get("/unitView", function (req, res) {
   if (req.session.loggedIn) {
     sendReviews(req, res);
@@ -301,6 +303,7 @@ app.get("/unitView", function (req, res) {
   }
 });
 
+//Sends the review page for a unit, filled in with all the reviews related to that unit.
 async function sendReviews(req, res) {
   let address_id = req.query["id"];
   let doc = fs.readFileSync("./html/unitView.html", "utf8");
@@ -384,6 +387,7 @@ async function sendReviews(req, res) {
   res.send(docDOM.serialize());
 }
 
+//Redirect for the user timeline page.
 app.get("/userTimeline", function (req, res) {
   if (req.session.loggedIn) {
     sendHistory(req, res);
@@ -392,6 +396,7 @@ app.get("/userTimeline", function (req, res) {
   }
 });
 
+//Sends the user timeline page, with a history of their previous posts.
 async function sendHistory(req, res) {
   let doc = fs.readFileSync("./html/userTimeLine.html", "utf8");
   let docDOM = new JSDOM(doc);
@@ -456,6 +461,7 @@ async function sendHistory(req, res) {
       res.send(docDOM.serialize());
 }
 
+//Redirect to the search results page.
 app.get("/results", function (req, res) {
   if (req.session.loggedIn) {
     executeSearch(req, res);
@@ -464,6 +470,7 @@ app.get("/results", function (req, res) {
   }
 });
 
+//Sends the admin page with a table of the data for all users.
 async function sendAdminPage(req, res) {
   let doc = fs.readFileSync("./html/admin.html", "utf8");
   let docDOM = new JSDOM(doc);
@@ -503,24 +510,29 @@ async function sendAdminPage(req, res) {
   res.send(docDOM.serialize());
 }
 
+//Redirect for user authentication
 app.post("/login", function (req, res) {
   authenticateUser(req, res);
 });
 
+//Redirect for creating a new user
 app.post("/signup", function (req, res) {
   res.setHeader("Content-Type", "application/json");
   createUser(req, res);
 });
 
+//Redirect for updating a user's profile info
 app.post('/update-profile', function (req, res) {
   res.setHeader('Content-Type', 'application/json');
   editUserProfile(req, res);
 });
 
+//Redirect for storing a search
 app.post('/search', function (req, res) {
   storeSearch(req, res);
 });
 
+//Redirect for editing a post's details
 app.post('/submitEdit', async function (req, res) {
   if (req.body.content.length > 0) {
     sanitizeHtml(req.body.content); //sanitize review
@@ -544,11 +556,13 @@ app.post('/submitEdit', async function (req, res) {
   }
   res.end();
 });
-  
+
+//Redirect for updating a search
 app.post('/searchUpdate', function (req, res) {
   updateSearch(req, res);
 });
 
+//Edits the user profile based on the data taken in from the req value, and returns info with the res value.
 async function editUserProfile(req, res) {
   if (req.session.loggedIn) {
     const connection = await mysql.createConnection({
@@ -622,6 +636,7 @@ async function editUserProfile(req, res) {
   }
 }
 
+//Updates a previously stored search's timestamp.
 async function updateSearch(req, res) {
   res.setHeader("Content-Type", "application/json");
   if (req.session.loggedIn) {
@@ -651,6 +666,7 @@ async function updateSearch(req, res) {
   }
 }
 
+//Stores a search into the database for future use.
 async function storeSearch(req, res) {
   res.setHeader("Content-Type", "application/json");
   if (req.session.loggedIn) {
@@ -662,13 +678,6 @@ async function storeSearch(req, res) {
       multipleStatements: true
     });
     connection.connect();
-    //This code should delete from the database if the user stores more than 4 searches, but it's buggy right now.
-    // let [rows3, fields3] = await connection.query('SELECT * FROM BBY_37_search WHERE user_id = ' + req.session.userid);
-    // while (rows3.length > 4){
-    //   await connection.execute('DELETE FROM BBY_37_search WHERE user_id = ? AND time_searched <= ALL (SELECT s2.time_searched FROM BBY_37_search AS s2 WHERE s2.user_id LIKE ?)', [req.session.userid, req.session.userid]);
-    //   [rows3, fields3] = await connection.query('SELECT * FROM BBY_37_search WHERE user_id = ' + req.session.userid);
-    // }
-    //Sanitize user inputs before saving them into database
     let prefixSanitized;
     let streetTypeSanitized;
     let provinceSanitized;
@@ -702,6 +711,7 @@ async function storeSearch(req, res) {
   }
 }
 
+//Executes the most recent search from the database related to the current user, redirecting them to the proper search results page.
 async function executeSearch(req, res) {
   if (req.session.loggedIn) {
     let doc = fs.readFileSync("./html/results.html", "utf8");
@@ -791,6 +801,7 @@ async function executeSearch(req, res) {
   }
 }
 
+//Authenticates a user's information, making sure that their data is valid and exists in the database.
 async function authenticateUser(req, res) {
   const connection = await mysql.createConnection({
     host: "localhost",
@@ -825,6 +836,7 @@ async function authenticateUser(req, res) {
   }
 }
 
+//Creates a new user in the database.
 async function createUser(req, res) {
   const connection = await mysql.createConnection({
     host: "localhost",
@@ -891,7 +903,7 @@ async function createUser(req, res) {
 }
 
 
-
+//Redirect for user deletion.
 app.post("/delete_user", function (req, res) {
   if (req.session.loggedIn && req.session.userlevel == 1) {
     deleteUser(req, res);
@@ -903,7 +915,7 @@ app.post("/delete_user", function (req, res) {
   }
 });
 
-
+//Prepares to delete a user from the database, checking to make sure the delete can go through.
 async function deleteUser(req, res) {
   const connection = await mysql.createConnection({
     host: "localhost",
@@ -919,6 +931,7 @@ async function deleteUser(req, res) {
     [req.body.userID]);
 
   if (rows[0].role_id == 0) {
+    //Delete is ok, execute the deletion
     doDeleteUser(req, res);
   } else {
     let [rows2, fields2] = await connection.query(
@@ -936,7 +949,7 @@ async function deleteUser(req, res) {
   await connection.end();
 }
 
-
+//Deletes a user from the database.
 async function doDeleteUser(req, res) {
   const connection = await mysql.createConnection({
     host: "localhost",
@@ -956,7 +969,7 @@ async function doDeleteUser(req, res) {
   });
 }
 
-
+//Redirect for updating a user's data.
 app.post("/update_user_data", function (req, res) {
   if (req.session.loggedIn && req.session.userlevel == 1) {
     adminUpdateUsers(req, res);
@@ -968,8 +981,8 @@ app.post("/update_user_data", function (req, res) {
   }
 });
 
+//Update's a user's information from the admin page.
 async function adminUpdateUsers(req, res) {
-
   const connection = await mysql.createConnection({
     host: "localhost",
     user: "root",
@@ -1009,6 +1022,7 @@ async function adminUpdateUsers(req, res) {
   await connection.end();
 }
 
+//Updates a user from the user profile page.
 async function doUpdateUser(req, res) {
   const connection = await mysql.createConnection({
     host: "localhost",
@@ -1087,7 +1101,7 @@ app.post("/add_user", function (req, res) {
   }
 });
 
-
+//Adds a user to the database from the admin panel.
 async function adminAddUser(req, res) {
   const connection = await mysql.createConnection({
     host: "localhost",
@@ -1185,6 +1199,7 @@ async function adminAddUser(req, res) {
   });
 }
 
+//Redirect to the home page.
 app.get("/home",function (req, res) {
   if (req.session.loggedIn) {
     sendHomePage(req, res);
@@ -1193,6 +1208,7 @@ app.get("/home",function (req, res) {
   }
 })
 
+//Redirect to the post creation page.
 app.get("/createPost", function (req, res) {
   if (req.session.loggedIn) {
     let doc = fs.readFileSync("./html/createPost.html", "utf8");
@@ -1204,6 +1220,7 @@ app.get("/createPost", function (req, res) {
   }
 });
 
+//Redirect for submitting a post.
 app.post("/submitPost", function (req,res){
   if (req.session.loggedIn) {
     submitPost(req,res);
@@ -1212,6 +1229,7 @@ app.post("/submitPost", function (req,res){
   }
 });
 
+//Submit a post to the database.
 async function submitPost(req,res){
   //Check if data sent from createPost page is valid
   let DataValid = true;
@@ -1334,7 +1352,7 @@ app.get('*', function(req, res){
   res.redirect("/notFound");
 });
 
-
+//Hosting on localhost.
 let port = 8000;
 app.listen(port, function () {
   console.log("RentWise server running on port: " + port);

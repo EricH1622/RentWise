@@ -1,4 +1,6 @@
 "use strict";
+
+//Executes a search query based on the user's input.
 async function searchQuery(data) {
   try {
     let responseObject = await fetch("/search", {
@@ -18,6 +20,7 @@ async function searchQuery(data) {
   } catch (error) {}
 }
 
+//Updates an existing search query and performs it.
 async function searchUpdate(data) {
   try {
     let responseObject = await fetch("/searchUpdate", {
@@ -38,6 +41,7 @@ async function searchUpdate(data) {
   }
 }
 
+//Adds a click event to perform a search when the search button is pressed.
 ready(document.getElementById("btn").addEventListener("click", function(e) {
   e.preventDefault();
   let unit = document.getElementById("unitVal").value;
@@ -87,6 +91,7 @@ ready(document.getElementById("btn").addEventListener("click", function(e) {
 
 }))
 
+//Executes callback when the document is loaded.
 function ready(callback) {
   if (document.readyState != "loading") {
     callback();
