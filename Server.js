@@ -204,7 +204,7 @@ async function sendProfilePage(req, res) {
       if (fs.existsSync(imagePath)) {
         docDOM.window.document.getElementById("profilePhotoDiv").innerHTML = '<img id="profilePhoto" src="./assets/uploads/profilePicture_' + req.session.userid + '"></img>';
       } else {
-        docDOM.window.document.getElementById("profilePhotoDiv").innerHTML += '<img id="profilePhoto" src="./assets/images/placeholder1.png></img>';
+        docDOM.window.document.getElementById("profilePhotoDiv").innerHTML = '<img id="profilePhoto" src="./assets/images/placeholder1.png></img>';
       }
 
     res.send(docDOM.serialize());

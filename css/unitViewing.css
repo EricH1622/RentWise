@@ -5,13 +5,14 @@
   grid-column: 1 / span 5;
   grid-row: 2;
   grid-template-columns: 100%;
-  grid-template-rows: 10% 10% 70% 10%;
+  grid-template-rows: 8% 6% 78% 8%;
   background-color: rgb(16, 0, 37);
   overflow-x: hidden;
 }
 
-#content * {
-  color: white;
+#content  {
+  color: black;
+  
 }
 
 #prop {
@@ -24,13 +25,16 @@
 
 #prop > h1 {
   font-size: 6vmin;
-  margin: 0 auto;
+  margin: 0 15px;
   filter: drop-shadow(7px 7px 3px #000000);
+  color: white
 }
 
 h3{
-  font-size: 5vh;
-  margin: 0 auto;
+  font-size: 3.5vh;
+  margin: 0 15px;
+  padding-top: 4px;
+  color: white;
 }
 
 
@@ -38,11 +42,37 @@ h3{
   overflow: auto;
   padding: 1rem 2rem 1rem 2rem;
   grid-gap: 10px;
-  background-color: rgb(255, 255, 255);
   overflow-x: hidden;
+  background-image: url("/assets/images/city6.jpg");
+  background-attachment: fixed;
 }
 
 .review {
+  height: fit-content;
+  /* border-style: solid; */
+  border-color: rgb(58, 58, 58);
+  background-color: rgb(235, 235, 235);
+  /* border-radius: 10px;
+  padding: 15px; */
+  display: grid;
+  grid-template-columns: 16.7% 16.7% 16.7% 16.7% 16.7% 16.7% 16.7%;
+  grid-template-rows: 12.5% 12.5% 12.5% 12.5% 12.5% 12.5% 12.5% 12.5% 12.5%;
+
+  border-style: solid;
+  border-radius: 20px;
+  border-width: 4px;
+  padding: 10px;
+  padding-bottom: 10px;
+  margin: 20px;
+  margin-bottom: 25px;
+}
+
+.editBtn {
+  grid-row: 7;
+  grid-column: 6;
+}
+
+/* .editBox {
   min-height: 160px;
   border-style: solid;
   border-color: rgb(0, 124, 161);
@@ -50,40 +80,129 @@ h3{
   border-radius: 10px;
   padding: 15px;
   display: grid;
-  grid-template-columns: 160px 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 16.7% 16.7% 16.7% 16.7% 16.7% 16.7%;
   grid-template-rows: 16.7% 16.7% 16.7% 16.7% 16.7% 16.7%;
-}
-#photo1{
-  width:80%;
-  height:80%;
-  border-radius: 8px;
-}
-.name {
-  grid-column: 2 / span 1;
-  grid-row: 1 / span 2;
+} */
+
+.editBox {
+  height: fit-content;
+  /* border-style: solid; */
+  border-color: rgb(58, 58, 58);
+  background-color: rgb(235, 235, 235);
+  /* border-radius: 10px;
+  padding: 15px; */
+  display: grid;
+  grid-template-columns: 16.7% 16.7% 16.7% 16.7% 16.7% 16.7% 16.7%;
+  grid-template-rows: 12.5% 12.5% 12.5% 12.5% 12.5% 12.5% 12.5% 12.5% 12.5%;
+  border-style: solid;
+  border-radius: 20px;
+  border-width: 4px;
+  padding: 10px;
+  padding-bottom: 10px;
+  margin: 20px;
+  margin-bottom: 25px;
 }
 
-.rev {
-  grid-column: 2 / span 7;
+#richText {
+  grid-column: 1 / span 6;
+  grid-row: 1 / span 2;
+  width: 100%;
+  height: 100%;
+}
+
+#mytextarea {
+  width: 99%;
+  height: 124px;
+}
+
+#errMsg {
+  color: red;
+  
+}
+
+#photoCollection {
+  grid-column: 1 / span 6;
   grid-row: 3 / span 2;
 }
 
+#imgUpload {
+  grid-column: 5 / span 2;
+  grid-row: 5;
+  display: block;
+  margin-left: auto;
+  margin-right: 0;
+}
+
+#cancelBtn {
+  grid-column: 5;
+  grid-row: 6;
+  display: block;
+  margin-left: auto;
+  margin-right: 0;
+}
+
+
+#submitBtn {
+  grid-column: 6;
+  grid-row: 6;
+  display: block;
+  margin-left: auto;
+  margin-right: 0;
+}
+/* 
+#photoCollection * {
+  display: none;
+} */
+
+.hidden {
+  display: none;
+}
+
+#photo1{
+  height: 200px;
+  width: 300px;
+  padding: 5px 10px;
+}
+
+#errMsg {
+  grid-column: 1 / span 5;
+  grid-row: 5;
+  justify-content: center;
+}
+
+.name {
+  grid-column: 1 / span 4;
+  grid-row: 1 / span 1;
+  padding: 10px;
+  padding-bottom: 20px;
+  font-weight: bold;
+  font-size: x-large;
+}
+
+.rev {
+  grid-column: 1 / span 6;
+  grid-row: 2 / span 2;
+  height: fit-content;
+  padding: 10px;
+}
+
 .images {
-  grid-column: 1 / span 1;
-  grid-row: 1/ span 6;
+  grid-column: 1 / span 6;
+  grid-row: 4 / span 1;
+  height: fit-content;
+  display: inline-block;
+  text-align: center;
+  padding: 10px;
 }
 
 .createTime {
-  grid-column: 2 / span 3;
-  grid-row: 5 /  span 2;
-  /* display: flex;
-  flex-direction: column;
-  justify-content: flex-end; */
+  grid-column: 5 / span 2;
+  grid-row: 1 /  span 1;
 }
 
 .editTime {
-  grid-column: 5 / span 3;
-  grid-row: 5 /  span 2;
+  grid-column: 1 / span 3;
+  grid-row: 5 /  span 1;
   /* display: flex;
   flex-direction: column;
   justify-content: flex-end; */
@@ -100,6 +219,9 @@ h3{
   border-radius: 10px;
   overflow: hidden;
   padding: 1.5vmin;
+  background-image: url("/assets/images/city6.jpg");
+
+  background-attachment: fixed;
 }
 
 #load {
@@ -132,7 +254,7 @@ button:hover {
 }
 
 @media only screen and (max-width: 1024px) and (min-width: 401px) {
-  #content {
+  /* #content {
     grid-template-columns: 100%;
     grid-template-rows: 10% 10% 70% 10%;
   }
@@ -148,8 +270,6 @@ button:hover {
   .review {
     min-height: 290px;
     border-style: solid;
-    border-color: rgb(0, 124, 161);
-    background-color: rgb(0, 195, 255);
     border-radius: 10px;
     padding: 15px;
     display: grid;
@@ -185,7 +305,7 @@ button:hover {
   .editTime {
     grid-column: 5 / span 3;
     grid-row: 5 /  span 2;
-  }
+  } */
   #buttons {
     grid-template-columns: 100%;
   }
@@ -233,8 +353,6 @@ button:hover {
   .review {
     min-height: 300px;
     border-style: solid;
-    border-color: rgb(0, 124, 161);
-    background-color: rgb(0, 195, 255);
     border-radius: 10px;
     padding: 15px;
     display: grid;

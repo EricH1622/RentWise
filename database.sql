@@ -82,6 +82,8 @@ CREATE TABLE IF NOT EXISTS `BBY_37_postImage` (
   `postImage_id` int(16) NOT NULL AUTO_INCREMENT,
   `post_id` int(16) NOT NULL,
   `filename` varchar(1024),
+  `user_id` int(16) NOT NULL,
   PRIMARY KEY (`postImage_id`),
-  FOREIGN KEY(post_id) REFERENCES BBY_37_post(post_id)
+  FOREIGN KEY(post_id) REFERENCES BBY_37_post(post_id),
+  FOREIGN KEY(user_id) REFERENCES BBY_37_user(user_id)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
