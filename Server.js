@@ -213,7 +213,7 @@ async function sendHomePage(req, res) {
     connection.connect();
     const [rows, fields] = await connection.execute(
       "SELECT * FROM BBY_37_search " +
-      "WHERE user_id = " + req.session.userid + " ORDER BY time_searched DESC");
+      "WHERE user_id = " + req.session.userid + " ORDER BY time_searched DESC LIMIT 5");
     await connection.end();
 
     if(rows.length > 0){
@@ -662,12 +662,12 @@ async function storeSearch(req, res) {
       multipleStatements: true
     });
     connection.connect();
-
-    let [rows3, fields3] = await connection.query('SELECT * FROM BBY_37_search WHERE user_id = ' + req.session.userid);
-    while (rows3.length > 4){
-      await connection.execute('DELETE FROM BBY_37_search WHERE user_id = ? AND time_searched <= ALL (SELECT s2.time_searched FROM BBY_37_search AS s2 WHERE s2.user_id LIKE ?)', [req.session.userid, req.session.userid]);
-      [rows3, fields3] = await connection.query('SELECT * FROM BBY_37_search WHERE user_id = ' + req.session.userid);
-    }
+    //This code should delete from the database if the user stores more than 4 searches, but it's buggy right now.
+    // let [rows3, fields3] = await connection.query('SELECT * FROM BBY_37_search WHERE user_id = ' + req.session.userid);
+    // while (rows3.length > 4){
+    //   await connection.execute('DELETE FROM BBY_37_search WHERE user_id = ? AND time_searched <= ALL (SELECT s2.time_searched FROM BBY_37_search AS s2 WHERE s2.user_id LIKE ?)', [req.session.userid, req.session.userid]);
+    //   [rows3, fields3] = await connection.query('SELECT * FROM BBY_37_search WHERE user_id = ' + req.session.userid);
+    // }
     //Sanitize user inputs before saving them into database
     let prefixSanitized;
     let streetTypeSanitized;
