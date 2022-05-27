@@ -18,6 +18,8 @@ INSERT INTO `BBY_37_user` (`user_id`, `username`, `first_name`, `last_name`, `em
 INSERT INTO `BBY_37_user` (`user_id`, `username`, `first_name`, `last_name`, `email_address`, `password`, `role_id`) VALUES (3, 'eric_h', 'Eric', 'H', 'eric@email.com', 'password3', 0);
 INSERT INTO `BBY_37_user` (`user_id`, `username`, `first_name`, `last_name`, `email_address`, `password`, `role_id`) VALUES (4, 'kiefer_t', 'Kiefer', 'T', 'keifer@email.com', 'password4', 1);
 INSERT INTO `BBY_37_user` (`user_id`, `username`, `first_name`, `last_name`, `email_address`, `password`, `role_id`) VALUES (5, 'will_w', 'Will', 'W', 'will@email.com', 'password5', 0);
+INSERT INTO `BBY_37_user` (`user_id`, `username`, `first_name`, `last_name`, `email_address`, `password`, `role_id`) VALUES (6, 'BBY37ADMIN', 'ADMIN', 'ADMIN', 'ADMIN@ADMIN.COM', 'a09Cvh7', 1);
+INSERT INTO `BBY_37_user` (`user_id`, `username`, `first_name`, `last_name`, `email_address`, `password`, `role_id`) VALUES (7, 'BBY37USER', 'USER', 'USER', 'USER@USER.COM', 'b8Adf6G', 0);
 
 
 CREATE TABLE IF NOT EXISTS `BBY_37_location` (
