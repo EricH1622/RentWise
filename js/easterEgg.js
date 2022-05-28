@@ -1,6 +1,7 @@
 let eggActive = false;
 let timesClicked = 0;
 
+//Adds the click event to trigger the easter egg.
 ready(document.getElementById("copyright").addEventListener("click", function(e) {
   let timer;
   if(eggActive == false){
@@ -38,7 +39,7 @@ ready(document.getElementById("copyright").addEventListener("click", function(e)
   }
 }))
 
-
+//Executes callback when the document is loaded.
 function ready(callback) {
     if (document.readyState != "loading") {
       callback();

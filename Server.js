@@ -1,6 +1,6 @@
 "use strict";
 
-// REQUIRES
+// Npm package requirements
 const express = require("express");
 const session = require("express-session");
 const app = express();
@@ -8,7 +8,25 @@ const fs = require("fs");
 const mysql = require("mysql2/promise");
 const multer = require("multer");
 const {JSDOM} = require('jsdom');
+const sanitizeHtml = require('sanitize-html');
 
+
+//Defining Multer storage
+const storage = multer.diskStorage({
+  destination: function (req, file, callback) {
+    callback(null, "./assets/uploads/")
+  },
+  filename: function (req, file, callback) {
+    callback(null, req.session.userid + "-" + Date.now() + '-' + Math.round(Math.random() * 1E3) +
+    '.' + file.originalname.split('.').pop().trim());
+  }
+});
+const upload = multer({
+  storage: storage
+});
+
+
+/*-------Express definitions------*/
 app.use("/js", express.static("./js"));
 app.use("/css", express.static("./css"));
 app.use("/assets", express.static("./assets"));
@@ -18,18 +36,64 @@ app.use(express.urlencoded({
   extended: true
 }));
 
-
 app.use(session({
   secret: "secret phrase for encoding",
   name: "BBY37-SessionID",
   resave: false,
   saveUninitialized: true
 }));
+/*-------------------------------*/
 
+//Redirect for image uploads
+app.post('/upload-images', upload.array("images"), function (req, res) {
+  if (req.session.loggedIn) {
+    addImagePathToDB(req, res);
+  } else {
+    res.redirect("/");
+  }
+});
 
+//Adds an uploaded image's path to the database.
+async function addImagePathToDB(req, res) {
+  const connection = await mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'COMP2800',
+    multipleStatements: true
+  });
+  connection.connect(); 
+
+  if (req.body.submitType == "profile") { // if the image upload is a profile pic
+    // add image to user's database
+    connection.query('UPDATE BBY_37_user SET image_profile = ? WHERE user_id = ?',
+    [req.files[0].filename, req.session.userid]);
+    res.send({status: "success", msg: "Profile picture added.", imagepath: "./assets/uploads/" + req.files[0].filename});
+    
+  } else if (req.body.submitType == "post" && req.body.postID) { // if the image upload is a post
+    // add images to image names to image database.
+    const [rows, fields] = await connection.query('SELECT user_id FROM BBY_37_post WHERE post_id = ?', [req.body.postID]);
+    if (rows[0] && rows[0].user_id == req.session.userid) {
+      for (let i = 0; i < req.files.length; i++) {
+        await connection.query('INSERT INTO BBY_37_postImage (post_id, user_id, filename) values (?, ?, ?)',
+        [req.body.postID, req.session.userid, req.files[i].filename]);
+      }
+      res.send({status: "success", msg: "Images were added to post."});
+    } else {
+      res.send({status: "fail", msg: "You cannot edit this post."});
+    }
+
+  } else {
+    // file was uploaded by logged-in user but flags are incorrect.
+    res.send({status: "fail", msg: "Metadata is incorrect, don't know what to do with file."});
+  }
+  connection.end()
+}
+
+//Redirect for the default path (index or home)
 app.get("/", function (req, res) {
   if (req.session.loggedIn) {
-    res.redirect("/profile");
+    res.redirect("/home");
   } else {
     let doc = fs.readFileSync("./html/index.html", "utf8");
     let docDOM = new JSDOM(doc);
@@ -38,6 +102,7 @@ app.get("/", function (req, res) {
   }
 });
 
+//Redirect for the login page.
 app.get("/login", function (req, res) {
   if (req.session.loggedIn) {
     res.redirect("/profile");
@@ -49,6 +114,7 @@ app.get("/login", function (req, res) {
   }
 });
 
+//Redirect for the account creation page.
 app.get("/createAccount", function (req, res) {
   if (req.session.loggedIn) {
     res.redirect("/profile");
@@ -60,6 +126,7 @@ app.get("/createAccount", function (req, res) {
   }
 });
 
+//Logs the user out.
 app.get("/logout", function (req, res) {
   if (req.session) {
     req.session.destroy(function (error) {
@@ -74,10 +141,7 @@ app.get("/logout", function (req, res) {
   }
 });
 
-app.get("/profile", function (req, res) {
-  sendProfilePage(req, res);
-});
-
+//Redirect for the admin page
 app.get("/admin", function (req, res) {
   if (req.session.loggedIn && req.session.userlevel == 1) {
     sendAdminPage(req, res);
@@ -86,8 +150,16 @@ app.get("/admin", function (req, res) {
   }
 });
 
+//Loads the error page.
+app.get("/notFound", function (req, res) {
+  let doc = fs.readFileSync("./html/notFound.html", "utf8");
+    let docDOM = new JSDOM(doc);
+    docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
+    res.send(docDOM.serialize());
+});
 
-//dynamic navbars
+
+//Loading function for a dynamic navbar.
 function getNavBar(req) {
   if (req.session.loggedIn) {
     if (req.session.userlevel == 0) {
@@ -95,7 +167,7 @@ function getNavBar(req) {
       <label for="check" class="checkbtn">
           <i><img src="/assets/images/menuIcon.png" class="hamburger"/></i>
       </label>
-      <div class="logo"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></div>
+      <div class="logo"><a id="logo" href="./home"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></a></div>
       <ul>
           <li><a href="/home">Search</a></li>
           <li><a href="/createPost">Create Post</a></li>
@@ -108,7 +180,7 @@ function getNavBar(req) {
       <label for="check" class="checkbtn">
           <i><img src="/assets/images/menuIcon.png" class="hamburger"/></i>
       </label>
-      <div class="logo"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></div>
+      <div class="logo"><a href="./home"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></a></div>
       <ul>
           <li><a href="/admin">Admin</a></li>
           <li><a href="/home">Search</a></li>
@@ -119,12 +191,65 @@ function getNavBar(req) {
       </ul>`
     }
   } else {
-    return `<div class="logo"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></div>`
+    return `<div class="logo"><a href="./home"><img id="logo1" src="/assets/images/Rentwise_Logo.png"></a></div>`
   }
 }
 
+//Sends the home page, filled with the user's previous searches.
+async function sendHomePage(req, res) {
+  if (req.session.loggedIn) {
+    let doc = fs.readFileSync("./html/home.html", "utf8");
+    let docDOM = new JSDOM(doc);
+    const connection = await mysql.createConnection({
+      host: "localhost",
+      user: "root",
+      password: "",
+      database: "COMP2800",
+      multipleStatements: true
+    });
+    connection.connect();
+    const [rows, fields] = await connection.execute(
+      "SELECT * FROM BBY_37_search " +
+      "WHERE user_id = " + req.session.userid + " ORDER BY time_searched DESC LIMIT 5");
+    await connection.end();
 
+    if(rows.length > 0){
+      for (let i = 0; i < rows.length; i++) {
+        if(rows[i].unit_number == "%"){
+          rows[i].unit_number = "_"
+        }
+        if(rows[i].street_number == "%"){
+          rows[i].street_number = "_"
+        }
+        if(rows[i].prefix == "%"){
+          rows[i].prefix = "_"
+        }
+        if(rows[i].street_type == "%"){
+          rows[i].street_type = "_"
+        }
+        docDOM.window.document.getElementById("previousSearches").innerHTML += 
+        `<button type="button" onclick="searchUpdate({'searchID': ` + rows[i].search_id + `})">` + 
+        rows[i].unit_number + ` ` + rows[i].street_number + ` ` + rows[i].prefix + ` ` + rows[i].street_name + ` ` + rows[i].street_type + `, ` + rows[i].city + `, ` + rows[i].province + `
+        </button>`;
+      }
+    } else {
 
+    }
+
+    docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
+
+    res.send(docDOM.serialize());
+  } else {
+    res.redirect("/");
+  }
+}
+
+//Redirect for the profile page.
+app.get("/profile", function (req, res) {
+  sendProfilePage(req, res);
+});
+
+//Sends the profile page, filled in with all the user's profile details
 async function sendProfilePage(req, res) {
   if (req.session.loggedIn) {
     let doc = fs.readFileSync("./html/profile.html", "utf8");
@@ -137,26 +262,35 @@ async function sendProfilePage(req, res) {
       multipleStatements: true
     });
     connection.connect();
-    const [rows, fields] = await connection.execute(
-      "SELECT first_name, last_name, username, email_address, password FROM BBY_37_user " +
-      "WHERE BBY_37_user.user_id = " + req.session.userid);
-    await connection.end();
+    let [rows, fields] = await connection.execute("SELECT * FROM BBY_37_user WHERE user_id = " + req.session.userid);
+
     docDOM.window.document.getElementById("firstName").setAttribute("value", rows[0].first_name);
     docDOM.window.document.getElementById("lastName").setAttribute("value", rows[0].last_name);
     docDOM.window.document.getElementById("username").setAttribute("value", rows[0].username);
     docDOM.window.document.getElementById("password").setAttribute("value", rows[0].password);
     docDOM.window.document.getElementById("email").setAttribute("value", rows[0].email_address);
-
     docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
-    docDOM.window.document.getElementById("profilePhoto").src = "/assets/uploads/profilePicture_" + req.session.userid;
 
+    let imagePath = "./assets/uploads/";
+
+
+    if (rows[0] && rows[0].image_profile) {
+      docDOM.window.document.getElementById("profilePhotoDiv").innerHTML =
+      '<img id="profilePhoto" src="' + imagePath + rows[0].image_profile + '" />';
+    } else {
+      docDOM.window.document.getElementById("profilePhotoDiv").innerHTML =
+      '<img id="profilePhoto" src="./assets/images/placeholder1.png" />';
+    }
     res.send(docDOM.serialize());
+    await connection.end();
+
   } else {
     // not logged in - no session and no access, redirect to root.
     res.redirect("/");
   }
 }
 
+//Redirect for the unit viewing page.
 app.get("/unitView", function (req, res) {
   if (req.session.loggedIn) {
     sendReviews(req, res);
@@ -165,6 +299,7 @@ app.get("/unitView", function (req, res) {
   }
 });
 
+//Sends the review page for a unit, filled in with all the reviews related to that unit.
 async function sendReviews(req, res) {
   let address_id = req.query["id"];
   let doc = fs.readFileSync("./html/unitView.html", "utf8");
@@ -201,37 +336,54 @@ async function sendReviews(req, res) {
 
   //Remove "N/A" prefix
   let prefixStr;
-  if(rows2[0].prefix == "N/A"){
+  let stTypeStr;
+  if(rows2[0].prefix == "%"){
     prefixStr = "";
   } else {
     prefixStr = rows2[0].prefix;
+  }if(rows2[0].street_type == "%"){
+    stTypeStr = "";
+  } else {
+    stTypeStr = rows2[0].street_type;
   }
 
   // load address into page
-  let address = rows2[0].unit_number + "-" + rows2[0].street_number + " " + rows2[0].street_name + " " + rows2[0].street_type + " " + prefixStr + " " + rows2[0].city + " " + rows2[0].province; 
+  let address = rows2[0].unit_number + " " + rows2[0].street_number + " " + rows2[0].street_name + " " + stTypeStr + " " + prefixStr + ", " + rows2[0].city + ", " + rows2[0].province; 
 
-  await connection.end();
   let currentReview = "";
   // empty reviews div
   docDOM.window.document.getElementById("reviews").innerHTML = currentReview;
   for (let j = 0; j < rows.length; j++) {
+    //Images
+    let [rows3, fields3] = await connection.execute("SELECT * FROM BBY_37_postImage WHERE post_id = " + rows[j].post_id);
+
     // for each row, make a new review
-    currentReview += "<div class='review'>";
-    currentReview += "<div class='name'><strong>" + u_name[j] + "</strong></div>";
-    currentReview += "<div class='rev'><strong>" + rows[j].content + "</strong></div>";
-    currentReview += "<div class='createTime'> Original Post: " + rows[j].date_created + "</div>";
+    currentReview += "<div class='review' id=" + rows[j].post_id + ">";
+    currentReview += "<div class='name'>" + u_name[j] + "</div>";
+    currentReview += "<div class='rev'>" + rows[j].content + "</div>";
+    currentReview += "<div class='createTime'> Original Post: " + (new Date(rows[j].date_created)).toLocaleString() + "</div>";
     if ((rows[j].last_edited_date != "Invalid Date") && (rows[j].last_edited_date != null)) {
-      currentReview += "<div class='editTime'> Last edit:" + rows[j].last_edited_date + "</div>";
+      currentReview += "<div class='editTime'> Last edit:" + (new Date(rows[j].last_edited_date)).toLocaleString() + "</div>";
     }
-    // currentReview += "<div class='images'>" + IMAGE TO GO HERE + "</div>";
+    currentReview += "<div class='images'>";
+    for (let i = 0; i < rows3.length; i++) {
+      let imgName = rows3[i];
+      currentReview +="<img src='./assets/uploads/" + rows3[i].filename + "'></img>";
+    }
+    currentReview += "</div>";
+    if (req.session.userid == rows[j].user_id) {
+      currentReview += "<div class='editBtn' id='editBtn' onclick='edit_init()'>Edit</div>";
+    }
     currentReview += "</div>";
   }
+  await connection.end();
   docDOM.window.document.getElementById("address").innerHTML= address;
   docDOM.window.document.getElementById("reviews").innerHTML += currentReview;
   docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
   res.send(docDOM.serialize());
 }
 
+//Redirect for the user timeline page.
 app.get("/userTimeline", function (req, res) {
   if (req.session.loggedIn) {
     sendHistory(req, res);
@@ -240,6 +392,7 @@ app.get("/userTimeline", function (req, res) {
   }
 });
 
+//Sends the user timeline page, with a history of their previous posts.
 async function sendHistory(req, res) {
   let doc = fs.readFileSync("./html/userTimeLine.html", "utf8");
   let docDOM = new JSDOM(doc);
@@ -263,17 +416,23 @@ async function sendHistory(req, res) {
   docDOM.window.document.getElementById("userHistory").innerHTML = historyItems;
 
   // check for if user has no posts
-  if (rows[0]?.street_number === undefined) {
+  if (rows.length < 1) {
     docDOM.window.document.getElementById("userHistory").innerHTML += "no posts";
-    // unecessary check?
-  } else if (rows[0].street_number != null) {
+  } else {
     for (let j = rows.length - 1; j > -1; j--) {
       // for each item, define the address
       let address = "";
+
+      if(rows[j].prefix == "%"){
+        rows[j].prefix = ""
+      }
+      if(rows[j].street_type == "%"){
+        rows[j].street_type = ""
+      }
       if (rows[j].unit_number != null) {
-        address = rows[j].unit_number + " " + rows[j].street_number + " " + rows[j].street_name + " " + rows[j].street_type + " " + rows[j].prefix + " " + rows[j].city + " " + rows[j].province;
+        address = rows[j].unit_number + " " + rows[j].street_number + " " + rows[j].prefix + " " + rows[j].street_name + " " + rows[j].street_type +  " " + rows[j].city + " " + rows[j].province;
       } else {
-        address = rows[j].street_number + " " + rows[j].street_name + " " + rows[j].street_type + " " + rows[j].prefix + " " + rows[j].city + " " + rows[j].province;
+        address = rows[j].street_number + " " + rows[j].prefix + " " + rows[j].street_name + " " + rows[j].street_type + " " + rows[j].city + " " + rows[j].province;
       }
       // for each row, make a new review
       historyItems += "<div class='timeLineItem'>";
@@ -283,9 +442,9 @@ async function sendHistory(req, res) {
       }
       historyItems += "<div class='review'>" + rows[j].content + "</div>";
       historyItems += "<div class='message'></div>";
-      historyItems += "<div class='initPostTime'>Posted: " + rows[j].date_created + "</div>";
+      historyItems += "<div class='initPostTime'>Posted: " + (new Date(rows[j].date_created)).toLocaleString() + "</div>";
       if (rows[j].last_edited_date != "Invalid Date") {
-        historyItems += "<div class='lastEditTime'>Edited: " + rows[j].last_edited_date + "</div>";
+        historyItems += "<div class='lastEditTime'>Edited: " + (new Date(rows[j].last_edited_date)).toLocaleString() + "</div>";
       } else {
         historyItems += "<div class='lastEditTime'></div>";
       }
@@ -293,12 +452,12 @@ async function sendHistory(req, res) {
       historyItems += "</div>";
       }
     docDOM.window.document.getElementById("userHistory").innerHTML = historyItems;
-  } else {
-    // error 
   }
+  docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
       res.send(docDOM.serialize());
 }
 
+//Redirect to the search results page.
 app.get("/results", function (req, res) {
   if (req.session.loggedIn) {
     executeSearch(req, res);
@@ -307,6 +466,7 @@ app.get("/results", function (req, res) {
   }
 });
 
+//Sends the admin page with a table of the data for all users.
 async function sendAdminPage(req, res) {
   let doc = fs.readFileSync("./html/admin.html", "utf8");
   let docDOM = new JSDOM(doc);
@@ -346,24 +506,59 @@ async function sendAdminPage(req, res) {
   res.send(docDOM.serialize());
 }
 
+//Redirect for user authentication
 app.post("/login", function (req, res) {
   authenticateUser(req, res);
 });
 
+//Redirect for creating a new user
 app.post("/signup", function (req, res) {
   res.setHeader("Content-Type", "application/json");
   createUser(req, res);
 });
 
+//Redirect for updating a user's profile info
 app.post('/update-profile', function (req, res) {
   res.setHeader('Content-Type', 'application/json');
   editUserProfile(req, res);
 });
 
+//Redirect for storing a search
 app.post('/search', function (req, res) {
   storeSearch(req, res);
 });
 
+//Redirect for editing a post's details
+app.post('/submitEdit', async function (req, res) {
+  if (req.body.content.length > 0) {
+    sanitizeHtml(req.body.content); //sanitize review
+    // update db
+    const connection = await mysql.createConnection({
+      host: "localhost",
+      user: "root",
+      password: "",
+      database: "COMP2800",
+      multipleStatements: true
+    });
+    connection.query('UPDATE BBY_37_post SET content = "' + req.body.content + '" WHERE post_id = ' + req.body.post_id);
+    connection.end();
+    res.json({
+      "status" : "success"
+    });
+  } else {
+    res.json({
+      "status" : "fail"
+    })
+  }
+  res.end();
+});
+
+//Redirect for updating a search
+app.post('/searchUpdate', function (req, res) {
+  updateSearch(req, res);
+});
+
+//Edits the user profile based on the data taken in from the req value, and returns info with the res value.
 async function editUserProfile(req, res) {
   if (req.session.loggedIn) {
     const connection = await mysql.createConnection({
@@ -437,19 +632,27 @@ async function editUserProfile(req, res) {
   }
 }
 
-async function storeSearch(req, res) {
+//Updates a previously stored search's timestamp.
+async function updateSearch(req, res) {
   res.setHeader("Content-Type", "application/json");
   if (req.session.loggedIn) {
-    req.session.unit = req.body.unit;
-    req.session.streetNum = req.body.streetNum;
-    req.session.prefix = req.body.prefix;
-    req.session.streetName = req.body.streetName;
-    req.session.streetType = req.body.streetType;
-    req.session.city = req.body.city;
-    req.session.province = req.body.province;
+    const connection = await mysql.createConnection({
+      host: 'localhost',
+      user: 'root',
+      password: '',
+      database: 'COMP2800',
+      multipleStatements: true
+    });
+    connection.connect();
+
+    await connection.execute('UPDATE BBY_37_search SET time_searched = NOW() WHERE search_id = ?',
+    [req.body.searchID]);
+    
+    await connection.end();
+
     res.send({
       status: "success",
-      msg: "Search parameters stored."
+      msg: "Search time updated."
     });
   } else {
     res.send({
@@ -459,6 +662,52 @@ async function storeSearch(req, res) {
   }
 }
 
+//Stores a search into the database for future use.
+async function storeSearch(req, res) {
+  res.setHeader("Content-Type", "application/json");
+  if (req.session.loggedIn) {
+    const connection = await mysql.createConnection({
+      host: 'localhost',
+      user: 'root',
+      password: '',
+      database: 'COMP2800',
+      multipleStatements: true
+    });
+    connection.connect();
+    let prefixSanitized;
+    let streetTypeSanitized;
+    let provinceSanitized;
+    if(valid_prefix(req.body.prefix)){
+      prefixSanitized = req.body.prefix;
+    }else{
+      prefixSanitized = "%";
+    }
+    if(valid_streetType(req.body.streetType)){
+      streetTypeSanitized = req.body.streetType;
+    }else{
+      streetTypeSanitized = "%";
+    }
+    if(valid_province(req.body.province)){
+      provinceSanitized = req.body.province;
+    }else{
+      provinceSanitized = "BC";
+    }
+    let params = [req.session.userid, req.body.unit, req.body.streetNum, prefixSanitized, sanitizeText(req.body.streetName), streetTypeSanitized, sanitizeText(req.body.city), provinceSanitized];
+    
+    await connection.execute('INSERT INTO BBY_37_search (time_searched, user_id, unit_number, street_number, prefix, street_name, street_type, city, province) values (NOW(), ?, ?, ?, ?, ?, ?, ?, ?)', params);
+    
+    await connection.end();
+
+    res.send({
+      status: "success",
+      msg: "Search parameters stored."
+    });
+  } else {
+    res.redirect("/login");
+  }
+}
+
+//Executes the most recent search from the database related to the current user, redirecting them to the proper search results page.
 async function executeSearch(req, res) {
   if (req.session.loggedIn) {
     let doc = fs.readFileSync("./html/results.html", "utf8");
@@ -467,25 +716,24 @@ async function executeSearch(req, res) {
     const connection = await mysql.createConnection({
       host: 'localhost',
       user: 'root',
+      password: '',
       database: 'COMP2800',
       multipleStatements: true
     });
     connection.connect();
-
-    let query = `SELECT * FROM BBY_37_location WHERE 
-      unit_number LIKE ? AND 
-      street_number LIKE ? AND 
-      prefix LIKE ? AND 
-      street_name LIKE ? AND 
-      street_type LIKE ? AND 
-      city LIKE ? AND 
-      province LIKE ?`;
+    let query = `SELECT L.location_id, L.unit_number, L.street_number, L.prefix, L.street_name, L.street_type, L.city, L.province FROM BBY_37_location AS L, BBY_37_search AS S WHERE 
+      L.unit_number LIKE S.unit_number AND 
+      L.street_number LIKE S.street_number AND 
+      L.prefix LIKE S.prefix AND 
+      L.street_name LIKE S.street_name AND 
+      L.street_type LIKE S.street_type AND 
+      L.city LIKE S.city AND 
+      L.province LIKE S.province
+      AND S.time_searched >= ALL (SELECT time_searched FROM BBY_37_search WHERE user_id LIKE ?)`;
     
-    let values = [req.session.unit, req.session.streetNum, req.session.prefix, req.session.streetName, req.session.streetType, req.session.city, req.session.province];
+    let values = [req.session.userid];
 
     const [rows, fields] = await connection.query(query, values);
-
-    
     if(rows.length > 0){
       let query2 = `SELECT COUNT(post_id) AS post_count FROM BBY_37_post WHERE location_id = ?`;
       let rows2;
@@ -503,17 +751,23 @@ async function executeSearch(req, res) {
         }
 
         let prefixStr;
-        if(rows[i].prefix == "N/A"){
+        if(rows[i].prefix == "%"){
           prefixStr = "";
         } else {
           prefixStr = rows[i].prefix;
         }
         
+        let stTypeStr;
+        if(rows[i].street_type == "%"){
+          stTypeStr = "";
+        } else {
+          stTypeStr = rows[i].street_type;
+        }
 
         docDOM.window.document.getElementById("results").innerHTML += `
         <div class="resultBox">
                     <div class="resultHead">
-                        <h2>` + rows[i].unit_number + "-" + rows[i].street_number + " " + prefixStr + " " + rows[i].street_name + " " + rows[i].street_type + " " + `</h2>
+                        <h2>` + rows[i].unit_number + " " + rows[i].street_number + " " + prefixStr + " " + rows[i].street_name + " " + stTypeStr + " " + `</h2>
                         <p class="address">` + rows[i].city + ", " + rows[i].province + `</p>
                     </div>
                     <div class="resultBody">
@@ -531,7 +785,7 @@ async function executeSearch(req, res) {
         <h1>No results found!</h1>
         <p>We couldn't find any results for that search, sorry!</p>
         <p>Maybe you'd like to make a post for it though?</p>
-        <button class="resultButton create" type="button">Create a post</button>
+        <a href="./createPost" style="text-decoration :none;"><button class="resultButton create" type="button">Create a post</button></a>
       </div>`;
     }
     await connection.end();
@@ -543,6 +797,7 @@ async function executeSearch(req, res) {
   }
 }
 
+//Authenticates a user's information, making sure that their data is valid and exists in the database.
 async function authenticateUser(req, res) {
   const connection = await mysql.createConnection({
     host: "localhost",
@@ -577,6 +832,7 @@ async function authenticateUser(req, res) {
   }
 }
 
+//Creates a new user in the database.
 async function createUser(req, res) {
   const connection = await mysql.createConnection({
     host: "localhost",
@@ -643,28 +899,7 @@ async function createUser(req, res) {
 }
 
 
-const storage = multer.diskStorage({
-  destination: function (req, file, callback) {
-    callback(null, "./assets/uploads/")
-  },
-  filename: function (req, file, callback) {
-    callback(null, "profilePicture_" + req.session.userid);
-  }
-});
-const upload = multer({
-  storage: storage
-});
-
-
-app.post('/upload-images', upload.array("files"), function (req, res) {
-
-
-  for (let i = 0; i < req.files.length; i++) {
-    req.files[i].filename = req.files[i].originalname;
-  }
-
-});
-
+//Redirect for user deletion.
 app.post("/delete_user", function (req, res) {
   if (req.session.loggedIn && req.session.userlevel == 1) {
     deleteUser(req, res);
@@ -676,7 +911,7 @@ app.post("/delete_user", function (req, res) {
   }
 });
 
-
+//Prepares to delete a user from the database, checking to make sure the delete can go through.
 async function deleteUser(req, res) {
   const connection = await mysql.createConnection({
     host: "localhost",
@@ -692,6 +927,7 @@ async function deleteUser(req, res) {
     [req.body.userID]);
 
   if (rows[0].role_id == 0) {
+    //Delete is ok, execute the deletion
     doDeleteUser(req, res);
   } else {
     let [rows2, fields2] = await connection.query(
@@ -709,7 +945,7 @@ async function deleteUser(req, res) {
   await connection.end();
 }
 
-
+//Deletes a user from the database.
 async function doDeleteUser(req, res) {
   const connection = await mysql.createConnection({
     host: "localhost",
@@ -729,7 +965,7 @@ async function doDeleteUser(req, res) {
   });
 }
 
-
+//Redirect for updating a user's data.
 app.post("/update_user_data", function (req, res) {
   if (req.session.loggedIn && req.session.userlevel == 1) {
     adminUpdateUsers(req, res);
@@ -741,8 +977,8 @@ app.post("/update_user_data", function (req, res) {
   }
 });
 
+//Update's a user's information from the admin page.
 async function adminUpdateUsers(req, res) {
-
   const connection = await mysql.createConnection({
     host: "localhost",
     user: "root",
@@ -782,6 +1018,7 @@ async function adminUpdateUsers(req, res) {
   await connection.end();
 }
 
+//Updates a user from the user profile page.
 async function doUpdateUser(req, res) {
   const connection = await mysql.createConnection({
     host: "localhost",
@@ -860,7 +1097,7 @@ app.post("/add_user", function (req, res) {
   }
 });
 
-
+//Adds a user to the database from the admin panel.
 async function adminAddUser(req, res) {
   const connection = await mysql.createConnection({
     host: "localhost",
@@ -958,17 +1195,16 @@ async function adminAddUser(req, res) {
   });
 }
 
+//Redirect to the home page.
 app.get("/home",function (req, res) {
   if (req.session.loggedIn) {
-    let doc = fs.readFileSync("./html/home.html", "utf8");
-    let docDOM = new JSDOM(doc);
-    docDOM.window.document.getElementById("nav").innerHTML = getNavBar(req);
-    res.send(docDOM.serialize());
+    sendHomePage(req, res);
   }else{
     res.redirect("/login");
   }
 })
 
+//Redirect to the post creation page.
 app.get("/createPost", function (req, res) {
   if (req.session.loggedIn) {
     let doc = fs.readFileSync("./html/createPost.html", "utf8");
@@ -980,6 +1216,7 @@ app.get("/createPost", function (req, res) {
   }
 });
 
+//Redirect for submitting a post.
 app.post("/submitPost", function (req,res){
   if (req.session.loggedIn) {
     submitPost(req,res);
@@ -987,7 +1224,63 @@ app.post("/submitPost", function (req,res){
     res.redirect("/login");
   }
 });
+
+//Submit a post to the database.
 async function submitPost(req,res){
+  //Check if data sent from createPost page is valid
+  let DataValid = true;
+  let unit_valid = true;
+  let streetNum_valid = true;
+  let prefix_valid = true;
+  let streetName_valid = true;
+  let streetType_valid = true;
+  let city_valid = true;
+  let province_valid = true;
+
+  if(!valid_unitNum(req.body.unit_number)){
+    unit_valid = false;
+    DataValid = false;
+  }
+
+  if(!valid_streetNum(req.body.street_number)){
+    streetNum_valid = false;
+    DataValid = false;
+  }
+  if(!valid_prefix(req.body.prefix)){
+    prefix_valid = false;
+    DataValid = false;
+  }
+  if(!valid_streetName(req.body.street_name)){
+    streetName_valid = false;
+    DataValid = false;
+  }else{
+    var streetNameTitleCase = toTitleCase(req.body.street_name);
+  }
+  if(!valid_streetType(req.body.street_type)){
+    streetType_valid = false;
+    DataValid = false;
+  }
+  if(!valid_cityName(req.body.city)){
+    city_valid = false;
+    DataValid = false;
+  }else{
+    var cityTitleCase = toTitleCase(req.body.city);
+  }
+  if(!valid_province(req.body.province)){
+    province_valid = false;
+    DataValid = false;
+  }
+
+  //If any of the inputs is invalid, send an array indicating which inputs are invalid
+  if(!DataValid){
+    res.send({
+      status:"Invalid data",
+      validation:[unit_valid,streetNum_valid,prefix_valid,streetName_valid,streetType_valid,city_valid,province_valid]
+    });
+    return;
+  }
+
+  //If all the inputs are valid, create connection to the database
   const connection = await mysql.createConnection({
     host: "localhost",
     user: "root",
@@ -1000,52 +1293,75 @@ async function submitPost(req,res){
   //Read into database to see if the address entered by user already exsits
   const [rows, fields] = await connection.query(
     "SELECT * FROM BBY_37_location WHERE BBY_37_location.unit_number = ? AND BBY_37_location.street_number = ? AND BBY_37_location.prefix = ? AND BBY_37_location.street_name = ? AND BBY_37_location.street_type = ? AND BBY_37_location.city = ? AND BBY_37_location.province = ?",
-    [req.body.unit_number, req.body.street_number, req.body.prefix, req.body.street_name, req.body.street_type, req.body.city, req.body.province]);
+    [req.body.unit_number, req.body.street_number, req.body.prefix, streetNameTitleCase, req.body.street_type, cityTitleCase, req.body.province]
+  );
 
-    //if the address does not exist in the database, create a new entry in the location table, grab that location id and add a new entry to the post table
-    var locationid;
-    if (rows.length === 0) {
-      await connection.execute("INSERT INTO BBY_37_location (unit_number,street_number,prefix,street_name,street_type,city,province) values (?, ?, ?, ?, ?, ?, ?)",[req.body.unit_number, req.body.street_number, req.body.prefix, req.body.street_name, req.body.street_type, req.body.city, req.body.province]);
-      const [row, fields] = await connection.query(
-        "SELECT * FROM BBY_37_location WHERE BBY_37_location.unit_number = ? AND BBY_37_location.street_number = ? AND BBY_37_location.prefix = ? AND BBY_37_location.street_name = ? AND BBY_37_location.street_type = ? AND BBY_37_location.city = ? AND BBY_37_location.province = ?",
-        [req.body.unit_number, req.body.street_number, req.body.prefix, req.body.street_name, req.body.street_type, req.body.city, req.body.province]);
+  //if the address does not exist in the database, create a new entry in the location table, grab that location id and add a new entry to the post table
+  const sanitizedReview = sanitizeHtml(req.body.review);
+  let locationid;
+  let newDate = Date.now();
 
-      //Grab the location_id of the new address added to location table
-      locationid = row[0].location_id;
+  if (rows.length === 0) {
+    await connection.execute("INSERT INTO BBY_37_location (unit_number,street_number,prefix,street_name,street_type,city,province) values (?, ?, ?, ?, ?, ?, ?)",
+    [req.body.unit_number, req.body.street_number, req.body.prefix, streetNameTitleCase, req.body.street_type, cityTitleCase, req.body.province]);
+    const [rows2, fields2] = await connection.query(
+      "SELECT * FROM BBY_37_location WHERE BBY_37_location.unit_number = ? AND BBY_37_location.street_number = ? AND BBY_37_location.prefix = ? AND BBY_37_location.street_name = ? AND BBY_37_location.street_type = ? AND BBY_37_location.city = ? AND BBY_37_location.province = ?",
+      [req.body.unit_number, req.body.street_number, req.body.prefix, streetNameTitleCase, req.body.street_type, cityTitleCase, req.body.province]);
 
-      if(!valid_userID(req.session.userid)){
-        res.send({
-          status: "fail",
-          msg: "Invalid User ID."
-        });
-        return;
-      }
+    //Grab the location_id of the new address added to location table
+    locationid = rows2[0].location_id;
 
-      await connection.execute("INSERT INTO BBY_37_post (user_id, date_created, content, location_id) values (?, ?, ?, ?)",[req.session.userid,new Date(),req.body.review,locationid]);
-      await connection.end();
+    await connection.execute("INSERT INTO BBY_37_post (user_id, date_created, last_edited_date, content, location_id) values (?, ?, ?, ?, ?)",
+    [req.session.userid, newDate, newDate, sanitizedReview, locationid]);
 
-      //if the address already exist, only add the review with the user id and the location id of this address
-    }else{
-      if(!valid_userID(req.session.userid)){
-        res.send({
-          status: "fail",
-          msg: "Invalid User ID."
-        });
-        return;
-      }
+    //if the address already exist, only add the review with the user id and the location id of this address
+  }else{
+    locationid = rows[0].location_id;
+    await connection.execute("INSERT INTO BBY_37_post (user_id, date_created, last_edited_date, content, location_id) values (?, ?, ?, ?, ?)",
+    [req.session.userid, newDate, newDate, sanitizedReview, locationid]);
+  }
 
-      locationid = rows[0].location_id;
-      await connection.execute("INSERT INTO BBY_37_post (user_id, date_created, content, location_id) values (?, ?, ?, ?)",[req.session.userid,new Date(),req.body.review,locationid]);
-      await connection.end();
-    }
-    res.send({
-      status:"success",
-      message:"The post has been created.",
-      location_id:locationid
-    }); 
+  const [rows3, fields3] = await connection.query(
+    "SELECT post_id FROM BBY_37_post WHERE BBY_37_post.user_id = ? AND BBY_37_post.date_created = ? AND BBY_37_post.last_edited_date = ? AND BBY_37_post.location_id = ?",
+    [req.session.userid, newDate, newDate, locationid]);
+
+  let newpostID = null;
+  if (rows3[0]) {
+    newpostID = rows3[0].post_id;
+  }
+
+  await connection.end();
+  res.send({
+    status: "success",
+    message: "The post has been created.",
+    location_id: locationid,
+    postID: newpostID
+  });
 }
 
-function valid_email (email) {
+
+
+//This is the 404 route
+//I found the basis for this code here: https://stackoverflow.com/questions/6528876/how-to-redirect-404-errors-to-a-page-in-expressjs
+//I understand how it works, and it is now heavily changed from its base form, but providing credit is important.
+app.get('*', function(req, res){
+  res.redirect("/notFound");
+});
+
+//Hosting on localhost.
+let port = 8000;
+app.listen(port, function () {
+  console.log("RentWise server running on port: " + port);
+});
+
+
+
+
+
+/************ USER INPUT VALIDITY CHECKS & OTHER STRING FUNCTIONS *************
+ ******************************************************************************/
+
+ function valid_email(email) {
   // allowed: a-z A-Z 0-9 _-.@
   // email should be trimmed before sending here.
 
@@ -1053,10 +1369,13 @@ function valid_email (email) {
   if (email.length > 100) return false;
 
   const emailParts = email.split('@');
-  if (emailParts.length !== 2  ||
-      emailParts[0].length < 1 ||
-      emailParts[1].length < 3 ||
-      !emailParts[1].includes(".") ) {
+  if (
+    emailParts.length !== 2  ||
+    emailParts[0].length < 1 ||
+    emailParts[1].length < 3 ||
+    !emailParts[1].includes(".") ||
+    emailParts[1].charAt(0) == "."
+    ) {
     return false;
   }
 
@@ -1065,12 +1384,14 @@ function valid_email (email) {
 
   for (let i = 0; i < charList.length; i++) {
     let char = charList[i];
-    if ((char >= 'a' && char <= 'z') ||
-        (char >= '@' && char <= 'Z') ||
-        (char >= '0' && char <= '9') ||
-        char == '-' ||
-        char == '_' ||
-        char == '.' ) {
+    if (
+      (char >= 'a' && char <= 'z') ||
+      (char >= '@' && char <= 'Z') ||
+      (char >= '0' && char <= '9') ||
+      char == '-' ||
+      char == '_' ||
+      char == '.'
+      ) {
       // continue...
     } else {
       return false;
@@ -1080,7 +1401,7 @@ function valid_email (email) {
 }
 
 
-function valid_username (username) {
+function valid_username(username) {
   // allowed: a-z A-Z 0-9 _-.
   // username should be trimmed before sending here.
 
@@ -1092,12 +1413,14 @@ function valid_username (username) {
 
   for (let i = 0; i < charList.length; i++) {
     let char = charList[i];
-    if ((char >= 'a' && char <= 'z') ||
-        (char >= 'A' && char <= 'Z') ||
-        (char >= '0' && char <= '9') ||
-        char == '-' ||
-        char == '_' ||
-        char == '.' ) {
+    if (
+      (char >= 'a' && char <= 'z') ||
+      (char >= 'A' && char <= 'Z') ||
+      (char >= '0' && char <= '9') ||
+      char == '-' ||
+      char == '_' ||
+      char == '.'
+      ) {
       // continue...
     } else {
       return false;
@@ -1107,30 +1430,36 @@ function valid_username (username) {
 }
 
 
-function valid_password (password) {
+function valid_password(password) {
   // * allowed: A-Z a-z 0-9 ~!@#$%^&* -=_+,. space
   // * password should NOT be trimmed before sending here.
-  // * password can contain consecutive spaces, therefore when displayed on page,
-  //   it must be put in <pre> or <code> tags.
+  // * spaces cannot be consecutive.
 
   if (!password) return false;
   if (password.length > 100) return false;
 
   const charList = password.split("");
-  if (charList[0] == " " || charList[charList.length - 1] == " ") return false;
+  if (hasSpaceBeforeAfter(charList)) return false;
 
   for (let i = 0; i < charList.length; i++) {
     let char = charList[i];
-    if ((char >= 'a' && char <= 'z') ||
-        (char >= '@' && char <= 'Z') ||
-        (char >= '0' && char <= '9') ||
-        (char >= ' ' && char <= '&' && char != '"') ||
-        (char >= '*' && char <= '.') ||
-        
-        char == '=' ||
-        char == '^' ||
-        char == '_' ||
-        char == '~'  ) {
+    if (
+      (char >= 'a' && char <= 'z') ||
+      (char >= '@' && char <= 'Z') ||
+      (char >= '0' && char <= '9') ||
+      (char >= '#' && char <= '&') ||
+      (char >= '*' && char <= '.') ||
+      char == '=' ||
+      char == '^' ||
+      char == '_' ||
+      char == '~' ||
+      char == '!'
+      ) {
+      // continue...
+    } else if (char == ' ' ) {
+      if (charList[i + 1] == ' ') {
+        return false;
+      }
       // continue...
     } else {
       return false;
@@ -1140,7 +1469,7 @@ function valid_password (password) {
 }
 
 
-function valid_name (name) {
+function valid_name(name) {
   // allowed: a-z A-Z .
   // username should be trimmed before sending here.
 
@@ -1148,14 +1477,13 @@ function valid_name (name) {
   if (name.length > 100) return false;
 
   const charList = name.split("");
-  if (charList[0] == " " || charList[charList.length - 1] == " ") return false;
+  if (hasSpaceBeforeAfter(charList)) return false;
 
   for (let i = 0; i < charList.length; i++) {
     let char = charList[i];
     if ((char >= 'a' && char <= 'z') ||
         (char >= 'A' && char <= 'Z')) {
       // continue...
-
     } else if (char == ' ') {
       if (charList[i + 1] == " ") {
         return false;
@@ -1175,12 +1503,228 @@ function valid_usertype(userType) {
 }
 
 
-function valid_userID (userID) {
+function valid_userID(userID) {
   if (typeof(userID) == "number") return true;
   return false;
 }
 
-let port = 8000;
-app.listen(port, function () {
-  console.log("RentWise server running on port: " + port);
-});
+
+function valid_province(province) {
+  if (
+    province == "AB" ||
+    province == "BC" ||
+    province == "ON" ||
+    province == "QC" ||
+    province == "SK" ||
+    province == "MB" ||
+    province == "NS" ||
+    province == "PE" ||
+    province == "NB" ||
+    province == "NL" ||
+    province == "YT" ||
+    province == "NT" ||
+    province == "NU"
+  ) {
+    return true;
+  }
+  return false;
+}
+
+
+function valid_prefix(prefix) {
+  if (
+    prefix == "%" ||
+    prefix == "N" ||
+    prefix == "S" ||
+    prefix == "E" ||
+    prefix == "W" ||
+    prefix == "NE" ||
+    prefix == "NW" ||
+    prefix == "SE" ||
+    prefix == "SW"
+  ) {
+    return true;
+  }
+  return false;
+}
+
+
+function valid_streetType(streetType) {
+  if (
+    streetType == "%" ||
+    streetType == "St." ||
+    streetType == "Ave." ||
+    streetType == "Rd." ||
+    streetType == "Dr." ||
+    streetType == "Ln." ||
+    streetType == "Pl." ||
+    streetType == "Ct." ||
+    streetType == "Cst." ||
+    streetType == "Way" ||
+    streetType == "Blvd." ||
+    streetType == "Hwy." ||
+    streetType == "Other"
+    ) {
+    return true;
+  }
+  return false;
+}
+
+function valid_streetNum(streetNum) {
+  // allowed: integers as strings
+
+  if (!streetNum) return false;
+  if (streetNum.length > 12) return false;
+
+  const charList = streetNum.split("");
+
+  for (let i = 0; i < charList.length; i++) {
+    let char = charList[i];
+    if (char >= '0' && char <= '9') {
+      // continue...
+    }  else {
+      return false;
+    }
+  }
+  return true;
+}
+
+function valid_unitNum(unitNum) {
+  // allowed: 0-9 a-z A-Z -
+  // value should be trimmed before sending here.
+
+  if (unitNum.length > 12) return false;
+
+  const charList = unitNum.split("");
+
+  for (let i = 0; i < charList.length; i++) {
+    let char = charList[i];
+    if ((char >= '0' && char <= '9') ||
+        (char >= 'A' && char <= 'Z') ||
+        (char >= 'a' && char <= 'z')
+      ) {
+      // continue...
+    } else if (char == "-") {
+      if (charList[i + 1] == "-") {
+        return false;
+      }
+      // continue...
+    } else {
+      return false;
+    }
+  }
+  return true;
+}
+
+
+function valid_streetName(streetName) {
+  // allowed: 0-9 a-z A-Z & space -
+  // value should be trimmed before sending here.
+
+  if (!streetName) return false;
+  if (streetName.length > 100) return false;
+
+  const charList = streetName.split("");
+  if (hasSpaceBeforeAfter(charList)) return false;
+
+  for (let i = 0; i < charList.length; i++) {
+    let char = charList[i];
+    if ((char >= '0' && char <= '9') ||
+        (char >= 'a' && char <= 'z') ||
+        (char >= 'A' && char <= 'Z') ||
+        (char == '&') ||
+        (char == '-')
+      ) {
+      // continue...
+    } else if (char == ' ') {
+      if (charList[i + 1] == ' ') {
+        return false;
+      }
+      // continue...
+    } else {
+      return false;
+    }
+  }
+  return true;
+}
+
+
+function valid_cityName(cityName) {
+  // allowed: 0-9 a-z A-Z & space - '
+  // value should be trimmed before sending here.
+
+  if (!cityName) return false;
+  if (cityName.length > 86) return false;
+
+  const charList = cityName.split("");
+  if (hasSpaceBeforeAfter(charList)) return false;
+
+  for (let i = 0; i < charList.length; i++) {
+    let char = charList[i];
+    if ((char >= '0' && char <= '9') ||
+        (char >= 'a' && char <= 'z') ||
+        (char >= 'A' && char <= 'Z') ||
+        (char == '&') ||
+        (char == `'`) ||
+        (char == '-')
+      ) {
+      // continue...
+    } else if (char == ' ') {
+      if (charList[i + 1] == ' ') {
+        return false;
+      }
+      // continue...
+    } else {
+      return false;
+    }
+  }
+  return true;
+}
+
+
+// converts a string to title case.
+function toTitleCase(string) {
+  const charList = string.split("");
+  for (let i = 0; i < charList.length; i++) {
+    if (i == 0 || charList[i - 1] == ' ' || charList[i - 1] == '-') {
+      charList[i] = charList[i].toUpperCase();
+    } else {
+      charList[i] = charList[i].toLowerCase();
+    }
+  }
+  const result = charList.join('');
+  return result;
+}
+
+
+// designed to sanitize the search entries from users
+function sanitizeText(string) {
+
+  let ar = [];
+  let char = "";
+  let x = -1;
+  for (let i = 0; i < string.length; i++) {
+    char = string.charAt(i);
+    if (
+      (char >= 'a' && char <= 'z') ||
+      (char >= 'A' && char <= 'Z') ||
+      (char >= '0' && char <= '9') ||
+      (char == '&') ||
+      (char == `'`) ||
+      (char == '-')
+      ) {
+      ar[++x] = char;
+    } else if (char == ' ' && string.charAt(i + 1) != ' ') {
+      ar[++x] = char;
+    }
+  }
+  return ar.join('');
+}
+
+
+// accepts an array of single characters.
+// Checks if the beginning or end of the array are not spaces.
+function hasSpaceBeforeAfter(charList) {
+  if (charList[0] == " " || charList[charList.length - 1] == " ") return true;
+  return false;
+}

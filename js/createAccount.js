@@ -1,6 +1,7 @@
 "use strict";
+
+//Requests the server to create an account based on the data from the document.
 async function createAccount(data) {
-  
   try {
     let responseObject = await fetch("/signup", {
       method: 'POST',
@@ -21,6 +22,7 @@ async function createAccount(data) {
   }
 }
 
+//Creates a click event to create an account when the create button is pressed.
 ready(document.getElementById("createBtn").addEventListener("click", function(e) {
   if((document.getElementById("usernameBox").value) && (document.getElementById("passwordBox").value) && (document.getElementById("firstNameBox").value) && (document.getElementById("lastNameBox").value) && (document.getElementById("email").value)){
     createAccount({
@@ -37,6 +39,7 @@ ready(document.getElementById("createBtn").addEventListener("click", function(e)
   }
 }))
 
+//Executes callback when the document is loaded.
 function ready(callback) {
   if (document.readyState != "loading") {
     callback();

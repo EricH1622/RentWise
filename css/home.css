@@ -1,12 +1,17 @@
-
+#container{
+  background-image: url(../assets/images/city2.jpeg);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
 
 #content{
-  overflow: auto;
   grid-row: 2 / span 2 !important;
   grid-column: 1 / span 5;
   display: grid;
   grid-template-columns: 100%;
-  grid-template-rows: 100%;
+  grid-template-rows: 80% 50%;
+  overflow-x: hidden;
 }
 
 h2 {
@@ -31,14 +36,15 @@ input[type=text],select {
 }
 
 #form {
+  font-family: 'Roboto', sans-serif;
   width: 100%;
   margin: 1rem 0 3em 0;
   border-radius: 10px;
-  background-color: #06002e;
+  background-color: #001d3d;
   color: white;
   font-weight: bolder;
   display: grid;
-  grid-template-rows: 2rem 1fr 1fr 1fr 1fr 1fr 1fr 1fr 2rem;
+  grid-template-rows: 2rem 1fr 1fr 1fr 1fr 1fr 1fr 2rem 1fr 2rem;
   grid-template-columns: 2rem 1fr 2rem 1fr 2rem;
   box-shadow: 15px 15px 5px 0px rgba(0,0,0,0.85);
 }
@@ -83,9 +89,12 @@ input[type=text],select {
   grid-column: 2 / span 3;
 }
 
-
-#submit {
+#msg{
   grid-row: 8 / span 1;
+  grid-column: 2 / span 3;
+}
+#submit {
+  grid-row: 9 / span 1;
   grid-column: 2 / span 3;
   display: flex;
   justify-content: center;
@@ -104,19 +113,26 @@ input[type=text],select {
   font-size: 16px;
 }
 
+#btn:hover{
+  background-color: rgb(187, 115, 0);
+  cursor: pointer;
+}
+
 #formContainer {
   grid-row: 1 / span 1;
   grid-column: 1 / span 1;
-  background-image: url(../assets/images/city2.jpeg);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   opacity: 0.9;
   overflow: hidden;
+}
+
+.required{
+  color:#DB3A34;
+  font-weight: lighter;
+  font-size: small;
 }
 
 #footer {
@@ -130,251 +146,37 @@ input[type=text],select {
   display: block; 
 }
 
-
-/**************** Navbar Styling ****************/
-.logo{
-  height: 100%;
-}
-
-#logo1{
-  height: 70%;
-  width: auto;
-}
-
-#nav > ul {
-grid-column: 2;
-grid-row: 1;
-}
-
-#nav ul li {
-display: inline-block;
-}
-
-#nav ul li a {
-color:rgb(255, 255, 255);
-text-decoration: none;
-border-radius: 5px;
-padding: 7px 13px;
-}
-
-#logout{
-  color: red !important;
-}
-
-#logout:hover{
-  color: white !important;
-  background-color: red !important;
-}
-
-#nav.search-container {
-float: right;
-}
-
-#nav a.active, #nav a:hover {
-background-color: rgba(255, 145, 0, 0.829);
-color: white;
-transition: 0.9s;
-}
-
-.checkbtn {
-font-size: large;
-color: rgb(31, 31, 31);
-margin: auto;
-cursor: pointer;
-display: none;
-}
-
-#check {
-display: none;
-}
-
-#nav input[type=text] {
-padding: 6px;
-margin-top: 8px;
-font-size: 17px;
-border: none;
-}
-
-#nav .search-container button {
-float: right;
-padding: 6px 10px;
-margin-top: 8px;
-margin-right: 16px;
-background: #ddd;
-font-size: 17px;
-border: none;
-cursor: pointer;
-}
-
-#nav .search-container button:hover {
-background: #ccc;
-}
-
-
-/**************** Footer Styling ****************/
-
-#footer .footerList {
-list-style: none;
-text-align: center;
-margin: 0;
-padding: 0;
-}
-
-#footer ul a {
-text-decoration: none;
-color: rgb(255, 255, 255);
-}
-
-#footer ul li {
-display: inline-block;
-padding: 1%;
-}
-
-#footer ul li a:hover {
-opacity: 1;
-font-weight: bold;
-transition: 0.6s;
-}
-
-#footer .copyright {
-  margin: 0;
-  text-align: center;
-  color: rgb(255, 255, 255);
-  font-size: 1.5vmin;
-}
-
-.hamburger{
-  width: auto;
-  height: 4vh;
-}
-
-#searchIcon{
-  width: auto;
-  height: 1.8vh;
+#previousSearches {
+  overflow: hidden;
   justify-self: center;
-  align-self: center;
-}
-
-@media only screen and (max-width : 1040px) and (min-width : 401px) {
-
-#container {
-  background-color: rgb(255, 255, 255);
-  display: grid;
-  height: 100vh;
-}
-
-/**************** Navbar Styling ****************/
-#nav{
-  display: grid;
-  grid-template-columns: 80% 20%;
-  grid-row: 100%;
-}
-
-.checkbtn{
-  display: block;
-  grid-column: 2;
-  grid-row: 1;
-  filter: invert();
-}
-
-.logo{
-  height: 100%;
-  grid-column: 1;
-  grid-row: 1;
-}
-
-#nav ul {
-  position: fixed;
   width: 100%;
-  background: rgba(16, 0, 37, 0.808);
-  top: 7vh;
-  left: -120%;
+  background-color: rgba(0, 29, 61, 0.9);
   text-align: center;
-  transition: all .5s;
+  justify-content: center;
+  align-items: center;
 }
 
-#nav ul li {
-  display: block;
-  padding-top: 2%;
-  padding-bottom: 2%;
-}
-
-#nav ul li a{
+#previousSearches > h1{
   color: white;
+  font-size: 40px;
 }
 
-#nav a.active, nav a:hover {
-  background-color: rgba(255, 255, 255, 0.8);
-  color: rgb(31, 31, 31);
+#previousSearches > button{
+  align-self: center;
+  background-color: rgb(0, 66, 128);
+  border: none;
+  border-radius: 10px;
+  margin: 0 auto;
+  color: white;
+  padding: 15px 80px;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  font-size: 16px;
+  width: 60%;
 }
 
-#check:checked ~ ul {
-  left: 0;
-}
-
-#nav .search-container button {
-float: none;
-}
-
-
-
-
-}
-
-@media only screen and (max-width : 400px) {
-  #container {
-    background-color: rgb(255, 255, 255);
-    display: grid;
-    height: 100vh;
-  }
-  
-  /**************** Navbar Styling ****************/
-  #nav{
-    display: grid;
-    grid-template-columns: 80% 20%;
-    grid-row: 100%;
-  }
-  
-  .checkbtn{
-    display: block;
-    grid-column: 2;
-    grid-row: 1;
-    filter: invert();
-  }
-  
-  .logo{
-    height: 100%;
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  #logo1{
-    height: 15vmin;
-    width: auto;
-  }
-  
-  #nav ul {
-    position: fixed;
-    width: 100%;
-    background: rgba(16, 0, 37, 0.808);
-    top: 7vh;
-    left: -120%;
-    text-align: center;
-    transition: all .5s;
-  }
-  
-  #nav ul li {
-    display: block;
-    padding-top: 2%;
-    padding-bottom: 2%;
-  }
-  
-  #nav ul li a{
-    color: white;
-  }
-  
-  #nav a.active, nav a:hover {
-    background-color: rgba(255, 255, 255, 0.8);
-    color: rgb(31, 31, 31);
-  }
+#previousSearches > button:hover{
+  background-color: rgb(0, 52, 100);
+  cursor: pointer;
 }

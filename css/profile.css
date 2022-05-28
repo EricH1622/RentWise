@@ -1,7 +1,7 @@
 #content{
     display: grid;
-    grid-template-columns: 15% 70% 15%;
-    grid-template-rows: 10% 80% 10%;
+    grid-template-columns: 10% 80% 10%;
+    grid-template-rows: 8% 84% 8%;
     background-image: url("/assets/images/city3.jpeg");
     background-repeat: no-repeat;
     background-size:cover;
@@ -56,30 +56,26 @@
 
 h1{
     text-align: center;
-    font-size: 5vmin;
     margin: 0 auto;
-}
-
-#timeline{
-    padding: 2%;
-    background-color: rgb(157, 223, 240);
-    /*Remove the following 2 lines to bring back the timeline once we need it later*/
-    visibility: hidden;
-    position: absolute;
+    font-family: 'Roboto', sans-serif;
 }
 
 #profileInfo{
     padding: 1%;
+    padding-top: 10px;
     display: grid;
     grid-template-rows: 10% 30% 60%;
     grid-template-columns: 10% 80% 10%;
-    text-align: center;
     grid-row: 2;
     grid-column: 2;
     margin: 0;
     vertical-align: middle;
-    background-color: rgba(0, 195, 255, 1);
+    background-color: #001d3d;
     border-radius: 20px;
+    color: white;
+    text-align: left;
+    font-family: 'Roboto', sans-serif;
+    box-shadow: 15px 15px 5px 0px rgba(0,0,0,0.85);
 }
 
 #profileInfo > *{
@@ -105,7 +101,6 @@ h1{
 }
 
 #imageUpload{
-    align-self: center;
     justify-self: center;
     width: 25vmin;
     font-size: 1.8vmin;
@@ -123,19 +118,27 @@ h1{
 #profileInfo > p, label{
     font-size: 3vmin;
     margin: 0;
-    align-self: center;
+    /* align-self: center; */
+}
+
+label {
+    font-size: 3vmin; 
+    
 }
 
 label > input{
-    font-size: 3vmin;
-    margin: 0;
+    font-size: 2.5vmin;
     color: rgb(0, 0, 0);
-    border-radius: 10px;
-    width: fit-content;
     border-style: none;
     display: inline;
-    padding: none;
-    width: 20vw;
+    width: 25vw;
+
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    float: right;
+    text-align: center;
 }
 
 label > input::placeholder{
@@ -170,9 +173,16 @@ label > input::placeholder{
     color: white;
     text-decoration: none;
     display: inline;
+    
 }
 
 #editButton:hover, #uploadButton:hover{
     background-color: rgb(218, 134, 0);
 }
 
+@media only screen and (max-width : 1040px) and (min-width : 401px) {
+
+    label > input{
+        width: 20vw;
+    }
+}

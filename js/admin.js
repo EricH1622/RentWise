@@ -17,11 +17,7 @@ let response_msg_box;
 let editingActive = false;
 const saved = []; // original row data being edited.
 
-
-
-
 begin(function() {
-
   // creating the edit bar
   editRow = document.createElement("tr");
   editRow.className = "edit_row";
@@ -70,7 +66,7 @@ begin(function() {
   
 });
 
-
+//Toggles the edit row on/off and moves it underneath a row
 function toggle_editRow() {
   if (editingActive) {
     return;
@@ -82,7 +78,7 @@ function toggle_editRow() {
   }
 }
 
-
+//Takes in the ID of a table row, and moves the edit box underneath the respective row.
 function move_editRow(rowID) {
   resetEditBox();
   document.getElementById(rowID).insertAdjacentElement("afterend", editRow);
@@ -90,6 +86,7 @@ function move_editRow(rowID) {
   editRowPosition = rowID;
 }
 
+//Changes the row accordingly when the edit button is pressed.
 function btn_edit_Do() {
   editingActive = true;
 
@@ -110,7 +107,7 @@ function btn_edit_Do() {
   td_list[6].innerHTML = `<input type="number" id="inp_usertype" min="0" max="1" value="${saved[6]}"/>`;
 }
 
-
+//Changes the row accordingly when the Done button is pressed.
 function btn_done_Do() {
   const td_list = document.querySelectorAll(`#${editRowPosition} > td`);
   for (let i = 1; i < td_list.length; i++) {
@@ -121,7 +118,7 @@ function btn_done_Do() {
   resetEditBox();
 }
 
-
+//Sends data to server when the update button is pressed.
 async function btn_update_Do() {
   let username = document.getElementById("inp_username").value;
   let firstname = document.getElementById("inp_firstname").value;
@@ -163,7 +160,7 @@ async function btn_update_Do() {
   }
 }
 
-
+//Prepares confirmation for deleting user.
 function btn_delete_Do() {
   btn_edit.classList.add("hidden");
   btn_delete.classList.add("hidden");
@@ -172,12 +169,12 @@ function btn_delete_Do() {
   btn_deleteFinal.classList.remove("hidden");
 }
 
-
+//Cancels the delete operation.
 function btn_cancelDelete_Do() {
   resetEditBox();
 }
 
-
+//Requests the server to delete a user from the table.
 async function btn_deleteFinal_Do() {
   let userID = document.querySelector(`#${editRowPosition} > td`);
   userID = userID.innerHTML;
@@ -221,7 +218,7 @@ function resetEditBox() {
   response_msg_box.innerHTML = "";
 }
 
-
+//Requests the server to add a user to the database based on the values in the document.
 async function btn_add_user_Do() {
   let username = document.getElementById("add_username").value;
   let firstname = document.getElementById("add_firstname").value;
@@ -274,7 +271,7 @@ async function btn_add_user_Do() {
 }
 
 
-
+//Executes callback when the document is loaded.
 function begin(callback) {
   if (document.readyState != "loading") {
       callback();
