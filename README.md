@@ -15,83 +15,83 @@ Our backend was done using Node.js, with packages including:
 Our database was made in SQL, and we hosted our website on heroku, although the heroku hosting was only partially successful, as the image uploading functions do not operate successfully on heroku.
 
 #### File Contents
-ROOT
-│   .gitignore
-│   README.md
-│   Server.js
-│
-├───assets
-│   ├───images
-│   │       city1.jpg
-│   │       city2.jpeg
-│   │       city3.jpeg
-│   │       city3.jpg
-│   │       city3.psd
-│   │       city4.jpg
-│   │       city5.jpg
-│   │       city5.psd
-│   │       city6.jpg
-│   │       closeButton.png
-│   │       favicon.ico
-│   │       house1.jpeg
-│   │       menuIcon.png
-│   │       placeholder1.png
-│   │       placholderprofilephoto.jpg
-│   │       post1.jpg
-│   │       post2.jpg
-│   │       post3.jpg
-│   │       post4.jpg
-│   │       post5.jpeg
-│   │       Rentwise_Logo.png
-│   │       searchIcon.png
-│   │
-│   ├───uploads
-│   │
-│   └───videos
-│           RentwiseGood1.mp4
-│
-├───css
-│       admin.css
-│       allPages.css
-│       createAccount.css
-│       createPost.css
-│       home.css
-│       landing.css
-│       login.css
-│       notFound.css
-│       profile.css
-│       results.css
-│       templateStyle.css
-│       unitViewing.css
-│       userTimeLineStyle.css
-│
-├───html
-│       admin.html
-│       createAccount.html
-│       createPost.html
-│       home.html
-│       index.html
-│       login.html
-│       notFound.html
-│       profile.html
-│       results.html
-│       unitView.html
-│       userTimeLine.html
-│
-├───js
-│       admin.js
-│       client.js
-│       createAccount.js
-│       createPost.js
-│       easterEgg.js
-│       profile.js
-│       search.js
-│       unitView.js
-│
-├───sql
-│      database.sql
-│
-└───
+ROOT  
+│   .gitignore  
+│   README.md  
+│   Server.js  
+│  
+├───assets  
+│   ├───images  
+│   │       city1.jpg  
+│   │       city2.jpeg  
+│   │       city3.jpeg  
+│   │       city3.jpg  
+│   │       city3.psd  
+│   │       city4.jpg  
+│   │       city5.jpg  
+│   │       city5.psd  
+│   │       city6.jpg  
+│   │       closeButton.png  
+│   │       favicon.ico  
+│   │       house1.jpeg  
+│   │       menuIcon.png  
+│   │       placeholder1.png  
+│   │       placholderprofilephoto.jpg  
+│   │       post1.jpg  
+│   │       post2.jpg  
+│   │       post3.jpg  
+│   │       post4.jpg  
+│   │       post5.jpeg  
+│   │       Rentwise_Logo.png  
+│   │       searchIcon.png  
+│   │  
+│   ├───uploads  
+│   │  
+│   └───videos  
+│           RentwiseGood1.mp4  
+│  
+├───css  
+│       admin.css  
+│       allPages.css  
+│       createAccount.css  
+│       createPost.css  
+│       home.css  
+│       landing.css  
+│       login.css  
+│       notFound.css  
+│       profile.css  
+│       results.css  
+│       templateStyle.css  
+│       unitViewing.css  
+│       userTimeLineStyle.css  
+│  
+├───html  
+│       admin.html  
+│       createAccount.html  
+│       createPost.html  
+│       home.html  
+│       index.html  
+│       login.html  
+│       notFound.html  
+│       profile.html  
+│       results.html  
+│       unitView.html  
+│       userTimeLine.html  
+│  
+├───js  
+│       admin.js  
+│       client.js  
+│       createAccount.js  
+│       createPost.js  
+│       easterEgg.js  
+│       profile.js  
+│       search.js  
+│       unitView.js  
+│  
+├───sql  
+│      database.sql  
+│  
+└───  
 #### How to install and run the project
 ##### Step 1: Downloading the project
  - On this github page, click the "Code" button to open the dropdown menu.
