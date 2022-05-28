@@ -73,9 +73,6 @@ async function addImagePathToDB(req, res) {
   } else if (req.body.submitType == "post" && req.body.postID) { // if the image upload is a post
     // add images to image names to image database.
     const [rows, fields] = await connection.query('SELECT user_id FROM BBY_37_post WHERE post_id = ?', [req.body.postID]);
-    if (!rows[0]) {
-      console.log("no result after query. The post for which files were uploaded cannot be found.");
-    }
     if (rows[0] && rows[0].user_id == req.session.userid) {
       for (let i = 0; i < req.files.length; i++) {
         await connection.query('INSERT INTO BBY_37_postImage (post_id, user_id, filename) values (?, ?, ?)',
